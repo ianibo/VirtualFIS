@@ -3,6 +3,7 @@ import com.k_int.vfis.auth.*
 class BootStrap {
 
     def springSecurityService
+    def dataSyncService
 
     def init = { servletContext ->
       log.debug("BootStrap::init");
@@ -24,7 +25,11 @@ class BootStrap {
       if (!adminUser.authorities.contains(userRole)) {
         VfisPersonVfisAuthority.create adminUser, userRole
       }
+
+      dataSyncService.sync();
     }
+
+
     def destroy = {
     }
 }
