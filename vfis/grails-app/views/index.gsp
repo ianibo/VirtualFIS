@@ -8,7 +8,7 @@
   <body>
     <div class="row">
       <section id="main" class="offset2 span8">
-        <div class="hero-unit">
+        <div class="well">
           <h1>Open Family Services - Virtual FIS</h1>
 
           <p>
@@ -16,6 +16,7 @@
             appearing in the OFS directory. We also offer a pay-for service which allows full management of family service records in accordance with
             --nick--.
           </p>
+
           <p>
             To use this service register and login using the links above, connect your accout to a local authority and start managing / editing your records.
           </p>
