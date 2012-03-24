@@ -38,6 +38,18 @@
           </div>
         </div>
       </div>
+      <div>
+        Log...
+        <sec:ifNotLoggedIn>
+          Not logged in
+          <g:link controller="login" action="auth">Login</g:link>
+        </sec:ifNotLoggedIn>
+        <sec:ifAllGranted roles="ROLE_USER">
+          User role
+          <sec:username /> (<g:link controller="logout">sign out</g:link>)
+        </sec:ifAllGranted>
+        end
+      </div>
     </nav>
 
     <div class="container-fluid">

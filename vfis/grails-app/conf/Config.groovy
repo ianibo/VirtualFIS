@@ -78,6 +78,9 @@ log4j = {
     //appenders {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
+    appenders {
+        console name: "stdout", threshold: org.apache.log4j.Level.ALL
+    }
 
     error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
            'org.codehaus.groovy.grails.web.pages', //  GSP
@@ -90,6 +93,12 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    debug  'grails.app.controllers',
+           'grails.app.services',
+           'grails.app.domain',
+           'grails.app.conf',
+           'grails.app.jobs'
 }
 
 // Added by the Spring Security Core plugin:
@@ -97,4 +106,5 @@ grails.plugins.springsecurity.userLookup.userDomainClassName = 'com.k_int.vfis.a
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'com.k_int.vfis.auth.VfisPersonVfisAuthority'
 grails.plugins.springsecurity.authority.className = 'com.k_int.vfis.auth.VfisAuthority'
 grails.plugins.springsecurity.requestMap.className = 'com.k_int.vfis.auth.VfisRequestmap'
-grails.plugins.springsecurity.securityConfigType = 'Requestmap'
+// grails.plugins.springsecurity.securityConfigType = 'Requestmap'
+grails.plugins.springsecurity.securityConfigType = "Annotation"
