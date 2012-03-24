@@ -29,6 +29,8 @@ class HomeController {
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def memberships() {
     log.debug("Memberships");
+    def result = [:]
+    result
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])

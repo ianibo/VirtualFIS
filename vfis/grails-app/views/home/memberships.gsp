@@ -24,7 +24,11 @@
            please contact OFS for suppot. Please ensure that the email address you have registered with and confirmed matches the organisation you
            are attempting to join/create</p>
         <g:form controller="home" action="processJoinRequest">
-          <input type="text" name="orgName"/>
+          <g:select name="org"
+                    from="${com.k_int.vfis.Organisation.list()}"
+                    optionKey="id"
+                    optionValue="name">
+          </g:select>
         </g:form>
         <form>
       </div>

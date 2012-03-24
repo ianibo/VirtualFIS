@@ -13,5 +13,12 @@ class Organisation {
   String iconURL
 
   static constraints = {
+    email(nullable:true, blank:true)
+    contactEmail(nullable:true, blank:true)
+    name(nullable:true, blank:true)
+    postcode(nullable:true, blank:true)
+    description(nullable:true, blank:true)
+    sourceDisclaimer(nullable:true, blank:true)
+    iconURL(nullable:true, blank:true)
   }
 }

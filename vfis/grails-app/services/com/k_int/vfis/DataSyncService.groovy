@@ -15,6 +15,9 @@ import java.security.MessageDigest
 class DataSyncService {
 
   def sync() {
+
+    log.debug("DataSyncService::sync");
+
     // Sync orgs with the public list from http://www.openfamilyservices.org.uk/ofs/data/orgs.json
     def data_url = new HTTPBuilder( 'http://www.openfamilyservices.org.uk/ofs/data/orgs.json' )
     // data_url.auth.basic feed_definition.target.identity, feed_definition.target.credentials
@@ -22,22 +25,31 @@ class DataSyncService {
     data_url.request(GET) {request ->
 
       response.success = { resp, data ->
-        log.debug("response status: ${resp.statusLine}")
-        log.debug("Response data code: ${data}");
+        // log.debug("response status: ${resp.statusLine}")
+        // log.debug("Response data code: ${data}");
         data.each { r ->
           if ( r.identifier != null ) {
             Organisation o = Organisation.findByIdentifier(r.identifier)
-            if ( o != null ) {
+            if ( o == null ) {
+              log.debug("Creatig new org ${r.identifier} / ${r.name}");
               o = new Organisation(
-                                   identifier:r.identifier, 
-                                   code:r.shortCode, 
-                                   email:r.email, 
-                                   contactEmail:r.contactEmail, 
-                                   name:r.name, 
-                                   postcode:r.postcode, 
-                                   description:r.description, 
-                                   disclaimer:r.sourceDisclaimer, 
-                                   iconURL:r.iconURL).save(flush:true);
+                                   identifier:"${r.identifier}", 
+                                   code:"${r.shortCode}", 
+                                   email:"${r.email}", 
+                                   contactEmail:"${r.contactEmail}", 
+                                   name:"${r.name}", 
+                                   postcode:"${r.postcode}", 
+                                   description:"${r.description}", 
+                                   disclaimer:"${r.sourceDisclaimer}", 
+                                   iconURL:"${r.iconURL}")
+              if ( o.save(flush:true) ) {
+                log.debug("Saved");
+              }
+              else {
+                o.errors.each { e ->
+                  log.warn(e);
+                }
+              }
               // {"office":null,"thoroughfare":null,"locality":null,"dependentLocality":null,"region":null,"contactTelephone":null,"contactFax":null,"showLogo":null,"subType":null}
 
             }
@@ -57,6 +69,5 @@ class DataSyncService {
         log.error("Failure - ${resp}");
       }
     }
-
   }
 }
