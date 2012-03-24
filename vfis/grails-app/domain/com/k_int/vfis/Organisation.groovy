@@ -12,6 +12,9 @@ class Organisation {
   String sourceDisclaimer
   String iconURL
 
+  static hasMany = [adminAssociations: PersonOrg]
+
+
   static constraints = {
     email(nullable:true, blank:true)
     contactEmail(nullable:true, blank:true)

@@ -7,8 +7,9 @@
 
   <body>
     <div class="row-fluid">
-        <ul class="breadcrumb">
-        <li class="active">FIS Home</li>
+      <ul class="breadcrumb">
+        <li> Virtual FIS <span class="divider">/</span> </li>
+        <li class="active">User Home</li>
       </ul>
     </div>
 

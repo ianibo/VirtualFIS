@@ -1,5 +1,7 @@
 package com.k_int.vfis.auth
 
+import com.k_int.vfis.*
+
 class VfisPerson {
 
 	transient springSecurityService
@@ -10,6 +12,9 @@ class VfisPerson {
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
+
+        static hasMany = [adminAssociations: PersonOrg]
+        static mappedBy = [adminAssociations: "person"]
 
 	static constraints = {
 		username blank: false, unique: true

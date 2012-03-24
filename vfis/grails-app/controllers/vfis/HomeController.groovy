@@ -1,5 +1,6 @@
 package vfis
 
+import com.k_int.vfis.*
 import com.k_int.vfis.auth.*
 
 import grails.plugins.springsecurity.Secured
@@ -30,11 +31,19 @@ class HomeController {
   def memberships() {
     log.debug("Memberships");
     def result = [:]
+    result.user = VfisPerson.get(springSecurityService.principal.id)
     result
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def processJoinRequest() {
-    log.debug("processJoinRequest ${params.orgName}");
+    log.debug("processJoinRequest org with id ${params.org}");
+    def user = VfisPerson.get(springSecurityService.principal.id)
+    def org = Organisation.get(params.org)
+    if ( ( org != null ) && ( params.role != null ) ) {
+      def p = new PersonOrg(dateRequested:System.currentTimeMillis(), status:0, org:org, person:user, role:params.role)
+      p.save(flush:true)
+    }
+    redirect(action: "memberships")
   }
 }
