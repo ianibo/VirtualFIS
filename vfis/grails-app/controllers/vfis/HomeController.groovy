@@ -30,4 +30,9 @@ class HomeController {
   def memberships() {
     log.debug("Memberships");
   }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def processJoinRequest() {
+    log.debug("processJoinRequest ${params.orgName}");
+  }
 }
