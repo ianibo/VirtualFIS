@@ -42,11 +42,11 @@
         <ul class="nav">
           <li<%= request.forwardURI == "${createLink(uri: '/')}" ? ' class="active"' : '' %>><a href="${createLink(uri: '/')}">Home</a></li>
           <sec:ifAllGranted roles="ROLE_USER">
-            <li><a href="#">Link</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
+                <li><g:link controller="Home" action="index">Dashboard</g:link></li>
+                <li><g:link controller="Home" action="memberships">Manage Memberships</g:link></li>
                 <li><a href="#">Another action</a></li>
               </ul>
             </li>

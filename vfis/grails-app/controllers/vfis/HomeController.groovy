@@ -24,6 +24,10 @@ class HomeController {
     else {
       log.error("Principal is null");
     }
+  }
 
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def memberships() {
+    log.debug("Memberships");
   }
 }
