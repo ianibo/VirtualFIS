@@ -28,38 +28,46 @@
 
   <body>
 
-    <nav class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <div class="nav-collapse">
-            <ul class="nav">              
-              <li<%= request.forwardURI == "${createLink(uri: '/')}" ? ' class="active"' : '' %>><a href="${createLink(uri: '/')}">Home</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div>
-        Log...
-        <sec:ifNotLoggedIn>
-          Not logged in
-          <g:link controller="login" action="auth">Login</g:link>
-        </sec:ifNotLoggedIn>
-        <sec:ifAllGranted roles="ROLE_USER">
-          User role
-          <sec:username /> (<g:link controller="logout">sign out</g:link>)
-        </sec:ifAllGranted>
-        end
-      </div>
-    </nav>
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <a class="brand" href="#">OFS Virtual FIS</a>
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li<%= request.forwardURI == "${createLink(uri: '/')}" ? ' class="active"' : '' %>><a href="${createLink(uri: '/')}">Home</a></li>
+          <sec:ifAllGranted roles="ROLE_USER">
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+              </ul>
+            </li>
+          </sec:ifAllGranted>
+        </ul>
+        <ul class="nav pull-right">
+          <li>
+            <form class="navbar-search pull-right" action="">
+              <input type="text" class="search-query span2" placeholder="Search">
+            </form>
+          </li>
+          <sec:ifNotLoggedIn><li><g:link controller="login" action="auth">Login</g:link></li><li><a href="">Register</a></li></sec:ifNotLoggedIn>
+          <sec:ifAllGranted roles="ROLE_USER"><li><a href="Logout">Logout (<sec:username/>)</a></li></sec:ifAllGranted>
+        </ul>
+      </div><!-- /.nav-collapse -->
+    </div><!-- /.container -->
+  </div><!-- /.navbar-inner -->
+</div><!-- /.navbar -->
 
     <div class="container-fluid">
       <g:layoutBody/>
-
-      <hr>
-
-      <footer>
-        <p>&copy; Company 2011</p>
-      </footer>
     </div>
 
     <r:layoutResources/>
