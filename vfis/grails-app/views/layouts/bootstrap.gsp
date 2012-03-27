@@ -4,8 +4,8 @@
   <head>
     <meta charset="utf-8">
     <title><g:layoutTitle default="${meta(name: 'app.name')}"/></title>
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Virtual FIS System">
+    <meta name="author" content="Knowledge Integration Ltd / Open Family Services">
 
     <meta name="viewport" content="initial-scale = 1.0">
 
@@ -48,9 +48,25 @@
                 <li><g:link controller="Home" action="index">Dashboard</g:link></li>
                 <li><g:link controller="Home" action="memberships">Manage Memberships</g:link></li>
                 <li><a href="#">Another action</a></li>
+                <sec:ifAllGranted roles="ROLE_ADMIN">
+                  <li><hr/></li>
+                  <li><g:link controller="admin" action="membershipRequests">Manage Membership Requests</g:link></li>
+                </sec:ifAllGranted>
               </ul>
             </li>
           </sec:ifAllGranted>
+
+          <g:if test="${user.adminAssociations?.size() > 0}">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <g:each in="${user.adminAssociations}" var="assoc">
+                  <li><g:link controller="Org" action="dashboard" id="${assoc.org.id}">${assoc.org.name}</g:link></li>
+                </g:each>
+              </ul>
+            </li>
+          </g:if>
+
         </ul>
         <ul class="nav pull-right">
           <li>

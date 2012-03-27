@@ -9,8 +9,19 @@ class HomeController {
 
   def springSecurityService
 
+  def addUserOrgs(user) {
+    def result = []
+    user.adminAssociations.each { assoc ->
+      if ( assoc.status == 1 ) {
+        result.add(assoc.org);
+      }
+    }
+    result
+  }
+
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def index() { 
+    def result=[]
     log.debug("Index.....");
     log.debug("HomeController::index springSecurityService.principal=${springSecurityService.principal}");
     if ( springSecurityService.principal ) {
@@ -18,13 +29,17 @@ class HomeController {
         log.debug("HomeController::index user=${springSecurityService.principal}");
       }
       else {
-        def user = VfisPerson.get(springSecurityService.principal.id)
+        result.user = VfisPerson.get(springSecurityService.principal.id)
         log.debug("HomeController::index user=${user}");
       }
     }
     else {
       log.error("Principal is null");
     }
+
+    // If admin
+      // Work out if there are any pending membership requests, if so, flag up as flash message on home page
+    result
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
@@ -46,4 +61,5 @@ class HomeController {
     }
     redirect(action: "memberships")
   }
+
 }
