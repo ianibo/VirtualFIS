@@ -32,11 +32,6 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
       <a class="brand" href="#">OFS Virtual FIS</a>
       <div class="nav-collapse">
         <ul class="nav">
@@ -55,18 +50,14 @@
               </ul>
             </li>
           </sec:ifAllGranted>
-
-          <g:if test="${user?.adminAssociations?.size() > 0}">
-            <li class="dropdown">
+          <g:if test="${user?.adminAssociations?.size() > 0}"><li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <g:each in="${user.adminAssociations}" var="assoc">
                   <li><g:link controller="Org" action="dashboard" id="${assoc.org.id}">${assoc.org.name}</g:link></li>
                 </g:each>
               </ul>
-            </li>
-          </g:if>
-
+            </li></g:if>
         </ul>
         <ul class="nav pull-right">
           <li>
