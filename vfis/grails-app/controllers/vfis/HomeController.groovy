@@ -21,22 +21,8 @@ class HomeController {
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def index() { 
-    def result=[]
-    log.debug("Index.....");
-    log.debug("HomeController::index springSecurityService.principal=${springSecurityService.principal}");
-    if ( springSecurityService.principal ) {
-      if ( springSecurityService.principal instanceof String ) {
-        log.debug("HomeController::index user=${springSecurityService.principal}");
-      }
-      else {
-        result.user = VfisPerson.get(springSecurityService.principal.id)
-        log.debug("HomeController::index user=${user}");
-      }
-    }
-    else {
-      log.error("Principal is null");
-    }
-
+    def result=[:]
+    result.user = VfisPerson.get(springSecurityService.principal.id)
     // If admin
       // Work out if there are any pending membership requests, if so, flag up as flash message on home page
     result
