@@ -33,11 +33,12 @@ class BootStrap {
       switch (GrailsUtil.environment) {
         case "development":
           log.debug("Dev env setup");
-          def o1 = new Organisation(identifier:"Test Organisation One", code:"TestOrg1", email:"a@b.c.d",name:"Test Org 1").save();
-          def o2 = new Organisation(identifier:"Test Organisation Two", code:"TestOrg2", email:"b@b.c.d",name:"Test Org 2").save();
-          def o3 = new Organisation(identifier:"Test Organisation Three", code:"TestOrg3", email:"c@b.c.d",name:"Test Org 3").save();
-          def o4 = new Organisation(identifier:"Test Organisation Four", code:"TestOrg4", email:"d@b.c.d",name:"Test Org 4").save();
-          def o5 = new Organisation(identifier:"Test Organisation Five", code:"TestOrg5", email:"e@b.c.d",name:"Test Org 5").save();
+          // def o1 = new Organisation(identifier:"Test Organisation One", code:"TestOrg1", email:"a@b.c.d",name:"Test Org 1").save();
+          // def o2 = new Organisation(identifier:"Test Organisation Two", code:"TestOrg2", email:"b@b.c.d",name:"Test Org 2").save();
+          // def o3 = new Organisation(identifier:"Test Organisation Three", code:"TestOrg3", email:"c@b.c.d",name:"Test Org 3").save();
+          // def o4 = new Organisation(identifier:"Test Organisation Four", code:"TestOrg4", email:"d@b.c.d",name:"Test Org 4").save();
+          // def o5 = new Organisation(identifier:"Test Organisation Five", code:"TestOrg5", email:"e@b.c.d",name:"Test Org 5").save();
+          dataSyncService.sync();
           break
         case "live":
           log.debug("Live env setup");

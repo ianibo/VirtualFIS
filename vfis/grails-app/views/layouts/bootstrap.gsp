@@ -40,9 +40,15 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><g:link controller="Home" action="index">Dashboard</g:link></li>
+                <li><g:link controller="Home" action="index">My Dashboard</g:link></li>
                 <li><g:link controller="Home" action="memberships">Manage Memberships</g:link></li>
-                <li><a href="#">Another action</a></li>
+
+                <g:if test="${org}">
+                  <li><hr/></li>
+                  <li><g:link controller="org" action="dashboard" id="${org.id}">${org.name} Dashboard</g:link></li>
+                  <li><g:link controller="org" action="reconcileOfs" id="${org.id}">Reconcile OFS Records</g:link></li>
+                </g:if>
+
                 <sec:ifAllGranted roles="ROLE_ADMIN">
                   <li><hr/></li>
                   <li><g:link controller="admin" action="membershipRequests">Manage Membership Requests</g:link></li>
