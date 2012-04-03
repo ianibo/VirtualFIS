@@ -17,7 +17,7 @@
     <div class="row-fluid">
       <div>
         <h1>${org.name} - Reconcile Records from OFS...</h1>
-        <g:if test="{reconciliation.status == true}">
+        <g:if test="{reconciliation?.active == true}">
           Currently active reconciliation
         </g:if>
         <g:else>

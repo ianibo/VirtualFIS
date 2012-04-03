@@ -24,6 +24,7 @@ class OrgController {
     result.org = Organisation.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
     result.reconciliation = reconciliationService.getStatus(params.id, 'OFS', 'result.org.code')
+
     log.debug("Reconcole OFS for org ${result.org.name} identifier ${result.org.identifier} code ${result.org.code}")    
     result    
   }
