@@ -18,7 +18,7 @@
       <div>
         <h1>${org.name} - Reconcile Records from OFS...</h1>
         <g:if test="${reconciliation?.active == true}">
-          Currently active reconciliation
+          Currently active reconciliation : ${reconciliation}
         </g:if>
         <g:else>
           no currently active reconciliation <g:link controller="org" action="requestReconciliation" id="${params.id}" class="btn">Start</g:link>

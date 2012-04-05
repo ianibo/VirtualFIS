@@ -68,7 +68,7 @@ class ReconciliationService {
           log.debug("New job id will be ${job_id}");
           active_jobs[job_id] = result;
           def future = executorService.submit({
-              reconcile(internal_org_id, remote_source_id, remote_collection_id)
+              reconcile(internal_org_id, remote_source_id, remote_collection_id, result)
           } as java.util.concurrent.Callable)
           result.future = future
         }
@@ -82,7 +82,7 @@ class ReconciliationService {
     result
   }
 
-  def reconcile(internal_org_id, remote_source_id, remote_collection_id) {
+  def reconcile(internal_org_id, remote_source_id, remote_collection_id, job_info) {
 
     def task_id = "${internal_org_id}:${remote_source_id}:${remote_collection_id}".toString()
     log.debug("reconcile ${task_id}");
@@ -90,7 +90,7 @@ class ReconciliationService {
     try {
 
       // Iterate over all
-      iterateAllRecords(remote_source_id, remote_collection_id) { record ->
+      iterateAllRecords(remote_source_id, remote_collection_id, job_info) { record ->
         try {
           log.debug("Inside closure......");
         }
@@ -112,17 +112,17 @@ class ReconciliationService {
    
   }
  
-  def iterateAllRecords(sourceid, collectionid, processing_closure) {
+  def iterateAllRecords(sourceid, collectionid, job_info, processing_closure) {
     log.debug("iterateAllRecords ${sourceid},${collectionid}");
     // aggregator.openfamilyservices.org.uk/dpp/oai?verb=listRecords&metadataPrefix=oai_dc&apikey=583c10bfdbd326ba:43918c3b:131c83c6954:-606c
     // Currently we only deal with 1 source - OFS, so really we only need the collection for now
     def apikey = grailsApplication.config.ofsapikey
     log.debug("Iterate all records, call closure, apikey = ${apikey}");
-    sync(processing_closure);
+    sync(processing_closure, job_info);
   } 
 
 
-  def sync(processing_closure) {
+  def sync(processing_closure, job_info) {
     log.debug("sync");
 
     def props =[:]
@@ -136,17 +136,17 @@ class ReconciliationService {
     def start = 0;
     while ( start >= 0 ) {
       try {
-        Thread.sleep(5000);
+        Thread.sleep(500);
       }
       catch ( Exception e ) {
       }
 
-      log.debug("Iterating using resumption token");
-      start = fetchSOLRPage(solr_endpoint, start, 'Surrey_County_Council', processing_closure);
+      log.debug("Next start position is ${start}, selecting page of data");
+      start = fetchSOLRPage(solr_endpoint, start, 'Surrey_County_Council', job_info, processing_closure);
     }
   }
 
-  def fetchSOLRPage(endpoint, start, authcode, closure) {
+  def fetchSOLRPage(endpoint, start, authcode, job_info, closure) {
 
     endpoint.request(GET, JSON) {request ->
       uri.query = [
@@ -156,15 +156,28 @@ class ReconciliationService {
         rows:'100',
         start:start
       ]
-      request.getParams().setParameter("http.socket.timeout", new Integer(5000))
+      request.getParams().setParameter("http.socket.timeout", new Integer(10000))
       headers.Accept = 'application/json'
 
       response.success = { resp, json ->
         log.debug( "Server Response: ${resp.statusLine}" )
         log.debug( "Server Type: ${resp.getFirstHeader('Server')}" )
         log.debug( "content type: ${resp.headers.'Content-Type'}" )
+
+        
         json.response.docs.each { doc ->
-          log.debug("doc = ${doc}")
+          log.debug("doc = [${start++}] ${doc}")
+        }
+
+        int num_found = json.response.numFound
+        if ( start == num_found ) {
+          log.debug("Reached end of records, break out");
+          start = -1
+        }
+        else {
+          log.debug("Processing, next start position is ${start} / ${num_found}")
+          job_info.start = start
+          job_info.max = num_found
         }
       }
 
@@ -173,8 +186,8 @@ class ReconciliationService {
       }
     }
 
-    start = -1;
-    return start
+    // start = -1;
+    start
   }
 
   def fetchOAIPage(oai_endpoint,
