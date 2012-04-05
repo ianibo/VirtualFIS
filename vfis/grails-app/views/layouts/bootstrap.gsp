@@ -41,7 +41,6 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><g:link controller="Home" action="index">My Dashboard</g:link></li>
-                <li><g:link controller="Home" action="memberships">Manage Memberships</g:link></li>
 
                 <g:if test="${org}">
                   <li><hr/></li>
@@ -55,15 +54,16 @@
                 </sec:ifAllGranted>
               </ul>
             </li>
-          </sec:ifAllGranted>
-          <g:if test="${user?.adminAssociations?.size() > 0}"><li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations<b class="caret"></b></a>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Your Organisations<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <g:each in="${user.adminAssociations}" var="assoc">
+                <g:each in="${user?.adminAssociations}" var="assoc">
                   <li><g:link controller="Org" action="dashboard" id="${assoc.org.id}">${assoc.org.name}</g:link></li>
                 </g:each>
+                <li><g:link controller="Home" action="memberships">Request and Manage Memberships</g:link></li>
               </ul>
-            </li></g:if>
+            </li>
+          </sec:ifAllGranted>
         </ul>
         <ul class="nav pull-right">
           <li>
