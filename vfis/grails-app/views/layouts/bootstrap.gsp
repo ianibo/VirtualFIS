@@ -46,7 +46,7 @@
                 <g:if test="${org}">
                   <li><hr/></li>
                   <li><g:link controller="org" action="dashboard" id="${org.id}">${org.name} Dashboard</g:link></li>
-                  <li><g:link controller="org" action="reconcileOfs" id="${org.id}">Reconcile OFS Records</g:link></li>
+                  <li><g:link controller="org" action="reconciliationStatus" id="${org.id}">OFS Reconciliation</g:link></li>
                 </g:if>
 
                 <sec:ifAllGranted roles="ROLE_ADMIN">

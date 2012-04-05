@@ -1,5 +1,7 @@
 package com.k_int.vfis
 
+import com.gmongo.GMongo
+
 class MongoService {
 
   def mongo = null;
@@ -24,4 +26,4 @@ class MongoService {
   def getMongo() {
     mongo
   }
-
+}
