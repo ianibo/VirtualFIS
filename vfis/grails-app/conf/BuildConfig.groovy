@@ -35,6 +35,9 @@ grails.project.dependency.resolution = {
 
         runtime 'mysql:mysql-connector-java:5.1.19'
         runtime 'com.gmongo:gmongo:0.9.2'
+        runtime 'xom:xom:1.2.5'
+        // runtime group:'net.sf.json-lib', name:'json-lib', version:'2.4', classifier:'jdk15'
+
         //runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.1.0'
         //runtime 'org.elasticsearch:elasticsearch:0.19.0.RC3'
     }

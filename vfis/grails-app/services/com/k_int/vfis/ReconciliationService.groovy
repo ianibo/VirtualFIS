@@ -14,7 +14,9 @@ import org.apache.http.entity.mime.*
 import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 import static groovyx.net.http.Method.GET
-import static groovyx.net.http.ContentType.JSON
+import grails.converters.*
+import net.sf.json.xml.XMLSerializer
+// import static groovyx.net.http.ContentType.JSON
 
 class ReconciliationService {
 
@@ -167,7 +169,7 @@ class ReconciliationService {
 
     def mdb = mongoService.getMongo().getDB('vfis')
 
-    endpoint.request(GET, JSON) {request ->
+    endpoint.request(GET, groovyx.net.http.ContentType.JSON) {request ->
       uri.path = 'index/aggr/select'
       uri.query = [
         q:"authority_shortcode:${authcode}",
@@ -189,6 +191,8 @@ class ReconciliationService {
           log.debug("doc = [${start++}] ${doc}")
           def recon_rec_info = mdb.reconRecords.findOne(internalId:job_info.job_id, docid:doc['dc.identifier'])
           def newrec = fetchRecord(endpoint,doc.repo_url_s[0])
+          //def newrec = fetchRecord2(endpoint)
+
           if ( recon_rec_info ) {
             log.debug("Updating persistence entry for ${doc['dc.identifier']}")
           }
@@ -197,6 +201,9 @@ class ReconciliationService {
             recon_rec_info.docid = doc['dc.identifier']
             recon_rec_info.internalId = job_info.job_id
           }
+
+          recon_rec_info.lastseen=System.currentTimeMillis()
+          recon_rec_info.src = newrec
 
           if ( doc.restp == 'Service') {
             log.debug("process FSD")
@@ -233,26 +240,68 @@ class ReconciliationService {
     start
   }
 
+  def fetchRecord2(path) {
+    def url = "http://aggregator.openfamilyservices.org.uk/${path}?apikey=${grailsApplication.config.ofsapikey}"
+    def json_version = org.json.XML.toJSONObject(url.text)
+    log.debug("Got json version ${json_version}")
+    json_version
+  }
+
   def fetchRecord(endpoint, path) {
     log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
-    endpoint.request(GET, XML) {request ->
-      uri.path = path
-      uri.query = [
-        'apikey':grailsApplication.config.ofsapikey
-      ]
+    def result = null
 
-      request.getParams().setParameter("http.socket.timeout", new Integer(10000))
 
-      response.success = { resp, xml ->
-        log.debug("Fetched record.....")
-      }
+    try {
+      // endpoint.request(GET, ContentType.XML) {request ->
+      // Request XML as we want to use the JSON XML to JSON parser instead
+      endpoint.request(GET, ContentType.TEXT) {request ->
+        uri.path = path
+        uri.query = [
+          'apikey':grailsApplication.config.ofsapikey
+        ]
+        headers.Accept = 'application/xml'
+        request.getParams().setParameter("http.socket.timeout", new Integer(10000))
 
-      response.failure = { resp, reader ->
-        log.debug( "Record fetch error ${resp}" )
-        System.out << reader
+        response.success = { resp, reader ->
+          response.headers.each { h ->
+            log.debug(h);
+          }
+          def xml_text = reader.text
+          log.debug("Fetched record.....${resp}. Trying to convert.. construct")
+          def xs=new net.sf.json.xml.XMLSerializer();
+          log.debug("c1")
+          xs.setSkipNamespaces( true );  
+          log.debug("c2")
+          xs.setTrimSpaces( true );  
+          log.debug("c3")
+          xs.setRemoveNamespacePrefixFromElements( true );  
+          log.debug("Go....\n\n")
+          result = xs.read(xml_text)
+          result = xs.read("<a><b>Hello</b><c>Goodbye</c></a>")
+          //log.debug("\n\nConverted\n\n ${result}")          
+        }
+
+        response.failure = { resp, reader ->
+          log.debug( "Record fetch error ${resp}" )
+          System.out << reader
+        }
       }
     }
+    catch ( Exception e ) {
+      log.error("problem ${e}")
+    }
+    finally {
+      log.debug("Fetch doc complete")
+    }
 
+    result
+  }
+
+  def recurse(gpath) {
+    gpath.childNodes().each { cn ->
+      recurse(cn)
+    }
   }
 
   def fetchOAIPage(oai_endpoint,
@@ -285,6 +334,7 @@ class ReconciliationService {
 
       request.getParams().setParameter("http.socket.timeout", new Integer(5000))
       headers.Accept = 'application/xml'
+
       // headers.'User-Agent' = 'GroovyHTTPBuilderTest/1.0'
       // headers.'Referer' = 'http://blog.techstacks.com/'
       response.success = { resp, xml ->
