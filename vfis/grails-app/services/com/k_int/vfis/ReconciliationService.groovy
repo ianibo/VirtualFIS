@@ -24,6 +24,18 @@ class ReconciliationService {
   def executorService
   def grailsApplication 
 
+  @javax.annotation.PostConstruct
+  def init() {
+    log.debug("Registering json null encoder")
+    def jsonnull_encoder = new org.bson.Transformer() {
+      Object transform(Object o) {
+        return null
+      }
+    };
+    org.bson.BSON.addEncodingHook(net.sf.json.JSONNull,jsonnull_encoder)
+  }
+
+
   def active_jobs = new java.util.HashMap()
 
   def getStatus(internal_org_id, remote_source_id, remote_collection_id) {
@@ -203,7 +215,9 @@ class ReconciliationService {
           }
 
           recon_rec_info.lastseen=System.currentTimeMillis()
+
           recon_rec_info.src = newrec
+          log.debug("Src property is ${newrec?.class?.name}")
 
           if ( doc.restp == 'Service') {
             log.debug("process FSD")
@@ -270,15 +284,15 @@ class ReconciliationService {
           def xml_text = reader.text
           log.debug("Fetched record.....${resp}. Trying to convert.. construct")
           def xs=new net.sf.json.xml.XMLSerializer();
-          log.debug("c1")
           xs.setSkipNamespaces( true );  
-          log.debug("c2")
+          xs.setSkipWhitespace( true );  
           xs.setTrimSpaces( true );  
-          log.debug("c3")
           xs.setRemoveNamespacePrefixFromElements( true );  
-          log.debug("Go....\n\n")
+          // result = net.sf.json.JSONObject.toBean(xs.read(xml_text))
+          // mongo likes to have nulls and not JSONNull for it's null fields... Do some mapping
           result = xs.read(xml_text)
-          result = xs.read("<a><b>Hello</b><c>Goodbye</c></a>")
+          log.debug("Result of conversion: ${result}")
+          // result = xs.read("<a><b>Hello</b><c>Goodbye</c></a>")
           //log.debug("\n\nConverted\n\n ${result}")          
         }
 
