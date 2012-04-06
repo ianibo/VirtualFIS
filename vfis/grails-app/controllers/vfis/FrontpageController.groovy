@@ -11,7 +11,10 @@ class FrontpageController {
 
   def index() { 
     def result=[:]
-    if ( springSecurityService?.principal?.id ) {
+    if ( ( springSecurityService?.principal ) && (springSecurityService?.principal instanceof String) ) {
+      log.debug("principal is string...")
+    }
+    else if ( springSecurityService?.principal?.id ) {
       result.user = VfisPerson.get(springSecurityService.principal.id)
     }
     result

@@ -29,19 +29,20 @@ class ReconciliationService {
     // See if we currently have an active reconcilliation process for the identified org, at the remote source
     // (Using the identifier particular to that remote source)
     def result = [active:false] // Default is no-job
+    def job_id ="${internal_org_id}:${remote_source_id}:${remote_collection_id}".toString()
 
     log.debug(active_jobs)
 
     try {
       synchronized(active_jobs) {
-        result.job = active_jobs["${internal_org_id}:${remote_source_id}:${remote_collection_id}".toString()]
+        result.job = active_jobs[job_id]
       }
     }
     catch ( Exception e ) {
     }
 
     if ( result.job ) {
-      log.debug("Running job")
+      log.debug("There is a Running job for ${job_id}")
       // There is an active job
       result.active = true
     }
@@ -53,8 +54,8 @@ class ReconciliationService {
   }
 
   def startReconciliation(internal_org_id, remote_source_id, remote_collection_id) {
-    log.debug("startReconciliation ${internal_org_id}:${remote_source_id}:${remote_collection_id}");
     def job_id ="${internal_org_id}:${remote_source_id}:${remote_collection_id}".toString()
+    log.debug("** startReconciliation ${internal_org_id}:${remote_source_id}:${remote_collection_id}");
     def result
     try {
       synchronized(active_jobs) {
@@ -64,11 +65,25 @@ class ReconciliationService {
           log.warn("Attempt to start a job already running.. returning existing info")
         }
         else {
+          // obtain / Set up a record to track info about this source
+          def mdb = mongoService.getMongo().getDB('vfis')
+          def recon_status = mdb.reconciliationSources.findOne(internalId:job_id)
+          if ( recon_status ) {
+            log.debug("Located existing reconciliation status object in db")
+          } 
+          else {
+            log.debug("First sighting of a reconciliation for ${job_id}")
+            recon_status = [:]
+            recon_status.internalId = job_id;
+          }
+
+          // Queue up the request
           result = [:]
+          result.job_id = job_id;
           log.debug("New job id will be ${job_id}");
           active_jobs[job_id] = result;
           def future = executorService.submit({
-              reconcile(internal_org_id, remote_source_id, remote_collection_id, result)
+              reconcile(internal_org_id, remote_source_id, remote_collection_id, result, mdb, recon_status)
           } as java.util.concurrent.Callable)
           result.future = future
         }
@@ -82,17 +97,19 @@ class ReconciliationService {
     result
   }
 
-  def reconcile(internal_org_id, remote_source_id, remote_collection_id, job_info) {
+  def reconcile(internal_org_id, remote_source_id, remote_collection_id, job_info, mdb, recon_status) {
 
-    def task_id = "${internal_org_id}:${remote_source_id}:${remote_collection_id}".toString()
-    log.debug("reconcile ${task_id}");
-
+    log.debug("*** reconcile ${job_info.job_id}")
     try {
+      // Update persistent info
+      recon_status.lastStarted = System.currentTimeMillis();
+      mdb.reconciliationSources.save(recon_status);
 
       // Iterate over all
       iterateAllRecords(remote_source_id, remote_collection_id, job_info) { record ->
         try {
           log.debug("Inside closure......");
+          // def recon_rec_info = mdb.reconRecords.find(reconSource:task_id, recid:record.recid)
         }
         catch ( Exception e ) {
           log.error("Problem",e)
@@ -102,14 +119,14 @@ class ReconciliationService {
         }
       }
 
-      log.debug("reconcile complete, remove ${task_id} from active jobs - before: ${active_jobs.keySet()}")
-      def v = active_jobs.remove(task_id);
+      log.debug("reconcile complete, remove ${job_info.job_id} from active jobs - before: ${active_jobs.keySet()}")
+      def v = active_jobs.remove(job_info.job_id);
       log.debug("reconcile complete, remove from active jobs - after: ${active_jobs.keySet()} ${v}")
     }
     catch ( Exception e ) {
       log.error("Problem",e);
     }
-   
+    log.debug("reconcile complete for ${job_info.job_id}")
   }
  
   def iterateAllRecords(sourceid, collectionid, job_info, processing_closure) {
@@ -130,7 +147,7 @@ class ReconciliationService {
     props.maxts = "";
 
     // def oai_endpoint = new RESTClient( 'http://aggregator.openfamilyservices.org.uk/dpp/oai' )
-    def solr_endpoint = new RESTClient( 'http://aggregator.openfamilyservices.org.uk/index/aggr/select' )
+    def solr_endpoint = new RESTClient( 'http://aggregator.openfamilyservices.org.uk/' )
 
     def hasMore = true
     def start = 0;
@@ -148,10 +165,13 @@ class ReconciliationService {
 
   def fetchSOLRPage(endpoint, start, authcode, job_info, closure) {
 
+    def mdb = mongoService.getMongo().getDB('vfis')
+
     endpoint.request(GET, JSON) {request ->
+      uri.path = 'index/aggr/select'
       uri.query = [
         q:"authority_shortcode:${authcode}",
-        fl:'aggregator.internal.id,modified,repo_url_s,restp',
+        fl:'aggregator.internal.id,modified,repo_url_s,restp,dc.identifier,repo_url_s',
         wt:'json',
         rows:'100',
         start:start
@@ -167,6 +187,29 @@ class ReconciliationService {
         
         json.response.docs.each { doc ->
           log.debug("doc = [${start++}] ${doc}")
+          def recon_rec_info = mdb.reconRecords.findOne(internalId:job_info.job_id, docid:doc['dc.identifier'])
+          def newrec = fetchRecord(endpoint,doc.repo_url_s[0])
+          if ( recon_rec_info ) {
+            log.debug("Updating persistence entry for ${doc['dc.identifier']}")
+          }
+          else {
+            recon_rec_info = [:]
+            recon_rec_info.docid = doc['dc.identifier']
+            recon_rec_info.internalId = job_info.job_id
+          }
+
+          if ( doc.restp == 'Service') {
+            log.debug("process FSD")
+            
+          }
+          else if ( doc.restp == 'ServiceProvider') {
+            log.debug("process ECD")
+          }
+          else {
+            log.error("unhandled resource type ${doc.restp}")
+          }
+
+          mdb.reconRecords.save(recon_rec_info)
         }
 
         int num_found = json.response.numFound
@@ -188,6 +231,28 @@ class ReconciliationService {
 
     // start = -1;
     start
+  }
+
+  def fetchRecord(endpoint, path) {
+    log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
+    endpoint.request(GET, XML) {request ->
+      uri.path = path
+      uri.query = [
+        'apikey':grailsApplication.config.ofsapikey
+      ]
+
+      request.getParams().setParameter("http.socket.timeout", new Integer(10000))
+
+      response.success = { resp, xml ->
+        log.debug("Fetched record.....")
+      }
+
+      response.failure = { resp, reader ->
+        log.debug( "Record fetch error ${resp}" )
+        System.out << reader
+      }
+    }
+
   }
 
   def fetchOAIPage(oai_endpoint,
@@ -241,12 +306,6 @@ class ReconciliationService {
           log.debug("About call closure [${props.reccount} / ${props.maxts}]");
           processing_closure.call(rec)
           // uploadStream(db,aggregator_service, 'nmcg')
-
-          try {
-            Thread.sleep(500);
-          }
-          catch ( Exception e ) {
-          }
         }
 
         result = xml?.ListRecords?.resumptionToken?.toString()

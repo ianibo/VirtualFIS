@@ -9,6 +9,7 @@ class OrgController {
 
   def springSecurityService
   def reconciliationService
+  def mongoService
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def dashboard() { 
@@ -20,11 +21,36 @@ class OrgController {
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def reconciliationStatus() { 
+    def mdb = mongoService.getMongo().getDB('vfis')
     log.debug("reconciliationStatus(${params.id})");
     def result=[:]
     result.org = Organisation.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
     result.reconciliation = reconciliationService.getStatus(params.id, 'OFS', result.org.code)
+
+    if ( ( result.reconciliation?.active) && ( result.reconciliation.job.max ) ) {
+      log.debug( "${result.reconciliation.job.start} / ${result.reconciliation.job.max} = ${result.reconciliation.job.start/result.reconciliation.job.max}" )
+      result.progress = (double)( (double)(result.reconciliation.job.start) / (double)(result.reconciliation.job.max) ) * 100
+    }
+    else {
+      result.progress = 0
+    }
+
+    def task_id = "${result.org.id}:OFS:${result.org.code}".toString()
+    result.persistentInfo = mdb.reconciliationSources.find(internalId:task_id)
+    if ( result.persistentInfo )
+      log.debug("got persistent info")
+    else 
+      log.debug("no persistent info")
+   
+    def pageno = params.pageno ?: 0 
+    result.records = []
+    mdb.reconRecords.find(internalId:task_id).limit(10).skip(pageno*10).sort('docid':1).each { r ->
+      result.records.add(r)
+    }
+
+    println("Result of find: ${result.records}")
+
     log.debug("Reconcole OFS for org ${result.org.name} identifier ${result.org.identifier} code ${result.org.code}")    
     result    
   }
