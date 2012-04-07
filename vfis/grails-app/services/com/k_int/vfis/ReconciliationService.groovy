@@ -15,7 +15,7 @@ import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 import static groovyx.net.http.Method.GET
 import grails.converters.*
-import net.sf.json.xml.XMLSerializer
+// import net.sf.json.xml.XMLSerializer
 // import static groovyx.net.http.ContentType.JSON
 
 class ReconciliationService {
@@ -26,13 +26,6 @@ class ReconciliationService {
 
   @javax.annotation.PostConstruct
   def init() {
-    log.debug("Registering json null encoder")
-    def jsonnull_encoder = new org.bson.Transformer() {
-      Object transform(Object o) {
-        return null
-      }
-    };
-    org.bson.BSON.addEncodingHook(net.sf.json.JSONNull,jsonnull_encoder)
   }
 
 
@@ -202,7 +195,7 @@ class ReconciliationService {
         json.response.docs.each { doc ->
           log.debug("doc = [${start++}] ${doc}")
           def recon_rec_info = mdb.reconRecords.findOne(internalId:job_info.job_id, docid:doc['dc.identifier'])
-          def newrec = fetchRecord(endpoint,doc.repo_url_s[0])
+          def xmlrec = fetchRecord(endpoint,doc.repo_url_s[0])
           //def newrec = fetchRecord2(endpoint)
 
           if ( recon_rec_info ) {
@@ -216,15 +209,14 @@ class ReconciliationService {
 
           recon_rec_info.lastseen=System.currentTimeMillis()
 
-          recon_rec_info.src = newrec
-          log.debug("Src property is ${newrec?.class?.name}")
-
           if ( doc.restp == 'Service') {
             log.debug("process FSD")
+            recon_rec_info.src = convertFSD(xmlrec)
             
           }
           else if ( doc.restp == 'ServiceProvider') {
             log.debug("process ECD")
+            recon_rec_info.src = convertECD(xmlrec)
           }
           else {
             log.error("unhandled resource type ${doc.restp}")
@@ -261,7 +253,45 @@ class ReconciliationService {
     json_version
   }
 
+  /** Just fetch back an xml record */
   def fetchRecord(endpoint, path) {
+    log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
+    def result = null
+
+
+    try {
+      // endpoint.request(GET, ContentType.XML) {request ->
+      // Request XML as we want to use the JSON XML to JSON parser instead
+      endpoint.request(GET, ContentType.XML) {request ->
+        uri.path = path
+        uri.query = [
+          'apikey':grailsApplication.config.ofsapikey
+        ]
+        headers.Accept = 'application/xml'
+        request.getParams().setParameter("http.socket.timeout", new Integer(10000))
+
+        response.success = { resp, xml ->
+          result = xml
+        }
+
+        response.failure = { resp, reader ->
+          log.debug( "Record fetch error ${resp}" )
+          System.out << reader
+        }
+      }
+    }
+    catch ( Exception e ) {
+      log.error("problem ${e}")
+    }
+    finally {
+      log.debug("Fetch doc complete")
+    }
+
+    result
+  }
+
+
+  def fetchRecord3(endpoint, path) {
     log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
     def result = null
 
@@ -385,4 +415,19 @@ class ReconciliationService {
     result
   }
 
+  /// Convert FSD XML to internal canonical JSON
+  def convertFSD(newrec) {
+    log.debug("Convert FSD ${newrec}");
+    def result = [:]
+    result.one='hello'
+    result
+  }
+
+  /// Convert ECD XML to internal canonical JSON
+  def convertECD(newrec) {
+    log.debug("Convert ECD ${newrec}");
+    def result = [:]
+    result.two='goodbye'
+    result
+  }
 }
