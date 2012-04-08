@@ -69,4 +69,42 @@ class OrgController {
     redirect(action: "reconciliationStatus", id:params.id)
   }
 
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def search() {
+    def mdb = mongoService.getMongo().getDB('vfis')
+    def result=[:]
+    result.hpp = params.hpp ? integer.parseInt(params.hpp) : 10
+    result.org = Organisation.get(params.id);
+    result.user = VfisPerson.get(springSecurityService.principal.id)
+    result.pageno = params.pageno ? Integer.parseInt(params.pageno) : 0 
+    result.records = []
+
+    def query_params = [owner:params.id]
+
+    if ( ( params.q ) &&
+         ( params.q.length() > 0 ) ) {
+      // db.content.find({'src.DC\.Title' : /.*Woking.*/}); = emulate this from mongo console
+      // db.content.find({'src.DC\.Title' : /.*Woking.*/, owner:"1"}).size();
+      query_params."src.DC\\.Title" = ~/${params.q}/  
+      // query_params.'type' = ~/${params.q}/ -- Works
+      // query_params.src = [ type : ~/${params.q}/ ]
+      // query_params.src = [ 'DC.Title' : ~/${params.q}/ ]
+      // query_params.'src.ProviderDetails.OfstedURN' = 'EY317028'
+      // query_params.'type' = ~/${params.q}/
+   }
+
+   log.debug("Search with params: ${query_params}")
+
+    mdb.content.find(query_params).limit(result.hpp).skip(result.pageno*result.hpp).sort('docid':1).each { r ->
+      result.records.add(r)
+    }
+
+    result.hitcount = mdb.content.find(query_params).count()
+    result.maxpages = (int) ( ( result.hitcount + (result.hpp-1) ) / result.hpp )
+    result.pagstart = ( result.pageno - 5 > 0 ) ? result.pageno - 5 : 0;
+    result.pagend = ( result.pageno + 5 > result.maxpages ) ? result.maxpages : result.pageno+5;
+ 
+    log.debug("Complete")
+    result
+  }
 }

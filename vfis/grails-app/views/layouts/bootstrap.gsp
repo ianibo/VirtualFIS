@@ -44,7 +44,8 @@
 
                 <g:if test="${org}">
                   <li><hr/></li>
-                  <li><g:link controller="org" action="dashboard" id="${org.id}">${org.name} Dashboard</g:link></li>
+                  <li><g:link controller="org" action="dashboard" id="${org.id}"><b>Selected Org: ${org.name}</b></g:link></li>
+                  <li><g:link controller="org" action="search" id="${org.id}">Search</g:link></li
                   <li><g:link controller="org" action="reconciliationStatus" id="${org.id}">OFS Reconciliation</g:link></li>
                 </g:if>
 

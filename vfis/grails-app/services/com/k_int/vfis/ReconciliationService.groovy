@@ -26,13 +26,28 @@ class ReconciliationService {
 
   @javax.annotation.PostConstruct
   def init() {
+
     log.debug("Registering json null encoder")
     def jsonnull_encoder = new org.bson.Transformer() {
       Object transform(Object o) {
         return null
       }
     };
+    // Attempt to rewrite input field names, substituting . for _
+    def jsonobject_encoder = new org.bson.Transformer() {
+      // Transform the json object into a simple hashmap, where the keys have . replaced with _
+      Object transform(Object o) {
+        // def result = new org.bson.BasicBSONObject()
+        def result = new java.util.HashMap()
+        net.sf.json.JSONObject jo = (net.sf.json.JSONObject) o
+        jo.keys().each { key ->
+          result.put(key.replace('.','_'), jo.get(key))
+        }
+        return result
+      }
+    };
     org.bson.BSON.addEncodingHook(net.sf.json.JSONNull,jsonnull_encoder)
+    org.bson.BSON.addEncodingHook(net.sf.json.JSONObject,jsonobject_encoder)
   }
 
 
