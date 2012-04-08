@@ -8,13 +8,14 @@ class VfisPerson {
 
 	String username
 	String password
+  String email
 	boolean enabled
 	boolean accountExpired
 	boolean accountLocked
 	boolean passwordExpired
 
-        static hasMany = [adminAssociations: PersonOrg]
-        static mappedBy = [adminAssociations: "person"]
+  static hasMany = [adminAssociations: PersonOrg]
+  static mappedBy = [adminAssociations: "person"]
 
 	static constraints = {
 		username blank: false, unique: true

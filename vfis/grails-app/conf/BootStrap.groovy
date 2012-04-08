@@ -19,6 +19,7 @@ class BootStrap {
       def adminUser = VfisPerson.findByUsername('admin') ?: new VfisPerson(
                         username: 'admin',
                         password: 'admin',
+                        email: 'admin@localhost',
                         enabled: true).save(failOnError: true)
  
       if (!adminUser.authorities.contains(adminRole)) {

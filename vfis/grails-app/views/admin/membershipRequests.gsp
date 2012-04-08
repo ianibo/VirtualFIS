@@ -22,6 +22,8 @@
           <table class="table table-striped table-bordered table-condensed">
             <thead>
               <tr>
+                <th>User</th>
+                <th>Email</th>
                 <th>Organisation</th>
                 <th>Role</th>
                 <th>Status</th>
@@ -32,6 +34,8 @@
             <tbody>
               <g:each in="${pendingRequests}" var="req">
                 <tr>
+                  <td>${req.person.username}</td>
+                  <td>${req.person.email}</td>
                   <td>${req.org.name}</td>
                   <td>${req.role}</td>
                   <td><g:message code="cv.membership.status.${req.status}"/></td>
