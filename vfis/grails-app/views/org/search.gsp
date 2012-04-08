@@ -15,18 +15,19 @@
     </div>
 
     <div class="row-fluid">
-      <div class="well">
-
-        <div class="navbar">
-          <div class="navbar-inner">
-            <div class="container">
-              <span class="brand">Search ${org.name} Records</span>
-              <g:form class="navbar-search pull-left" action="search" controller="org" id="${params.id}" method="get">
-                <input type="text" class="search-query" name="q" placeholder="Search">
-              </g:form>
-            </div>
+      <g:form class="well form-inline" action="search" controller="org" id="${params.id}" method="get">
+          <div class="control-group">
+            <label class="control-label" for="titlesearchinput">Record Title : </label>
+            <input id="titlesearchinput "type="text" class="search-query" name="q" placeholder="Search" value="${params.q}">
+            <label class="control-label" for="typesearchinput">Record Type : </label>
+            <select id="typesearchinput" name="rectype" value="params.rectype"><option value="All">All</option><option value="ECD">ECD</option><option value="FSD">FSD</option></select>
+            <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i> Search</button>
           </div>
-        </div>
+      </g:form>
+    </div>
+
+    <div class="row-fluid">
+      <div class="well">
 
         <table class="table table-striped table-bordered table-condensed">
           <div>Found ${hitcount} records, showing page ${pageno+1} of ${maxpages}</div>
@@ -53,10 +54,10 @@
                   <g:if test="${r.type='OFS:Service'}">ECD</g:if>
                   <g:else>FSD</g:else>
                 </td>
-                <td>${r.src.'DC.Title'}</td>
+                <td>${r.src.DC_Title}</td>
                 <td>
                   <div class="btn-group">
-                    <g:link controller="content" action="edit" id="${r._id}" class="btn btn-primary btn-small">Edit</g:link>
+                    <g:link controller="content" action="edit" id="${r._id}" class="btn btn-primary btn-small"><i class="icon-edit icon-white"></i> Edit</g:link>
                   </div>
                 </td>
               </tr>

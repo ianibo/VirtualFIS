@@ -85,7 +85,7 @@ class OrgController {
          ( params.q.length() > 0 ) ) {
       // db.content.find({'src.DC\.Title' : /.*Woking.*/}); = emulate this from mongo console
       // db.content.find({'src.DC\.Title' : /.*Woking.*/, owner:"1"}).size();
-      query_params."src.DC\\.Title" = ~/${params.q}/  
+      query_params."src.DC_Title" = ~/(?i)${params.q}/
       // query_params.'type' = ~/${params.q}/ -- Works
       // query_params.src = [ type : ~/${params.q}/ ]
       // query_params.src = [ 'DC.Title' : ~/${params.q}/ ]
