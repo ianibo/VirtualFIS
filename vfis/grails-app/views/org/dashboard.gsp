@@ -25,17 +25,33 @@
     </div>
 
     <div class="row-fluid">
-      <div class="span6">
+      <div class="span4">
         <div class="well">
-          <h2>Search</h2>
+          <h2>Records</h2>
+          <h3>ECD Records</h3>
+          System currently holds X ECD records
+          <h3>FSD Records</h3>
+          System currently holds Y ECD records
         </div>
       </div>
 
-      <div class="span6">
+      <div class="span4">
         <div class="well">
-          <h2>Details</h2>
+          <h2>Reconciliation</h2>
+          <h3>OFS</h3>
+          No outstanding issues
+          <h3>OFSTED</h3>
+          No outstanding issues
         </div>
       </div>
+
+      <div class="span4">
+        <div class="well">
+          <h2>End user feedback</h2>
+          There are currently no unactioned feedback messages
+        </div>
+      </div>
+
     </div>
 
   </body>

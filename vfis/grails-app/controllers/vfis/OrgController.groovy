@@ -37,7 +37,7 @@ class OrgController {
     }
 
     def task_id = "${result.org.id}:OFS:${result.org.code}".toString()
-    result.persistentInfo = mdb.reconciliationSources.find(internalId:task_id)
+    result.persistentInfo = mdb.reconciliationSources.find(reconSource:task_id)
     if ( result.persistentInfo )
       log.debug("got persistent info")
     else 
@@ -45,11 +45,9 @@ class OrgController {
    
     def pageno = params.pageno ?: 0 
     result.records = []
-    mdb.reconRecords.find(internalId:task_id).limit(10).skip(pageno*10).sort('docid':1).each { r ->
+    mdb.reconRecords.find(reconSource:task_id).limit(10).skip(pageno*10).sort('docid':1).each { r ->
       result.records.add(r)
     }
-
-    println("Result of find: ${result.records}")
 
     log.debug("Reconcole OFS for org ${result.org.name} identifier ${result.org.identifier} code ${result.org.code}")    
     result    
@@ -59,9 +57,10 @@ class OrgController {
   def requestReconciliation() { 
     log.debug("requestReconciliation(${params.id})");
     def result=[:]
+    def policy=['new_record':'auto']
     result.org = Organisation.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
-    result.reconciliation = reconciliationService.startReconciliation(params.id, 'OFS', result.org.code)
+    result.reconciliation = reconciliationService.startReconciliation(params.id, 'OFS', result.org.code, policy)
     redirect(action: "reconciliationStatus", id:params.id)
   }
 

@@ -15,7 +15,7 @@ import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 import static groovyx.net.http.Method.GET
 import grails.converters.*
-// import net.sf.json.xml.XMLSerializer
+import net.sf.json.xml.XMLSerializer
 // import static groovyx.net.http.ContentType.JSON
 
 class ReconciliationService {
@@ -26,6 +26,13 @@ class ReconciliationService {
 
   @javax.annotation.PostConstruct
   def init() {
+    log.debug("Registering json null encoder")
+    def jsonnull_encoder = new org.bson.Transformer() {
+      Object transform(Object o) {
+        return null
+      }
+    };
+    org.bson.BSON.addEncodingHook(net.sf.json.JSONNull,jsonnull_encoder)
   }
 
 
@@ -60,7 +67,7 @@ class ReconciliationService {
     result
   }
 
-  def startReconciliation(internal_org_id, remote_source_id, remote_collection_id) {
+  def startReconciliation(internal_org_id, remote_source_id, remote_collection_id, policy) {
     def job_id ="${internal_org_id}:${remote_source_id}:${remote_collection_id}".toString()
     log.debug("** startReconciliation ${internal_org_id}:${remote_source_id}:${remote_collection_id}");
     def result
@@ -90,7 +97,7 @@ class ReconciliationService {
           log.debug("New job id will be ${job_id}");
           active_jobs[job_id] = result;
           def future = executorService.submit({
-              reconcile(internal_org_id, remote_source_id, remote_collection_id, result, mdb, recon_status)
+              reconcile(internal_org_id, remote_source_id, remote_collection_id, result, mdb, recon_status, policy)
           } as java.util.concurrent.Callable)
           result.future = future
         }
@@ -104,7 +111,7 @@ class ReconciliationService {
     result
   }
 
-  def reconcile(internal_org_id, remote_source_id, remote_collection_id, job_info, mdb, recon_status) {
+  def reconcile(internal_org_id, remote_source_id, remote_collection_id, job_info, mdb, recon_status, policy) {
 
     log.debug("*** reconcile ${job_info.job_id}")
     try {
@@ -113,10 +120,40 @@ class ReconciliationService {
       mdb.reconciliationSources.save(recon_status);
 
       // Iterate over all
-      iterateAllRecords(remote_source_id, remote_collection_id, job_info) { record ->
+      iterateAllRecords(remote_source_id, remote_collection_id, job_info) { record_identifier, record_type, display_text, record_content ->
         try {
-          log.debug("Inside closure......");
-          // def recon_rec_info = mdb.reconRecords.find(reconSource:task_id, recid:record.recid)
+          log.debug("Inside closure...... ${record_type}, ${record_identifier}");
+          // Reconcilliation phase 1 : See if we have a previous copy of this remote record
+          def recon_rec_info = mdb.reconRecords.find(reconSource:job_info.job_id, docid:record_identifier)
+          if ( recon_rec_info ) {
+            // Yes, we need to determine if anything has changed
+          }
+          else {
+            // No, this is a new record in the tracking database for starters
+            recon_rec_info = [:]
+            recon_rec_info.docid = record_identifier
+            recon_rec_info.lastmod = System.currentTimeMillis()
+            recon_rec_info.reconSource = job_info.job_id
+            recon_rec_info.displayText = display_text
+            recon_rec_info.src = record_content
+
+            // Is the reconciliation policy for new records to auto-create them?
+            if ( policy.new_record == 'auto') {
+              recon_rec_info.changes = [[desc:"Record ${record_identifier} newly created.", status:'autoaccepted']]
+              def content_record = [:]
+              content_record.docid = record_identifier
+              content_record.owner = internal_org_id
+              content_record.src = record_content
+              content_record.type = record_type
+              content_record._id = new org.bson.types.ObjectId()
+              recon_rec_info.targetRecord = content_record._id;
+              mdb.content.save(content_record);
+            }
+            else {
+              log.debug("No new record policy")
+            }
+          }
+          mdb.reconRecords.save(recon_rec_info)
         }
         catch ( Exception e ) {
           log.error("Problem",e)
@@ -153,7 +190,6 @@ class ReconciliationService {
     props.reccount = 0;
     props.maxts = "";
 
-    // def oai_endpoint = new RESTClient( 'http://aggregator.openfamilyservices.org.uk/dpp/oai' )
     def solr_endpoint = new RESTClient( 'http://aggregator.openfamilyservices.org.uk/' )
 
     def hasMore = true
@@ -172,13 +208,13 @@ class ReconciliationService {
 
   def fetchSOLRPage(endpoint, start, authcode, job_info, closure) {
 
-    def mdb = mongoService.getMongo().getDB('vfis')
+    // def mdb = mongoService.getMongo().getDB('vfis')
 
     endpoint.request(GET, groovyx.net.http.ContentType.JSON) {request ->
       uri.path = 'index/aggr/select'
       uri.query = [
         q:"authority_shortcode:${authcode}",
-        fl:'aggregator.internal.id,modified,repo_url_s,restp,dc.identifier,repo_url_s',
+        fl:'aggregator.internal.id,modified,repo_url_s,restp,dc.identifier,repo_url_s,dc.title',
         wt:'json',
         rows:'100',
         start:start
@@ -194,35 +230,14 @@ class ReconciliationService {
         
         json.response.docs.each { doc ->
           log.debug("doc = [${start++}] ${doc}")
-          def recon_rec_info = mdb.reconRecords.findOne(internalId:job_info.job_id, docid:doc['dc.identifier'])
-          def xmlrec = fetchRecord(endpoint,doc.repo_url_s[0])
-          //def newrec = fetchRecord2(endpoint)
-
-          if ( recon_rec_info ) {
-            log.debug("Updating persistence entry for ${doc['dc.identifier']}")
+  
+          def newrec = fetchRecord(endpoint,doc.repo_url_s[0])
+          if ( newrec ) {
+            closure.call(doc['dc.identifier'], "OFS:${doc.restp}", doc['dc.title'][0], newrec)
           }
           else {
-            recon_rec_info = [:]
-            recon_rec_info.docid = doc['dc.identifier']
-            recon_rec_info.internalId = job_info.job_id
+            log.error("Fetch record returned NULL!")
           }
-
-          recon_rec_info.lastseen=System.currentTimeMillis()
-
-          if ( doc.restp == 'Service') {
-            log.debug("process FSD")
-            recon_rec_info.src = convertFSD(xmlrec)
-            
-          }
-          else if ( doc.restp == 'ServiceProvider') {
-            log.debug("process ECD")
-            recon_rec_info.src = convertECD(xmlrec)
-          }
-          else {
-            log.error("unhandled resource type ${doc.restp}")
-          }
-
-          mdb.reconRecords.save(recon_rec_info)
         }
 
         int num_found = json.response.numFound
@@ -242,56 +257,14 @@ class ReconciliationService {
       }
     }
 
-    // start = -1;
     start
   }
 
-  def fetchRecord2(path) {
-    def url = "http://aggregator.openfamilyservices.org.uk/${path}?apikey=${grailsApplication.config.ofsapikey}"
-    def json_version = org.json.XML.toJSONObject(url.text)
-    log.debug("Got json version ${json_version}")
-    json_version
-  }
 
-  /** Just fetch back an xml record */
+  //
+  // Use the org.json classes to try and parse the XML into a JSON object
+  //
   def fetchRecord(endpoint, path) {
-    log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
-    def result = null
-
-
-    try {
-      // endpoint.request(GET, ContentType.XML) {request ->
-      // Request XML as we want to use the JSON XML to JSON parser instead
-      endpoint.request(GET, ContentType.XML) {request ->
-        uri.path = path
-        uri.query = [
-          'apikey':grailsApplication.config.ofsapikey
-        ]
-        headers.Accept = 'application/xml'
-        request.getParams().setParameter("http.socket.timeout", new Integer(10000))
-
-        response.success = { resp, xml ->
-          result = xml
-        }
-
-        response.failure = { resp, reader ->
-          log.debug( "Record fetch error ${resp}" )
-          System.out << reader
-        }
-      }
-    }
-    catch ( Exception e ) {
-      log.error("problem ${e}")
-    }
-    finally {
-      log.debug("Fetch doc complete")
-    }
-
-    result
-  }
-
-
-  def fetchRecord3(endpoint, path) {
     log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
     def result = null
 
@@ -315,7 +288,6 @@ class ReconciliationService {
           log.debug("Fetched record.....${resp}. Trying to convert.. construct")
           def xs=new net.sf.json.xml.XMLSerializer();
           xs.setSkipNamespaces( true );  
-          xs.setSkipWhitespace( true );  
           xs.setTrimSpaces( true );  
           xs.setRemoveNamespacePrefixFromElements( true );  
           // result = net.sf.json.JSONObject.toBean(xs.read(xml_text))
