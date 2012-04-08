@@ -34,6 +34,7 @@
     <div class="row-fluid">
       <div class="well">
         <table class="table table-striped table-bordered table-condensed">
+          <div>Found ${hitcount} records, showing page ${pageno+1} of ${maxpages}</div>
           <thead>
             <tr>
               <th>Record</th>
@@ -45,7 +46,14 @@
           <tbody>
             <g:each in="${records}" var="r">
               <tr>
-                <td>${r.displayText} (${r.docid})</td>
+                <td>
+                  <g:if test="${r.targetRecord}">
+                    <g:link controller="content" action="edit" id="${r.targetRecord}">${r.displayText} (${r.docid})</g:link>
+                  </g:if>
+                  <g:else>
+                    ${r.displayText} (${r.docid})
+                  </g:else>
+                </td>
                 <td><g:formatDate format="dd MMMM HH:mm" date="${r.lastmod}"/></td>
                 <td>
                   <ul>
@@ -62,14 +70,37 @@
                   </ul>
                 </td>
                 <td>
-                  <g:if test="${c.targetRecord}">
-                    <g:link controller="content" action="edit" id="${c.targetRecord}" class="button">Edit</g:link>
-                  </g:if>
+                  <div class="btn-group">
+                    <g:if test="${r.targetRecord}">
+                      <g:link controller="content" action="edit" id="${r.targetRecord}" class="btn btn-primary btn-small">Edit</g:link>
+                    </g:if>
+                  </div>
                 </td>
               </tr>
             </g:each>
           <tbody>
         </table>
+        <div class="pagination pagination-right">
+          <ul>
+            <li><g:link controller="org" action="reconciliationStatus" id="${params.id}">First</g:link></li>
+            <g:if test="${pageno > 0}">
+              <li><g:link controller="org" action="reconciliationStatus" id="${params.id}" params="${[pageno:pageno-1]}">Prev</g:link></li>
+            </g:if>
+            <g:each in="${(pagstart..<pagend)}" var="p">
+              <g:if test="${pageno==p}">
+                <li class="active"><g:link controller="org" action="reconciliationStatus" id="${params.id}" params="${[pageno:p]}">${p+1}</g:link></li>
+              </g:if>
+              <g:else>
+                <li><g:link controller="org" action="reconciliationStatus" id="${params.id}" params="${[pageno:p]}">${p+1}</g:link></li>
+              </g:else>
+            </g:each>
+            <g:if test="${pageno < maxpages }">
+              <li><g:link controller="org" action="reconciliationStatus" id="${params.id}" params="${[pageno:pageno+1]}">Next</g:link></li>
+            </g:if>
+            <li><g:link controller="org" action="reconciliationStatus" id="${params.id}" params="${[pageno:maxpages-1]}">Last</g:link></li>
+          </ul>
+        </div>
+
       </div>
     </div>
 

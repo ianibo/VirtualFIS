@@ -43,11 +43,16 @@ class OrgController {
     else 
       log.debug("no persistent info")
    
-    def pageno = params.pageno ?: 0 
+    result.pageno = params.pageno ? Integer.parseInt(params.pageno) : 0 
     result.records = []
-    mdb.reconRecords.find(reconSource:task_id).limit(10).skip(pageno*10).sort('docid':1).each { r ->
+    mdb.reconRecords.find(reconSource:task_id).limit(10).skip(result.pageno*10).sort('docid':1).each { r ->
       result.records.add(r)
     }
+
+    result.hitcount = mdb.reconRecords.find(reconSource:task_id).count()
+    result.maxpages = (int) ( ( result.hitcount + 9 ) / 10 )
+    result.pagstart = ( result.pageno - 5 > 0 ) ? result.pageno - 5 : 0;
+    result.pagend = ( result.pageno + 5 > result.maxpages ) ? result.maxpages : result.pageno+5;
 
     log.debug("Reconcole OFS for org ${result.org.name} identifier ${result.org.identifier} code ${result.org.code}")    
     result    
