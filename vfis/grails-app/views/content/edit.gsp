@@ -13,11 +13,20 @@
       </ul>
     </div>
 
+    <g:if test="${flash.message != null}">
+      <div class="alert alert-success">
+        <a class="close" data-dismiss="alert">×</a>
+        <h4 class="alert-heading">Success!</h4>
+        <g:message code="${flash.message}" args="${flash.args}" default="${flash.default}"/>
+      </div>
+    </g:if>
+
     <div class="row-fluid">
       <div class="well">
-        <form class="form-horizontal">
+        <g:form controller="content" action="save" class="form-horizontal" id="${params.id}">
           <g:render template="/content/dynamicComponent" model="[root:record, layoutnode:layout,parentpath:'src']"/>
-        </form>
+          <button class="btn" data-complete-text="Save" type="submit">Save</button>
+        </g:form>
       </div>
     </div>
 

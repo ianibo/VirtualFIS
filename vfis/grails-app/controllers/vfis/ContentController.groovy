@@ -19,9 +19,9 @@ class ContentController {
       log.debug("Process edit")
       def rec_to_edit = mdb.content.findOne(_id:new org.bson.types.ObjectId(params.id))
       if ( rec_to_edit != null ) {
-        log.debug("Got record")
+        //log.debug("Got record")
         def layout = getLayout(rec_to_edit)
-        log.debug("layout: ${layout}")
+        // log.debug("layout: ${layout}")
 
         result.layout = layout
         result.record = rec_to_edit
@@ -36,6 +36,43 @@ class ContentController {
     }
 
     result
+  }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def save() {
+    def mdb = mongoService.getMongo().getDB('vfis')
+    // The clean parameter map from the request
+    // log.debug("form params: ${request.getParameterMap()}")
+    def rec_to_edit = mdb.content.findOne(_id:new org.bson.types.ObjectId(params.id))
+    def changelog = []
+    request.getParameterMap().each() { kvp ->
+      if ( kvp.key.startsWith('src.') ) {
+        def current_value = org.apache.commons.beanutils.PropertyUtils.getProperty(rec_to_edit,kvp.key)
+        def value_from_page = kvp.value[0]
+        log.debug("test ${kvp.key} == ${value_from_page} (orig=${current_value})")
+
+        if ( current_value == value_from_page ) {
+          // log.debug("Value unchanged")
+        }
+        else {
+          // log.debug("Value changed")
+          org.apache.commons.beanutils.PropertyUtils.setProperty(rec_to_edit, kvp.key, value_from_page)
+          changelog.add([prop:kvp.key,from:current_value,to:value_from_page]);
+        }
+      }
+      else {
+        log.debug("skip ${kvp.key}")
+      }
+    }
+
+    if ( changelog.size() > 0 ) {
+      log.debug("Record was changed.. ${changelog}")
+      flash.message = "Record updated"
+    }
+
+    
+
+    redirect(controller:"content", action: "edit", id:params.id)
   }
 
   def getLayout(record) {
@@ -63,7 +100,7 @@ class ContentController {
     context.each { kvpair ->
       if ( kvpair.value ) {
         if ( kvpair.value instanceof Map ) {
-          log.debug("${kvpair.key} is a map")
+          // log.debug("${kvpair.key} is a map")
           result.add([type:"link", 
                       display:"border", 
                       linklabel:kvpair.key, 
@@ -74,7 +111,7 @@ class ContentController {
           log.debug("${kvpair.key} is a list")
         }
         else {
-          log.debug("Consider key=${kvpair.key} value=${kvpair.value} class=${kvpair.value?.class?.name}")
+          // log.debug("Consider key=${kvpair.key} value=${kvpair.value} class=${kvpair.value?.class?.name}")
           result.add([type:'text', label:kvpair.key, propname:kvpair.key])
           // add helptext:'' for helptext
         }
