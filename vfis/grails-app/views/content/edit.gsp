@@ -16,7 +16,7 @@
     <div class="row-fluid">
       <div class="well">
         <form class="form-horizontal">
-          <g:render template="/content/dynamicComponent" model="[root:record, layoutnode:layout]"/>
+          <g:render template="/content/dynamicComponent" model="[root:record, layoutnode:layout,parentpath:'src']"/>
         </form>
       </div>
     </div>
