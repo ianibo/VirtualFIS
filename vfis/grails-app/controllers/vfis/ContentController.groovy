@@ -21,7 +21,7 @@ class ContentController {
       if ( rec_to_edit != null ) {
         //log.debug("Got record")
         def layout = getLayout(rec_to_edit)
-        // log.debug("layout: ${layout}")
+        log.debug("layout: ${layout}")
 
         result.layout = layout
         result.record = rec_to_edit
@@ -68,9 +68,8 @@ class ContentController {
     if ( changelog.size() > 0 ) {
       log.debug("Record was changed.. ${changelog}")
       flash.message = "Record updated"
+      mdb.content.save(rec_to_edit)
     }
-
-    
 
     redirect(controller:"content", action: "edit", id:params.id)
   }
