@@ -21,6 +21,8 @@ class ContentController {
       if ( rec_to_edit != null ) {
         log.debug("Got record")
         def layout = getLayout(rec_to_edit)
+        log.debug("layout: ${layout}")
+
         result.layout = layout
         result.record = rec_to_edit
       }
@@ -62,6 +64,7 @@ class ContentController {
       if ( kvpair.value ) {
         if ( kvpair.value instanceof Map ) {
           log.debug("${kvpair.key} is a map")
+          result.add([type:"link", display:"border", linklabel:kvpair.key, content:generateControls(kvpair.value)])
         }
         else if ( kvpair.value instanceof List ) {
           log.debug("${kvpair.key} is a list")
@@ -69,6 +72,7 @@ class ContentController {
         else {
           log.debug("Consider key=${kvpair.key} value=${kvpair.value} class=${kvpair.value?.class?.name}")
           result.add([type:'text', label:kvpair.key])
+          // add helptext:'' for helptext
         }
       }
       else {
