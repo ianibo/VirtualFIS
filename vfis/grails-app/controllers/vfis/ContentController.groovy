@@ -20,7 +20,7 @@ class ContentController {
       def rec_to_edit = mdb.content.findOne(_id:new org.bson.types.ObjectId(params.id))
       if ( rec_to_edit != null ) {
         log.debug("Got record")
-        def layout = getLayout(rec_to_edit.type)
+        def layout = getLayout(rec_to_edit)
         result.layout = layout
         result.record = rec_to_edit
       }
@@ -42,18 +42,39 @@ class ContentController {
   }
 
   def generateLayout(record) {
+    // Create list of simple text fields
+
     [ 
       'type':'tabs',
       'tabs': [     // Tabs: An array of maps - 1 map for each tab.
         [
           'id' : 'basic_dets',
           'label' : 'Basic Details',
-          'content' : [
-            [type:'text'],
-            [type:'text']
-          ]
+          'content' : generateControls(record.src)
         ]
       ]
     ]
+  }
+
+  def generateControls(context) {
+    def result = []
+    context.each { kvpair ->
+      if ( kvpair.value ) {
+        if ( kvpair.value instanceof Map ) {
+          log.debug("${kvpair.key} is a map")
+        }
+        else if ( kvpair.value instanceof List ) {
+          log.debug("${kvpair.key} is a list")
+        }
+        else {
+          log.debug("Consider key=${kvpair.key} value=${kvpair.value} class=${kvpair.value?.class?.name}")
+          result.add([type:'text', label:kvpair.key])
+        }
+      }
+      else {
+        // Null
+      }
+    }
+    result
   }
 }
