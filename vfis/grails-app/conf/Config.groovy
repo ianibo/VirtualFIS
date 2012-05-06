@@ -108,3 +108,7 @@ grails.plugins.springsecurity.authority.className = 'com.k_int.vfis.auth.VfisAut
 grails.plugins.springsecurity.requestMap.className = 'com.k_int.vfis.auth.VfisRequestmap'
 // grails.plugins.springsecurity.securityConfigType = 'Requestmap'
 grails.plugins.springsecurity.securityConfigType = "Annotation"
+
+grails.plugins.springsecurity.ui.password.minLength=6
+grails.plugins.springsecurity.ui.password.maxLength=20
+grails.plugins.springsecurity.ui.password.validationRegex='^.*$'

@@ -72,7 +72,7 @@
               <input type="text" class="search-query span2" placeholder="Search">
             </form>
           </li>
-          <sec:ifNotLoggedIn><li><g:link controller="login" action="auth">Login</g:link></li><li><a href="">Register</a></li></sec:ifNotLoggedIn>
+          <sec:ifNotLoggedIn><li><g:link controller="login" action="auth">Login</g:link></li><li><g:link controller="register" action="index">Register</g:link></li></sec:ifNotLoggedIn>
           <sec:ifAllGranted roles="ROLE_USER"><li><a href="Logout">Logout (<sec:username/>)</a></li></sec:ifAllGranted>
         </ul>
       </div><!-- /.nav-collapse -->
