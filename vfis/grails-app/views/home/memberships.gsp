@@ -60,7 +60,7 @@
   
           <g:form controller="home" action="processJoinRequest" form class="form-search">
             <g:select name="org"
-                      from="${com.k_int.vfis.Organisation.list()}"
+                      from="${com.k_int.iep.datamodel.IEPProvider.list()}"
                       optionKey="id"
                       optionValue="name"
                       class="input-medium">

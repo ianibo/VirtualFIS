@@ -19,9 +19,40 @@ class OrgController {
     result.user = VfisPerson.get(springSecurityService.principal.id)
 
     log.debug("Looking up feedback records for authority with identifier ${result.org.identifier}")
-    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=?",[result.org]);
+
+    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
+                                                     ['open',result.org],[max:20]);
+
+    log.debug(result.feedback)
+
     result
   }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def feedback() {
+    def result=[:]
+    result.org = IEPProvider.get(params.id);
+    result.user = VfisPerson.get(springSecurityService.principal.id)
+
+    log.debug("Looking up feedback records for authority with identifier ${result.org.identifier}")
+
+    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
+                                                     ['open',result.org],[max:20]);
+
+    log.debug(result.feedback)
+
+    result
+  }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def issue() {
+    def result=[:]
+    result.org = IEPProvider.get(params.id);
+    result.user = VfisPerson.get(springSecurityService.principal.id)
+
+    redirect(action:'feedback',id:params.id)
+  }
+
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def reconciliationStatus() { 

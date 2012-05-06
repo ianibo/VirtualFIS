@@ -26,7 +26,7 @@
 
     <div class="row-fluid">
 
-      <div class="span4">
+      <div class="span12">
         <div class="well">
           <h2><g:link action="feedback" id="${params.id}">End User Feedback</g:link></h2>
            <table class="table table-striped table-bordered table-condensed">
@@ -36,50 +36,28 @@
                   <th>From</th>
                   <th>Category</th>
                   <th>Status</th>
-                </tr>
-                <tr>
-                  <th colspan="4">Message</th>
+                  <th>Message</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <g:each in="${feedback}" var="f">
                   <tr>
-                    <td><g:formatDate format="dd-MMM-yyyy" date="${f.messageTimeStamp}"/></td>
+                    <td style="white-space: nowrap"><g:formatDate format="dd-MMM-yyyy" date="${f.messageTimeStamp}"/></td>
                     <td>${f.contactEmail} / ${f.contactName}</td>
                     <td>${f.category}</td>
                     <td>${f.status}</td>
-                  </tr>
-                  <tr>
-                    <td colspan="4">${f.message}</td>
+                    <td>${f.message}</td>
+                    <td>
+                     <g:link controller="org" action="issue" id="${params.id}"params="${[issue:f.id,act='resolved']}" class="btn" >Resolved</g:link>
+                     <g:link controller="org" action="issue" id="${params.id}"params="${[issue:f.id,act='spam']}" class="btn" >Spam</g:link>
+                    </td>
                   </tr>
                 </g:each>
               </tbody>
            </table>
         </div>
       </div>
-
-      <div class="span4">
-        <div class="well">
-          <h2>Records</h2>
-          <h3>ECD Records</h3>
-          System currently holds X ECD records
-          <h3>FSD Records</h3>
-          System currently holds Y ECD records
-        </div>
-      </div>
-
-      <div class="span4">
-        <div class="well">
-          <h2>Reconciliation</h2>
-          <h3>OFS</h3>
-          No outstanding issues
-          <h3>OFSTED</h3>
-          No outstanding issues
-        </div>
-      </div>
-
-
-
     </div>
 
   </body>

@@ -12,9 +12,20 @@ hibernate {
 // environment specific settings
 environments {
     development {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:mem:devDb;MVCC=TRUE"
+       dataSource {
+            // dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+            // url = "jdbc:hsqldb:mem:devDB"            // url = "jdbc:hsqldb:mem:devDB"
+            driverClassName = "com.mysql.jdbc.Driver"
+            dbCreate =  "update" // "create-drop"           // "create"
+            username = "k-int"
+            password = "k-int"
+            pooled = true
+            url = "jdbc:mysql://localhost/OFSProd?autoReconnect=true&amp;characterEncoding=utf8"
+            properties {
+                validationQuery="select 1"
+                testWhileIdle=true
+                timeBetweenEvictionRunsMillis=60000
+            }
         }
     }
     test {

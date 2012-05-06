@@ -2,6 +2,7 @@ package vfis
 
 import com.k_int.vfis.*
 import com.k_int.vfis.auth.*
+import com.k_int.iep.datamodel.*
 
 import grails.plugins.springsecurity.Secured
 
