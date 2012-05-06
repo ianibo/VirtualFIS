@@ -16,11 +16,16 @@ class BootStrap {
       def adminRole = VfisAuthority.findByAuthority('ROLE_ADMIN') ?: new VfisAuthority(authority: 'ROLE_ADMIN').save(failOnError: true)
 
       log.debug("Create admin user...");
-      def adminUser = VfisPerson.findByUsername('admin') ?: new VfisPerson(
+      def adminUser = VfisPerson.findByUsername('admin')
+      if ( ! adminUser ) {
+        def newpass = java.util.UUID.randomUUID().toString()
+        log.error("No admin user found, create with temporary password ${newpass}")
+        adminUser = new VfisPerson(
                         username: 'admin',
-                        password: 'admin',
+                        password: newpass,
                         email: 'admin@localhost',
                         enabled: true).save(failOnError: true)
+      }
  
       if (!adminUser.authorities.contains(adminRole)) {
         VfisPersonVfisAuthority.create adminUser, adminRole
