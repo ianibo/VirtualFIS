@@ -15,11 +15,11 @@ class OrgController {
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def dashboard() { 
     def result=[:]
-    result.org = Organisation.get(params.id);
+    result.org = IEPProvider.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
 
     log.debug("Looking up feedback records for authority with identifier ${result.org.identifier}")
-    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner.identifier=?",[result.org.identifier]);
+    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=?",[result.org]);
     result
   }
 
@@ -28,7 +28,7 @@ class OrgController {
     def mdb = mongoService.getMongo().getDB('vfis')
     log.debug("reconciliationStatus(${params.id})");
     def result=[:]
-    result.org = Organisation.get(params.id);
+    result.org = IEPProvider.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
     result.reconciliation = reconciliationService.getStatus(params.id, 'OFS', result.org.code)
 
@@ -67,7 +67,7 @@ class OrgController {
     log.debug("requestReconciliation(${params.id})");
     def result=[:]
     def policy=['new_record':'auto']
-    result.org = Organisation.get(params.id);
+    result.org = IEPProvider.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
     result.reconciliation = reconciliationService.startReconciliation(params.id, 'OFS', result.org.code, policy)
     redirect(action: "reconciliationStatus", id:params.id)
@@ -78,7 +78,7 @@ class OrgController {
     def mdb = mongoService.getMongo().getDB('vfis')
     def result=[:]
     result.hpp = params.hpp ? integer.parseInt(params.hpp) : 10
-    result.org = Organisation.get(params.id);
+    result.org = IEPProvider.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
     result.pageno = params.pageno ? Integer.parseInt(params.pageno) : 0 
     result.records = []

@@ -40,7 +40,7 @@ class HomeController {
   def processJoinRequest() {
     log.debug("processJoinRequest org with id ${params.org}");
     def user = VfisPerson.get(springSecurityService.principal.id)
-    def org = Organisation.get(params.org)
+    def org = IEPProvider.get(params.org)
     if ( ( org != null ) && ( params.role != null ) ) {
       def p = new PersonOrg(dateRequested:System.currentTimeMillis(), status:0, org:org, person:user, role:params.role)
       p.save(flush:true)
