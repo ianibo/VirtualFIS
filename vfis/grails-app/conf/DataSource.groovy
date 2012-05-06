@@ -32,7 +32,7 @@ environments {
             username = "k-int"
             password = "k-int"
             pooled = true
-            url = "jdbc:mysql://localhost/VFISLive?autoReconnect=true&amp;characterEncoding=utf8"
+            url = "jdbc:mysql://localhost/OFSProd?autoReconnect=true&amp;characterEncoding=utf8"
             properties {
                 validationQuery="select 1"
                 testWhileIdle=true

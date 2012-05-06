@@ -6,6 +6,8 @@ grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
+grails.plugin.location.'iep-datamodel'='../../iep/iep-datamodel-plugin/iep-datamodel'
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {

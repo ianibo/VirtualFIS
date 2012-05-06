@@ -25,6 +25,14 @@
     </div>
 
     <div class="row-fluid">
+
+      <div class="span4">
+        <div class="well">
+          <h2>End user feedback</h2>
+          There are currently no unactioned feedback messages
+        </div>
+      </div>
+
       <div class="span4">
         <div class="well">
           <h2>Records</h2>
@@ -45,12 +53,7 @@
         </div>
       </div>
 
-      <div class="span4">
-        <div class="well">
-          <h2>End user feedback</h2>
-          There are currently no unactioned feedback messages
-        </div>
-      </div>
+
 
     </div>
 

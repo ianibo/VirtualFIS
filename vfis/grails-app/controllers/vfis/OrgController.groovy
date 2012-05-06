@@ -2,6 +2,7 @@ package vfis
 
 import com.k_int.vfis.*
 import com.k_int.vfis.auth.*
+import com.k_int.iep.datamodel.*
 
 import grails.plugins.springsecurity.Secured
 
@@ -16,6 +17,9 @@ class OrgController {
     def result=[:]
     result.org = Organisation.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
+
+    log.debug("Looking up feedback records for authority with identifier ${result.org.identifier}")
+    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner.identifier=?",[result.org.identifier]);
     result
   }
 
