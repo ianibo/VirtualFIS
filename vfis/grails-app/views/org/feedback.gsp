@@ -49,8 +49,8 @@
                     <td>${f.status}</td>
                     <td>${f.message}</td>
                     <td>
-                     <g:link controller="org" action="issue" id="${params.id}"params="${[issue:f.id,act='resolved']}" class="btn" >Resolved</g:link>
-                     <g:link controller="org" action="issue" id="${params.id}"params="${[issue:f.id,act='spam']}" class="btn" >Spam</g:link>
+                     <g:link controller="org" action="issue" id="${params.id}" params="${[issue:f.id, act:'resolved']}" class="btn" >Resolved</g:link>
+                     <g:link controller="org" action="issue" id="${params.id}" params="${[issue:f.id, act:'spam']}" class="btn" >Spam</g:link>
                     </td>
                   </tr>
                 </g:each>

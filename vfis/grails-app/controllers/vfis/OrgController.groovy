@@ -12,18 +12,34 @@ class OrgController {
   def reconciliationService
   def mongoService
 
+  def hasAccess(user,org) {
+    def result = false;
+
+    // Find out if there is an approved person org record for the current user for this org
+    def po = PersonOrg.findAll("from PersonOrg po where po.org=? and po.person=? and po.status=1",[org,user])
+
+    if ( po.size > 0 )
+      result = true;
+
+    result;
+  }
+
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def dashboard() { 
     def result=[:]
     result.org = IEPProvider.get(params.id);
     result.user = VfisPerson.get(springSecurityService.principal.id)
 
-    log.debug("Looking up feedback records for authority with identifier ${result.org.identifier}")
+    if ( hasAccess(result.user, result.org) ) {
+      result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
+                                                     [result.org,'open'],[max:20]);
 
-    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
-                                                     ['open',result.org],[max:20]);
-
-    log.debug(result.feedback)
+    }
+    else {
+      log.error("org::dashboard - No access")
+      flash.error="You do not have permission to view or manage ${result.org.name}. Please use this form to request access"
+      redirect(controller:'home', action:'memberships',params:[req:result.org.id])
+    }
 
     result
   }
@@ -36,8 +52,16 @@ class OrgController {
 
     log.debug("Looking up feedback records for authority with identifier ${result.org.identifier}")
 
-    result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
-                                                     ['open',result.org],[max:20]);
+    if ( hasAccess(result.user, result.org) ) {
+      result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
+                                                     [result.org,'open'],[max:20]);
+
+    }
+    else {
+      log.error("org::feedback - No access")
+      flash.error="You do not have permission to view or manage ${result.org.name}. Please use this form to request access"
+      redirect(controller:'home', action:'memberships',params:[req:result.org.id])
+    }
 
     log.debug(result.feedback)
 

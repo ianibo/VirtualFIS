@@ -14,6 +14,14 @@
       </ul>
     </div>
 
+    <g:if test="${flash.error}">
+       <bootstrap:alert class="alert-info">${flash.error}</bootstrap:alert>
+    </g:if>
+
+    <g:if test="${flash.message}">
+       <bootstrap:alert class="alert-info">${flash.message}</bootstrap:alert>
+    </g:if>
+
     <div class="row-fluid">
       <div class="span12">
         <h1>Administrative memberships</h1>
@@ -63,7 +71,8 @@
                       from="${com.k_int.iep.datamodel.IEPProvider.list()}"
                       optionKey="id"
                       optionValue="name"
-                      class="input-medium">
+                      class="input-medium"
+                      value="${params.req}">
             </g:select>
             <g:select name="role" from="${['Administrator', 'Staff']}"/>
             <button class="btn" data-complete-text="Request Membership" type="submit">Request Membership</button>

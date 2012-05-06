@@ -14,6 +14,15 @@
       </ul>
     </div>
 
+    <g:if test="${flash.error}">
+       <bootstrap:alert class="alert-info">${flash.error}</bootstrap:alert>
+    </g:if>
+
+    <g:if test="${flash.message}">
+       <bootstrap:alert class="alert-info">${flash.message}</bootstrap:alert>
+    </g:if>
+
+
     <div class="row-fluid">
       <div>
         <div class="well">
