@@ -9,7 +9,8 @@
     <div class="row-fluid">
         <ul class="breadcrumb">
         <li> <g:link path="/">Virtual FIS</g:link> <span class="divider">/</span> </li>
-        <li> <g:link controller="org" action="dashboard" id="${org.id}">${org.name}</g:link> </li>
+        <li> <g:link controller="org" action="dashboard" id="${org.id}">${org.name}</g:link> <span class="divider">/</span> </li>
+        <li> <g:link controller="org" action="feedback" id="${org.id}">Feedback</g:link> </li>
       </ul>
     </div>
 
