@@ -112,3 +112,5 @@ grails.plugins.springsecurity.securityConfigType = "Annotation"
 grails.plugins.springsecurity.ui.password.minLength=6
 grails.plugins.springsecurity.ui.password.maxLength=20
 grails.plugins.springsecurity.ui.password.validationRegex='^.*$'
+grails.plugins.springsecurity.ui.encodePassword=false
+
