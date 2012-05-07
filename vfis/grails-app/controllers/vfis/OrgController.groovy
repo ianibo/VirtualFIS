@@ -24,6 +24,7 @@ class OrgController {
     result;
   }
 
+
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def dashboard() { 
     def result=[:]
@@ -54,7 +55,7 @@ class OrgController {
 
     if ( hasAccess(result.user, result.org) ) {
       result.feedback = IEPResourceMessage.findAll("from IEPResourceMessage m where m.owner.owner=? and m.status=? order by m.messageTimeStamp desc",
-                                                     [result.org,'open'],[max:20]);
+                                                     [result.org,'open'],[:]);
 
     }
     else {
@@ -210,4 +211,71 @@ class OrgController {
 
     result
   }
+
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def details() { 
+
+    def result=[:]
+
+    result.org = IEPProvider.get(params.id);
+    result.user = VfisPerson.get(springSecurityService.principal.id)
+
+    if ( hasAccess(result.user, result.org) ) {
+      switch (request.method) {
+        case 'GET':
+          if (!result.org) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'org.label', default: 'Org'), params.id])
+            redirect action: 'list'
+            return
+          }
+
+          break
+
+        case 'POST':
+          log.debug("Process POST ${params}");
+          if (!result.org) {
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'org.label', default: 'Org'), params.id])
+            redirect action: 'list'
+            return
+          }
+
+          if (params.version) {
+            def version = params.version.toLong()
+            if (result.org.version > version) {
+              result.org.errors.rejectValue('version', 'default.optimistic.locking.failure',
+                                    [message(code: 'org.label', default: 'Org')] as Object[],
+                                    "Another user has updated this Org while you were editing")
+              render view: 'details', model: result
+              return
+            }
+          }
+  
+          log.debug("Merge properties from form... ${params}");
+          result.org.properties = params
+  
+          if (!result.org.save(flush: true)) {
+            render view: 'details', model: result
+            return
+          }
+          else {
+            log.debug("Problesm");
+            result.org.errors.each { err ->
+              log.error(err);
+            }
+          }
+  
+          flash.message = message(code: 'default.updated.message', args: [message(code: 'result.org.label', default: 'Org'), org.id])
+          redirect action: 'details', id: result.org.id
+          break
+      }
+    }
+    else {
+      log.error("org::dashboard - No access")
+      flash.error="You do not have permission to view or manage ${result.org.name}. Please use this form to request access"
+      redirect(controller:'home', action:'memberships',params:[req:result.org.id])
+    }
+    result
+  }
+
 }
