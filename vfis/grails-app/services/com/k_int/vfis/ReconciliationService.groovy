@@ -246,7 +246,7 @@ class ReconciliationService {
         json.response.docs.each { doc ->
           log.debug("doc = [${start++}] ${doc}")
   
-          def newrec = fetchRecord(endpoint,doc.repo_url_s[0])
+          def newrec = fetchRecord(endpoint,doc.repo_url_s[0], doc.restp)
           if ( newrec ) {
             closure.call(doc['dc.identifier'], "OFS:${doc.restp}", doc['dc.title'][0], newrec)
           }
@@ -279,7 +279,7 @@ class ReconciliationService {
   //
   // Use the org.json classes to try and parse the XML into a JSON object
   //
-  def fetchRecord(endpoint, path) {
+  def fetchRecord(endpoint, path, restp) {
     log.debug("Requesting ${path}?apikey=${grailsApplication.config.ofsapikey}")
     def result = null
 
@@ -308,6 +308,9 @@ class ReconciliationService {
           // result = net.sf.json.JSONObject.toBean(xs.read(xml_text))
           // mongo likes to have nulls and not JSONNull for it's null fields... Do some mapping
           result = xs.read(xml_text)
+         
+          result."$schema" = "http://purl.org/jsonschema/${restp}";
+
           log.debug("Result of conversion: ${result}")
           // result = xs.read("<a><b>Hello</b><c>Goodbye</c></a>")
           //log.debug("\n\nConverted\n\n ${result}")          
