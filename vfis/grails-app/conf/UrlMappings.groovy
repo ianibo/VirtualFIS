@@ -9,5 +9,7 @@ class UrlMappings {
 
 		"/"(controller:'frontpage',action:'index')
 		"500"(view:'/error')
+
+                "/org/$shortcode/content/$id/edit"(controller:'content',action:'edit')
 	}
 }

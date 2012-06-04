@@ -57,7 +57,7 @@
                 <td>${r.src.DC_Title}</td>
                 <td>
                   <div class="btn-group">
-                    <g:link controller="content" action="edit" id="${r._id}" class="btn btn-primary btn-small"><i class="icon-edit icon-white"></i> Edit</g:link>
+                    <g:link controller="content" action="edit" id="${r._id}" params="${[shortcode:org.shortCode]}" class="btn btn-primary btn-small"><i class="icon-edit icon-white"></i> Edit</g:link>
                   </div>
                 </td>
               </tr>

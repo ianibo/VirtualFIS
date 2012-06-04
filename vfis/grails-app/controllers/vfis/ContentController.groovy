@@ -2,19 +2,28 @@ package vfis
 
 import com.k_int.vfis.*
 import com.k_int.vfis.auth.*
+import com.k_int.iep.datamodel.*
 
 import grails.plugins.springsecurity.Secured
 
 class ContentController {
 
+  // Spring Security Service - Used to locate user and handle session data relating to user
   def springSecurityService
+
+  // Mongo service is a lightweight wrapper that holds a factory for creating lightweight connections to mongo.
   def mongoService
 
+
+  // Request that a page be show for the specified resouce. getLayout will be invoked to find the
+  // layout for this record (Layouts are json documents)
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def edit() {
     def result = [:]
     log.debug("ContentController::edit")
     def mdb = mongoService.getMongo().getDB('vfis')
+    result.org = IEPProvider.findByShortCode(params.shortcode);
+    result.user = VfisPerson.get(springSecurityService.principal.id)
     if ( ( params.id ) && ( params.id.length() > 0 ) ) {
       log.debug("Process edit")
       def rec_to_edit = mdb.content.findOne(_id:new org.bson.types.ObjectId(params.id))
@@ -74,6 +83,8 @@ class ContentController {
     redirect(controller:"content", action: "edit", id:params.id)
   }
 
+
+  // return an appropriate layout for the record....
   def getLayout(record) {
     // Simple for now, later on per user, customise and auto-generate for types with no layout.
     generateLayout(record)

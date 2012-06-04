@@ -101,7 +101,7 @@ class OrgController {
 
       def mdb = mongoService.getMongo().getDB('vfis')
       log.debug("reconciliationStatus(${params.id})");
-      result.reconciliation = reconciliationService.getStatus(params.id, 'OFS', result.org.code)
+      result.reconciliation = reconciliationService.getStatus(params.id, 'OFS', result.org.shortCode)
 
       if ( ( result.reconciliation?.active) && ( result.reconciliation.job.max ) ) {
         log.debug( "${result.reconciliation.job.start} / ${result.reconciliation.job.max} = ${result.reconciliation.job.start/result.reconciliation.job.max}" )
@@ -111,7 +111,7 @@ class OrgController {
         result.progress = 0
       }
 
-      def task_id = "${result.org.id}:OFS:${result.org.code}".toString()
+      def task_id = "${result.org.id}:OFS:${result.org.shortCode}".toString()
       result.persistentInfo = mdb.reconciliationSources.find(reconSource:task_id)
       if ( result.persistentInfo )
         log.debug("got persistent info")
@@ -129,7 +129,7 @@ class OrgController {
       result.pagstart = ( result.pageno - 5 > 0 ) ? result.pageno - 5 : 0;
       result.pagend = ( result.pageno + 5 > result.maxpages ) ? result.maxpages : result.pageno+5;
 
-      log.debug("Reconcole OFS for org ${result.org.name} identifier ${result.org.identifier} code ${result.org.code}")    
+      log.debug("Reconcole OFS for org ${result.org.name} identifier ${result.org.identifier} code ${result.org.shortCode}")    
     }
     else {
       log.error("org::reconcilliationStatus - No access")
@@ -150,7 +150,7 @@ class OrgController {
 
     if ( hasAccess(result.user, result.org) ) {
       def policy=['new_record':'auto']
-      result.reconciliation = reconciliationService.startReconciliation(params.id, 'OFS', result.org.code, policy)
+      result.reconciliation = reconciliationService.startReconciliation(params.id, 'OFS', result.org.shortCode, policy)
       redirect(action: "reconciliationStatus", id:params.id)
     }
     else {
@@ -188,10 +188,11 @@ class OrgController {
         // query_params.src = [ 'DC.Title' : ~/${params.q}/ ]
         // query_params.'src.ProviderDetails.OfstedURN' = 'EY317028'
         // query_params.'type' = ~/${params.q}/
-     }
+      }
 
-     log.debug("Search with params: ${query_params}")
+      log.debug("Search with params: ${query_params}")
 
+      // Search the mongo instance...
       mdb.content.find(query_params).limit(result.hpp).skip(result.pageno*result.hpp).sort('docid':1).each { r ->
         result.records.add(r)
       }
@@ -200,7 +201,7 @@ class OrgController {
       result.maxpages = (int) ( ( result.hitcount + (result.hpp-1) ) / result.hpp )
       result.pagstart = ( result.pageno - 5 > 0 ) ? result.pageno - 5 : 0;
       result.pagend = ( result.pageno + 5 > result.maxpages ) ? result.maxpages : result.pageno+5;
-   
+  
       log.debug("Complete")
     }
     else {
