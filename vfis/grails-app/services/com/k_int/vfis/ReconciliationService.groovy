@@ -126,7 +126,13 @@ class ReconciliationService {
     result
   }
 
-  def reconcile(internal_org_id, remote_source_id, remote_collection_id, job_info, mdb, recon_status, policy) {
+  def reconcile(internal_org_id, 
+                remote_source_id, 
+                remote_collection_id, 
+                job_info, 
+                mdb, 
+                recon_status, 
+                policy) {
 
     log.debug("*** reconcile ${job_info.job_id}")
     try {
@@ -194,11 +200,11 @@ class ReconciliationService {
     // Currently we only deal with 1 source - OFS, so really we only need the collection for now
     def apikey = grailsApplication.config.ofsapikey
     log.debug("Iterate all records, call closure, apikey = ${apikey}");
-    sync(processing_closure, job_info);
+    sync(processing_closure, job_info, collectionid);
   } 
 
 
-  def sync(processing_closure, job_info) {
+  def sync(processing_closure, job_info, collectionid) {
     log.debug("sync");
 
     def props =[:]
@@ -217,7 +223,7 @@ class ReconciliationService {
       }
 
       log.debug("Next start position is ${start}, selecting page of data");
-      start = fetchSOLRPage(solr_endpoint, start, 'Surrey_County_Council', job_info, processing_closure);
+      start = fetchSOLRPage(solr_endpoint, start, collectionid, job_info, processing_closure);
     }
   }
 
@@ -236,6 +242,8 @@ class ReconciliationService {
       ]
       request.getParams().setParameter("http.socket.timeout", new Integer(10000))
       headers.Accept = 'application/json'
+
+      log.debug("Searching /index/aggr/select?q=authority_shortcode:${authcode}");
 
       response.success = { resp, json ->
         log.debug( "Server Response: ${resp.statusLine}" )
@@ -257,7 +265,7 @@ class ReconciliationService {
 
         int num_found = json.response.numFound
         if ( start == num_found ) {
-          log.debug("Reached end of records, break out");
+          log.debug("Reached end of records, (start=${start},num_found=${num_found})break out");
           start = -1
         }
         else {

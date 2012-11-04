@@ -22,7 +22,7 @@ class BootStrap {
         log.error("No admin user found, create with temporary password ${newpass}")
         adminUser = new VfisPerson(
                         username: 'admin',
-                        password: newpass,
+                        password: 'admin',
                         email: 'admin@localhost',
                         enabled: true).save(failOnError: true)
       }

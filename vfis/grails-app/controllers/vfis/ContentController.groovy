@@ -3,6 +3,7 @@ package vfis
 import com.k_int.vfis.*
 import com.k_int.vfis.auth.*
 import com.k_int.iep.datamodel.*
+import grails.converters.*
 
 import grails.plugins.springsecurity.Secured
 
@@ -45,6 +46,35 @@ class ContentController {
     }
 
     result
+  }
+
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  def getLayout() {
+   def result = [:]
+    log.debug("ContentController::edit")
+    def mdb = mongoService.getMongo().getDB('vfis')
+    result.org = IEPProvider.findByShortCode(params.shortcode);
+    result.user = VfisPerson.get(springSecurityService.principal.id)
+    if ( ( params.id ) && ( params.id.length() > 0 ) ) {
+      log.debug("Process edit")
+      def rec_to_edit = mdb.content.findOne(_id:new org.bson.types.ObjectId(params.id))
+      if ( rec_to_edit != null ) {
+        //log.debug("Got record")
+        def layout = getLayout(rec_to_edit)
+        log.debug("layout: ${layout}")
+
+        result.layout = layout
+      }
+      else {
+        log.error("Unable to locate record to edit for id ${params.id}")
+      }
+    }
+    else {
+      log.debug("No ID")
+      redirect(controller:"home", action: "index")
+    }
+
+    render result.layout as JSON
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
