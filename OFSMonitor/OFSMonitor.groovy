@@ -7,7 +7,9 @@
   @Grab(group='com.gmongo', module='gmongo', version='0.9.2'),
   @Grab(group='org.apache.httpcomponents', module='httpclient', version='4.0'),
   @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0'),
-  @Grab( 'log4j:log4j:1.2.14' )
+  @Grab( 'log4j:log4j:1.2.14' ),
+  @Grab('xom:xom:1.2.5')
+
 ])
 
 import static groovyx.net.http.ContentType.URLENC
@@ -32,7 +34,7 @@ import org.apache.log4j.Logger
 
 
 mongoService=null
-apikey="aaa"
+apikey=args[0]
 
 log = Logger.getLogger(this.class)
 Logger.rootLogger.level = Level.DEBUG
@@ -40,14 +42,13 @@ Logger.rootLogger.level = Level.DEBUG
 // initialise the service
 init();
 
-def status = [:]
 def policy = [:]
 def job_info = [:]
 policy.new_record='auto'
 
 mdb = mongoService.getDB('localchatter')
 
-reconcile("Sheffield_City_Council","Sheffield_City_Council","Sheffield_City_Council",job_info,mdb,status,policy);
+reconcile("Sheffield_City_Council","Sheffield_City_Council","Sheffield_City_Council",job_info,mdb,policy);
 
 log.debug("Done");
 
@@ -90,23 +91,18 @@ def reconcile(internal_org_id,
               remote_collection_id, 
               job_info, 
               mdb, 
-              recon_status, 
               policy) {
 
 
   log.debug("*** reconcile ${job_info.job_id}")
   println("*** reconcile ${job_info.job_id}")
   try {
-    // Update persistent info
-    recon_status.lastStarted = System.currentTimeMillis();
-    mdb.reconciliationSources.save(recon_status);
-
     // Iterate over all
     iterateAllRecords(remote_source_id, remote_collection_id, job_info) { record_identifier, record_type, display_text, record_content ->
       try {
         log.debug("Inside closure...... ${record_type}, ${record_identifier}");
         // Reconcilliation phase 1 : See if we have a previous copy of this remote record
-        def recon_rec_info = mdb.reconRecords.find(reconSource:job_info.job_id, docid:record_identifier)
+        def recon_rec_info = mdb.localCopies.find(reconSource:job_info.job_id, docid:record_identifier)
         if ( recon_rec_info ) {
           // Yes, we need to determine if anything has changed
         }
