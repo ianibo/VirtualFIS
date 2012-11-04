@@ -259,8 +259,8 @@ def fetchRecord(endpoint, path, restp) {
         response.headers.each { h ->
           log.debug(h);
         }
-        def xml_text = reader.text
-        log.debug("Fetched record.....${resp}. Trying to convert.. construct")
+        def xml_text = reader.text.toString()
+        // log.debug("Fetched record.....${resp}. Trying to convert.. construct")
         def xs=new net.sf.json.xml.XMLSerializer();
         xs.setSkipNamespaces( true );  
         xs.setTrimSpaces( true );  
@@ -269,9 +269,9 @@ def fetchRecord(endpoint, path, restp) {
         // mongo likes to have nulls and not JSONNull for it's null fields... Do some mapping
         result = xs.read(xml_text)
        
-        result."$schema" = "http://purl.org/jsonschema/${restp}";
+        result.'$schema' = "http://purl.org/jsonschema/${restp}";
 
-        log.debug("Result of conversion: ${result}")
+        log.debug("Converted"); // Result of conversion: ${result}")
         // result = xs.read("<a><b>Hello</b><c>Goodbye</c></a>")
         //log.debug("\n\nConverted\n\n ${result}")          
       }
