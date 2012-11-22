@@ -17,7 +17,10 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ISPPDepositImplService", targetNamespace = "http://dcsf.gov.uk/ISPP/Webservice", wsdlLocation = "file:/home/ibbo/dev/VirtualFIS/soap2/metroisppsoap/deposit.wsdl")
+@WebServiceClient(name = "ISPPDepositImplService", 
+                  targetNamespace = "http://dcsf.gov.uk/ISPP/Webservice", 
+                  wsdlLocation = "file:/home/ibbo/dev/VirtualFIS/soap2/metroisppsoap/deposit.wsdl")
+
 public class ISPPDepositImplService
     extends Service
 {

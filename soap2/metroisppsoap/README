@@ -1,3 +1,7 @@
 
 http://jax-ws-commons.java.net/grails/
 http://docs.codehaus.org/pages/viewpage.action?pageId=88342530
+#
+
+/tmp/metro/bin/wsimport.sh -s ./src/java ./deposit.wsdl 
+
