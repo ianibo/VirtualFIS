@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.4-b01-. --><xs:schema xmlns:tns="http://dcsf.gov.uk/ISPP/Webservice/encodedTypes" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://dcsf.gov.uk/ISPP/Webservice/encodedTypes">
+
+<xs:element name="uploadRequest" nillable="true" type="tns:uploadRequest_t" />
+
+<xs:element name="uploadResponse" nillable="true" type="tns:uploadResponse_t" />
+
+<xs:complexType name="uploadRequest_t">
+<xs:sequence>
+<xs:element name="doc" type="xs:string" />
+<xs:element name="authoritative" type="xs:boolean" minOccurs="0" />
+<xs:element name="owner" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="uploadResponse_t">
+<xs:sequence>
+<xs:element name="status" type="xs:string" />
+<xs:element name="addinfo" type="xs:string" minOccurs="0" />
+<xs:element name="location" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
