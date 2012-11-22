@@ -69,13 +69,30 @@ environments {
     }
 }
 
+
+springws.wsdl.Deposit.export
+
+springws {
+    wsdl {
+        Deposit {
+            // In this case the wsdl will be available at <grails.serverURL>/services/hr/v2/Holiday/Holiday-v2.wsdl
+            // wsdlName= 'Holiday-v2'
+            xsds= '/WEB-INF/Deposit.xsd'
+            portTypeName = 'ISPPPortType'
+            serviceName = 'ISPPDepositImplService'
+            locationUri = "${grails.serverURL}/services/deposit.wsdl"
+            targetNamespace = 'http://dcsf.gov.uk/ISPP/Webservice'
+        }
+    }
+}
+
 // log4j configuration
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    appenders {
+        console name: "stdout", threshold: org.apache.log4j.Level.ALL
+    }
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
@@ -88,4 +105,14 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    debug  'grails.app.controllers',
+           'grails.app.service',
+           'grails.app.services',
+           'grails.app.domain',
+           'grails.app.tagLib',
+           // 'grails.app.conf',
+           'grails.app.jobs' // ,
+        // 'org.springframework.security'
+
 }
