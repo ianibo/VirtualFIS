@@ -89,3 +89,18 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+cxf {
+  servlet {
+    loadOnStartup = 10
+  }
+
+  servlets = [
+    CxfServlet: '/*'
+  ]
+
+  endpoint {
+    soap12Binding = false
+  }
+}
+
