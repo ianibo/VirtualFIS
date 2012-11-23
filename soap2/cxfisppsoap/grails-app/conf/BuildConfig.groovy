@@ -1,4 +1,4 @@
-grails.servlet.version = "2.5" // Change depending on target container compliance (2.5 or 3.0)
+porails.servlet.version = "2.5" // Change depending on target container compliance (2.5 or 3.0)
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -33,8 +33,6 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-        test("org.codehaus.geb:geb-spock:0.7.2")
-
     }
 
     plugins {
@@ -52,25 +50,5 @@ grails.project.dependency.resolution = {
         runtime ":database-migration:1.1"
 
         compile ':cache:1.0.0'
-
-
-       /* Spock and Geb for Testing ******************************************/
-        test(":spock:0.7") {
-            export = false
-        }
-
-        test(":geb:0.7.2") {
-            export = false
-        }
-
-        test(":code-coverage:1.2.5") {
-            export = false
-        }
-
-        test(":codenarc:0.17") {
-            export = false
-        }
-
-
     }
 }
