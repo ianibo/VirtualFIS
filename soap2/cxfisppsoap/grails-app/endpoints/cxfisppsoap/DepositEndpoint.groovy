@@ -14,9 +14,9 @@ class DepositEndpoint {
     static expose = EndpointType.JAX_WS_WSDL
     static wsdl = 'resources/deposit.wsdl'
 
-    // public UploadResponseT upload( UploadRequestT doc) {
-    //   UploadResponseT resp = new UploadResponseT()
-    //   return resp
-    // }
+    public UploadResponseT upload( UploadRequestT doc) {
+      UploadResponseT resp = new UploadResponseT()
+      return resp
+    }
 
 }

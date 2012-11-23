@@ -49,7 +49,8 @@ class ContentController {
   }
 
   @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
-  def getLayout() {
+  // def getLayout() {
+  def getVfisLayout() {
    def result = [:]
     log.debug("ContentController::edit")
     def mdb = mongoService.getMongo().getDB('vfis')
