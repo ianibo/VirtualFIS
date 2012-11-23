@@ -27,8 +27,8 @@ class DepositSpec extends GebReportingSpec {
         // customerName == methodResponse.name.text()
         // customerType == methodResponse.type.text()
 
-        // where:
-        // 1 | 1
+        where:
+        1 | 1
         // customerName  | customerType
         // 'Frank'       | CustomerType.PRIVATE.name()
         // 'Super Duper' | CustomerType.BUSINESS.name()
