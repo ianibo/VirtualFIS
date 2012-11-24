@@ -18,34 +18,20 @@ testUpload()
 def testUpload() {
   SOAPClient client = new SOAPClient("http://localhost:8080/cxfisppsoap/deposit")
 
-  client.send(
-"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:enc="http://dcsf.gov.uk/ISPP/Webservice/encodedTypes">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <enc:uploadRequest>
-         <doc>?</doc>
-         <!--Optional:-->
-         <authoritative>?</authoritative>
-         <!--Optional:-->
-         <owner>?</owner>
-      </enc:uploadRequest>
-   </soapenv:Body>
-</soapenv:Envelope>""")
+  SOAPResponse response = client.send() {
+    envelopeAttributes "xmlns:ispp": "http://dcsf.gov.uk/ISPP/Webservice/encodedTypes"
+    body {
+      'ispp:uploadRequest' {
+        doc('this is the doc string')
+        authoritative(true)
+        owner('this is the owner')
+      }
+    }
+  }
 
+  def methodResponse = response.body
+  println("Call completed ${methodResponse}");
 
-
-  // SOAPResponse response = client.send() {
-  //   envelopeAttributes "xmlns:ispp": "http://dcsf.gov.uk/ISPP/Webservice/encodedTypes"
-  //   body {
-  //     'ispp:uploadRequest' {
-  //       doc('this is the doc string')
-  //       authoritative(true)
-  //       owner('this is the owner')
-  //     }
-  //   }
-  // }
-
-  // def methodResponse = response.body.getCustomersByNameResponse.return
 }
 
 
