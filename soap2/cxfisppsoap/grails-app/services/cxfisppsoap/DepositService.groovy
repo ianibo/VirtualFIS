@@ -1,10 +1,38 @@
 package cxfisppsoap
 
 import java.security.MessageDigest
+import javax.annotation.PostConstruct;
 
 class DepositService {
 
   def mongoService
+
+  @PostConstruct
+  def init() {
+    log.debug("Registering json null encoder")
+    def jsonnull_encoder = new org.bson.Transformer() {
+      Object transform(Object o) {
+        return null
+      }
+    };
+
+    // Attempt to rewrite input field names, substituting . for _
+    def jsonobject_encoder = new org.bson.Transformer() {
+      // Transform the json object into a simple hashmap, where the keys have . replaced with _
+      Object transform(Object o) {
+        // def result = new org.bson.BasicBSONObject()
+        def result = new java.util.HashMap()
+        net.sf.json.JSONObject jo = (net.sf.json.JSONObject) o
+        jo.keys().each { key ->
+          result.put(key.replace('.','_'), jo.get(key))
+        }
+        return result
+      }
+    };
+
+    org.bson.BSON.addEncodingHook(net.sf.json.JSONNull,jsonnull_encoder)
+    org.bson.BSON.addEncodingHook(net.sf.json.JSONObject,jsonobject_encoder)
+  }
 
   def upload(file,authoritative,owner,user) {
 
@@ -23,6 +51,13 @@ class DepositService {
       xs.setForceTopLevelObject( true );
       xs.setRemoveNamespacePrefixFromElements( true );
 
+      file = file.replaceAll('<DC\\.Date\\.','<DC_Date_');
+      file = file.replaceAll('</DC\\.Date\\.','</DC_Date_');
+      file = file.replaceAll('<DC\\.','<DC_');
+      file = file.replaceAll('</DC\\.','</DC_');
+      file = file.replaceAll('<DCTerms\\.','<DCTerms_');
+      file = file.replaceAll('</DCTerms\\.','</DCTerms_');
+
       result.orig = xs.read(file)
 
       log.debug("transformed file: ${result.orig}");
@@ -31,13 +66,13 @@ class DepositService {
 
       if ( result.orig.ProviderDescription ) {
         log.debug("ECD Record");
-        result.'$schema' = "http://purl.org/jsonschema/ecd";
+        result.'__schema' = "http://purl.org/jsonschema/ecd";
         result.docid = "${owner}:${result.orig.ProviderDescription.'DC.Identifier'}"
       }
       else {
         if ( result.orig.ServiceDescription ) {
           log.debug("FSD Record");
-          result.'$schema' = "http://purl.org/jsonschema/fsd";
+          result.'__schema' = "http://purl.org/jsonschema/fsd";
           result.docid = "${owner}:${result.orig.ServiceDescription.'DC.Identifier'}"
         }
         else {
@@ -54,8 +89,6 @@ class DepositService {
         log.debug("Saving...");
         mdb.sourcerecs.save(result);
       }
-
-      log.debug("Converted ${result}");
     }
     catch ( Exception e ) {
       log.error("error",e);
