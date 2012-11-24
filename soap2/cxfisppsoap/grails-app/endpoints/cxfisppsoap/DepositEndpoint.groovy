@@ -16,6 +16,7 @@ class DepositEndpoint {
 
     public UploadResponseT upload( UploadRequestT doc) {
       UploadResponseT resp = new UploadResponseT()
+      log.debug("Got request ${doc} sending response ${resp}");
       return resp
     }
 
