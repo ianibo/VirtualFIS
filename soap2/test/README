@@ -1,0 +1,17 @@
+SoapUI is handy for testing out the interface: http://www.soapui.org/
+
+
+Example Request:
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:enc="http://dcsf.gov.uk/ISPP/Webservice/encodedTypes">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <enc:uploadRequest>
+         <doc>?</doc>
+         <!--Optional:-->
+         <authoritative>?</authoritative>
+         <!--Optional:-->
+         <owner>?</owner>
+      </enc:uploadRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
