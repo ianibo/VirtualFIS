@@ -33,6 +33,9 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+        compile 'net.sf.json-lib:json-lib:2.4'
+        compile 'net.sf.ezmorph:ezmorph:1.0.6'
+        compile "xom:xom:1.2.5"
     }
 
     plugins {
@@ -43,7 +46,7 @@ grails.project.dependency.resolution = {
         compile ":cxf:1.0.7"
         compile ":cxf-client:1.4.7"
         compile ":spring-security-core:1.2.7.3"
-        compild ":spring-security-acl:1.1.1"
+        compile ":spring-security-acl:1.1.1"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
