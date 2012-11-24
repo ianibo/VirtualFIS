@@ -2,9 +2,10 @@ package cxfisppsoap
 
 class DepositService {
 
-  def upload(file,authoritative,owner) {
-    log.debug("upload: ${file}");
+  def upload(file,authoritative,owner,user) {
+    log.debug("upload: file len=${file.length()}");
     log.debug("        ${authoritative}");
     log.debug("        ${owner}");
+    log.debug("        ${user}");
   }
 }

@@ -123,3 +123,12 @@ cxf {
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'vf.VFUser'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'vf.VFUserRole'
 grails.plugins.springsecurity.authority.className = 'vf.VFRole'
+
+
+grails.plugins.springsecurity.useBasicAuth = true
+grails.plugins.springsecurity.basic.realmName = "depositsoap"
+
+grails.plugins.springsecurity.filterChain.chainMap = [
+   '/deposit': 'JOINED_FILTERS,-exceptionTranslationFilter',
+   '/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
+]

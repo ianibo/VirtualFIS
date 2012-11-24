@@ -21,7 +21,7 @@ class VFUser {
 	}
 
 	Set<VFRole> getAuthorities() {
-		VFUserRole.findAllByvfUser(this).collect { it.vfRole } as Set
+		VFUserRole.findAllByVfUser(this).collect { it.vfRole } as Set
 	}
 
 	def beforeInsert() {
