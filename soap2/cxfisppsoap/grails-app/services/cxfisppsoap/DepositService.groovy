@@ -4,6 +4,8 @@ import java.security.MessageDigest
 
 class DepositService {
 
+  def mongoService
+
   def upload(file,authoritative,owner,user) {
 
     def result = [:]
@@ -17,28 +19,43 @@ class DepositService {
       def xs=new net.sf.json.xml.XMLSerializer();
       xs.setSkipNamespaces( false );
       xs.setTrimSpaces( false );
+      xs.setSkipWhitespace( true );
+      xs.setForceTopLevelObject( true );
       xs.setRemoveNamespacePrefixFromElements( true );
 
-      result.json = xs.read(file)
+      result.orig = xs.read(file)
 
-      result.json.cksum = chksum(file);
+      log.debug("transformed file: ${result.orig}");
 
-      if ( result['@schemaLocation']?.startsWith('http://dcsf.gov.uk/XMLSchema/Childcare') ) {
+      result.cksum = chksum(file);
+
+      if ( result.orig.ProviderDescription ) {
         log.debug("ECD Record");
-        result.json.'$schema' = "http://purl.org/jsonschema/ecd";
+        result.'$schema' = "http://purl.org/jsonschema/ecd";
+        result.docid = "${owner}:${result.orig.ProviderDescription.'DC.Identifier'}"
       }
       else {
-        if ( result['@schemaLocation']?.startsWith('http://dcsf.gov.uk/XMLSchema/ServiceDirectory') ) {
+        if ( result.orig.ServiceDescription ) {
           log.debug("FSD Record");
-          result.json.'$schema' = "http://purl.org/jsonschema/fsd";
+          result.'$schema' = "http://purl.org/jsonschema/fsd";
+          result.docid = "${owner}:${result.orig.ServiceDescription.'DC.Identifier'}"
         }
         else {
           log.debug("Unknown type");
         }
       }
 
-      log.debug("Converted ${result.json}");
+      def mdb = mongoService.getMongo().getDB('ispp')
+      def reco_record = mdb.sourcerecs.findOne(docid:result.docid)
+      if ( reco_record ) {
+        log.debug("Replace existing record");
+      }
+      else {
+        log.debug("Saving...");
+        mdb.sourcerecs.save(result);
+      }
 
+      log.debug("Converted ${result}");
     }
     catch ( Exception e ) {
       log.error("error",e);

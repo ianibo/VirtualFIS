@@ -37,6 +37,12 @@ grails.project.dependency.resolution = {
         compile group:'net.sf.json-lib', name:'json-lib', version:'2.4', classifier:'jdk15'
         compile 'net.sf.ezmorph:ezmorph:1.0.6'
         compile "xom:xom:1.2.5"
+
+        runtime 'com.gmongo:gmongo:1.0'
+
+        runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.1.0'
+        runtime 'org.elasticsearch:elasticsearch:0.19.9'
+
     }
 
     plugins {
