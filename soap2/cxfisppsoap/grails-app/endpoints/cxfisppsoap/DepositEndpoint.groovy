@@ -12,16 +12,22 @@ import javax.jws.WebService
             portName = 'ISPPPortTypePort')
 class DepositEndpoint {
 
-    static expose = EndpointType.JAX_WS_WSDL
-    static wsdl = 'resources/deposit.wsdl'
+  def depositService
 
-    public UploadResponseT upload( UploadRequestT doc) {
-      UploadResponseT resp = new UploadResponseT()
-      resp.status="OK"
-      resp.addinfo=""
-      resp.location=""
-      println("Got request ${doc} sending response ${resp}");
-      return resp
-    }
+  static expose = EndpointType.JAX_WS_WSDL
+  static wsdl = 'resources/deposit.wsdl'
+
+  public UploadResponseT upload( UploadRequestT doc) {
+
+    depositService.upload(doc.doc, doc.authoritative, doc.owner);
+
+    UploadResponseT resp = new UploadResponseT()
+    resp.status="OK"
+    resp.addinfo=""
+    resp.location=""
+
+    println("Got request ${doc} sending response ${resp}");
+    return resp
+  }
 
 }
