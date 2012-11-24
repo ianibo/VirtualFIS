@@ -28,12 +28,13 @@ grails.project.dependency.resolution = {
         // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
+        mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
+
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-        compile 'net.sf.json-lib:json-lib:2.4'
+        compile group:'net.sf.json-lib', name:'json-lib', version:'2.4', classifier:'jdk15'
         compile 'net.sf.ezmorph:ezmorph:1.0.6'
         compile "xom:xom:1.2.5"
     }
