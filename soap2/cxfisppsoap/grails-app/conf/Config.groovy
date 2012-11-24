@@ -118,3 +118,8 @@ cxf {
   }
 }
 
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'vf.VFUser'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'vf.VFUserRole'
+grails.plugins.springsecurity.authority.className = 'vf.VFRole'

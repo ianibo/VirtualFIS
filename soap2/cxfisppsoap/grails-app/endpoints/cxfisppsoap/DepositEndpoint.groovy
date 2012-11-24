@@ -19,6 +19,15 @@ class DepositEndpoint {
 
   public UploadResponseT upload( UploadRequestT doc) {
 
+    log.debug("upload endpoint");
+
+    // MessageContext ctx = (MessageContext) context.getMessageContext(); 
+    // List recv = (List)ctx.get("RECV_RESULTS"); 
+    // WSHandlerResult wsResult = (WSHandlerResult)recv.get(0); 
+    // WSSecurityEngineResult wsseResult = (WSSecurityEngineResult)wsResult.getResults().get(0); 
+    // String login = wsseResult.getPrincipal().getName(); 
+    // System.out.println("login = " + login); 
+
     depositService.upload(doc.doc, doc.authoritative, doc.owner);
 
     UploadResponseT resp = new UploadResponseT()

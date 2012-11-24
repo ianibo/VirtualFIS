@@ -40,6 +40,11 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.8.0"
         runtime ":resources:1.1.6"
 
+        compile ":cxf:1.0.7"
+        compile ":cxf-client:1.4.7"
+        compile ":spring-security-core:1.2.7.3"
+        compild ":spring-security-acl:1.1.1"
+
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
         //runtime ":cached-resources:1.0"
