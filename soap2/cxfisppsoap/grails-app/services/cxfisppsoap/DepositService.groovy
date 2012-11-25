@@ -2,6 +2,9 @@ package cxfisppsoap
 
 import java.security.MessageDigest
 import javax.annotation.PostConstruct;
+import net.sf.json.JSON
+
+// http://www.xml.com/pub/a/2006/05/31/converting-between-xml-and-json.html
 
 class DepositService {
 
@@ -20,12 +23,20 @@ class DepositService {
     def jsonobject_encoder = new org.bson.Transformer() {
       // Transform the json object into a simple hashmap, where the keys have . replaced with _
       Object transform(Object o) {
+        def result;
         // def result = new org.bson.BasicBSONObject()
-        def result = new java.util.HashMap()
-        net.sf.json.JSONObject jo = (net.sf.json.JSONObject) o
-        jo.keys().each { key ->
-          result.put(key.replace('.','_'), jo.get(key))
+        if ( o instanceof net.sf.json.JSONObject ) {
+          result = new java.util.HashMap()
+          net.sf.json.JSONObject jo = (net.sf.json.JSONObject) o
+          jo.keys().each { key ->
+            println("Set ${key} = ${jo.get(key)}");
+            result.put(key.replace('.','_'), org.bson.BSON.applyEncodingHooks(jo.get(key)))
+          }
         }
+        else {
+          result = o
+        }
+
         return result
       }
     };
@@ -58,22 +69,23 @@ class DepositService {
       file = file.replaceAll('<DCTerms\\.','<DCTerms_');
       file = file.replaceAll('</DCTerms\\.','</DCTerms_');
 
-      result.orig = xs.read(file)
+      JSON j = xs.read(file)
+      result.orig = j
 
-      log.debug("transformed file: ${result.orig}");
-
+      log.debug(j.toString());
+      result.owner = owner;
       result.cksum = chksum(file);
 
       if ( result.orig.ProviderDescription ) {
         log.debug("ECD Record");
         result.'__schema' = "http://purl.org/jsonschema/ecd";
-        result.docid = "${owner}:${result.orig.ProviderDescription.'DC.Identifier'}"
+        result.docid = "${owner}:${j.ProviderDescription.'DC_Identifier'}"
       }
       else {
         if ( result.orig.ServiceDescription ) {
           log.debug("FSD Record");
           result.'__schema' = "http://purl.org/jsonschema/fsd";
-          result.docid = "${owner}:${result.orig.ServiceDescription.'DC.Identifier'}"
+          result.docid = "${owner}:${j.ServiceDescription.'DC_Identifier'}"
         }
         else {
           log.debug("Unknown type");
@@ -82,13 +94,14 @@ class DepositService {
 
       def mdb = mongoService.getMongo().getDB('ispp')
       def reco_record = mdb.sourcerecs.findOne(docid:result.docid)
+
       if ( reco_record ) {
         log.debug("Replace existing record");
+        mdb.sourcerecs.remove(reco_record)
       }
-      else {
-        log.debug("Saving...");
-        mdb.sourcerecs.save(result);
-      }
+
+      log.debug("Saving...");
+      mdb.sourcerecs.save(result);
     }
     catch ( Exception e ) {
       log.error("error",e);
