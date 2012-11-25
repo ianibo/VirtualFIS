@@ -56,10 +56,10 @@ class DepositService {
 
     try {
       def xs=new net.sf.json.xml.XMLSerializer();
-      xs.setSkipNamespaces( false );
-      xs.setTrimSpaces( false );
-      xs.setSkipWhitespace( true );
-      xs.setForceTopLevelObject( true );
+      xs.setSkipNamespaces( true );
+      xs.setTrimSpaces( true );
+      // xs.setSkipWhitespace( true ); - This causes many data elements to end up null
+      // xs.setForceTopLevelObject( true );
       xs.setRemoveNamespacePrefixFromElements( true );
 
       file = file.replaceAll('<DC\\.Date\\.','<DC_Date_');
