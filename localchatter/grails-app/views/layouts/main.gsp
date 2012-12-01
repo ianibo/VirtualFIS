@@ -22,7 +22,7 @@
           <div class="span4">
             <!-- Logo and site link -->
             <div class="logo">
-              <h1><a href="http://www.localchatter.com/">Local Chatter<span class="color">.</span></a></h1>
+              <h1><a href="http://www.localchatter.com/">LocalChatter<span class="color">.</span>Info</a></h1>
               <p>Helping Connect public information with local commiunities</p>
             </div>
           </div>
