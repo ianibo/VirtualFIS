@@ -29,7 +29,6 @@ class DepositService {
           result = new java.util.HashMap()
           net.sf.json.JSONObject jo = (net.sf.json.JSONObject) o
           jo.keys().each { key ->
-            println("Set ${key} = ${jo.get(key)}");
             result.put(key.replace('.','_'), org.bson.BSON.applyEncodingHooks(jo.get(key)))
           }
         }
@@ -59,7 +58,7 @@ class DepositService {
       xs.setSkipNamespaces( true );
       xs.setTrimSpaces( true );
       // xs.setSkipWhitespace( true ); - This causes many data elements to end up null
-      // xs.setForceTopLevelObject( true );
+      xs.setForceTopLevelObject( true );
       xs.setRemoveNamespacePrefixFromElements( true );
 
       file = file.replaceAll('<DC\\.Date\\.','<DC_Date_');
@@ -92,7 +91,9 @@ class DepositService {
         }
       }
 
-      def mdb = mongoService.getMongo().getDB('ispp')
+      log.debug("looking for docid ${result.docid}");
+
+      def mdb = mongoService.getMongo().getDB('localchatter')
       def reco_record = mdb.sourcerecs.findOne(docid:result.docid)
 
       if ( reco_record ) {
@@ -100,7 +101,7 @@ class DepositService {
         mdb.sourcerecs.remove(reco_record)
       }
 
-      log.debug("Saving...");
+      // log.debug("Saving...");
       mdb.sourcerecs.save(result);
     }
     catch ( Exception e ) {
