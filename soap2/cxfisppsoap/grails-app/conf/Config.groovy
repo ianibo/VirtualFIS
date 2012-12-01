@@ -110,7 +110,7 @@ cxf {
   }
 
   servlets = [
-    CxfServlet: '/*'
+    CxfServlet: '/soap/*'
   ]
 
   endpoint {
@@ -129,6 +129,6 @@ grails.plugins.springsecurity.useBasicAuth = true
 grails.plugins.springsecurity.basic.realmName = "depositsoap"
 
 grails.plugins.springsecurity.filterChain.chainMap = [
-   '/deposit': 'JOINED_FILTERS,-exceptionTranslationFilter',
+   '/soap/deposit': 'JOINED_FILTERS,-exceptionTranslationFilter',
    '/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
 ]
