@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+  <jaxws:endpoint id="DepositEndpoint" implementor="cxfisppsoap.DepositEndpoint"/>
+
+
+
+    <!--
+  jaxws:endpoint id="DepositEndpoint" implementor="cxfisppsoap.DepositEndpoint"
+    endpointName="e:DespositEndpoint"
+    serviceName="s:ISPPDepositImplService"
+    xmlns:e="http://service.jaxws.cxf.apache.org/endpoint"
+    xmlns:s="http://service.jaxws.cxf.apache.org/service"
+    address="http://localhost:8080/test"
+    -->
+
+</beans>
+
