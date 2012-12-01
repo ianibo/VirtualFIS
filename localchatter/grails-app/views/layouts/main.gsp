@@ -9,10 +9,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><g:layoutTitle default="Grails"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'style.css')}" type="text/css">
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'blue.css')}" type="text/css">
     <g:layoutHead/>
     <r:layoutResources />
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'style.css')}" type="text/css">
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'blue.css')}" type="text/css">
   </head>
   <body>
 
@@ -64,11 +64,10 @@
           <div class="span4">
              <!-- widget 2 -->
              <div class="widget">
-                <h4>Recent Posts</h4>
+                <h4>Links</h4>
                    <ul>
-                      <li><a href="#">Sed eu leo orci, in rhoncus puru condimentum gravida metus</a></li>
-                      <li><a href="#">Etiam at in rhoncus puru nulla ipsum, in rhoncus purus</a></li>
-                      <li><a href="#">Fusce vel magnain rhoncus puru faucibus felis dapibus facilisis</a></li>
+                      <li><a href="#">For local authorities and information providers</a></li>
+                      <li><a href="#">For record owners</a></li>
                    </ul>
              </div>
           </div>
@@ -78,18 +77,13 @@
              <div class="widget">
                 <h4>Categories</h4>
                 <ul>
-                   <li><a href="#">Condimentum</a></li>
-                   <li><a href="#">Etiam at</a></li>
-                   <li><a href="#">Fusce vel</a></li>
-                   <li><a href="#">Vivamus</a></li>
-                   <li><a href="#">Pellentesque</a></li>
+                   <li><a href="#">Global Search</a></li>
+                   <li><a href="#">Childcare Only</a></li>
                 </ul>
              </div>
           </div>
       
-          <div class="span12"><hr /><p class="copy">
-          <!-- Copyright information. You can remove my site link. -->
-               Copyright &copy; <a href="#">Your Site</a> | Designed by <a href="http://responsivewebinc.com">Responsive Web Design</a></p></div>
+          <div class="span12"><hr /><p class="copy"> Copyright &copy; <a href="#">Knowledge Integration Ltd</a></p></div>
         </div>
       </div>
     </footer>               

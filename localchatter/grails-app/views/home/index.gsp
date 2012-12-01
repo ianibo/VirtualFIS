@@ -13,8 +13,7 @@
           <!-- Navigation links starts here -->
           <ul class="nav">
             <!-- Main menu -->
-            <li><a href="index.html">Home #1</a></li>
-            <li><a href="index1.html">Home #2</a></li>
+            <li><g:link controller="home" action="index">Home</g:link></li>
           </ul>
         </div>
       </div>
@@ -24,8 +23,21 @@
   <div class="content">
     <div class="container">
       <div class="row">
-        <div class="span12">
-          This is content
+        <div class="span2">
+        </div>
+        <div class="span8">
+          <div style="text-align:center;">
+            <g:form action="index" method="get">
+              <h1>Search</h1>
+              <p>Search the localchatter database for resources near you. Just enter your postcode to find everything near you,
+                 or add keywords to look for specific kinds of information, EG childcare</p>
+              <input placeholder="Enter your postcode..." type="text" />
+              <input placeholder="Keywords, eg Childcare..." type="text" /><br/>
+              <button class='btn'>Go!</button>
+            </g:form>
+          </div>
+        </div>
+        <div class="span2">
         </div>
       </div>
     </div>
