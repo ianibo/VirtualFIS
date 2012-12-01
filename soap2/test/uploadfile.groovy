@@ -17,7 +17,7 @@ testUpload(args[0])
 
 
 def testUpload(filename) {
-  SOAPClient client = new SOAPClient("http://localhost:8080/cxfisppsoap/deposit")
+  SOAPClient client = new SOAPClient("http://localhost:8080/api/soap/deposit")
   client.authorization = new HTTPBasicAuthorization("test", "tset")
 
   def upload_file = new File(filename)

@@ -126,9 +126,11 @@ grails.plugins.springsecurity.authority.className = 'vf.VFRole'
 
 
 grails.plugins.springsecurity.useBasicAuth = true
-grails.plugins.springsecurity.basic.realmName = "depositsoap"
+grails.plugins.springsecurity.basic.realmName = "localchatterapi"
 
-grails.plugins.springsecurity.filterChain.chainMap = [
-   '/soap/deposit': 'JOINED_FILTERS,-exceptionTranslationFilter',
-   '/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
-]
+//grails.plugins.springsecurity.filterChain.chainMap = [
+//   '/**': 'JOINED_FILTERS,-exceptionTranslationFilter',
+   // '/soap/deposit': 'JOINED_FILTERS,-exceptionTranslationFilter',
+   // '/rest/**': 'JOINED_FILTERS,-exceptionTranslationFilter'
+   // '/rest/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
+//]

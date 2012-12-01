@@ -16,7 +16,7 @@ testUpload()
 
 
 def testUpload() {
-  SOAPClient client = new SOAPClient("http://localhost:8080/cxfisppsoap/deposit")
+  SOAPClient client = new SOAPClient("http://localhost:8080/api/soap/deposit")
 
   SOAPResponse response = client.send() {
     envelopeAttributes "xmlns:ispp": "http://dcsf.gov.uk/ISPP/Webservice/encodedTypes"
