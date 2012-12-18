@@ -70,7 +70,7 @@ def go(db) {
     }
   }
 
-  def max_auth_count = 5
+  def max_auth_count = 50
 
   db.ofstedauth.find().sort(lastCheck:1).each { authority_info ->
   
@@ -79,6 +79,7 @@ def go(db) {
       def pageno = 0;
       def rectype = "16";
       def moredata = true
+
       println("Processing ${authority_info.authcode} last checked on ${authority_info.lastCheck}");
   
       while ( ( moredata ) && ( pageno < 1000 ) ) {
@@ -115,7 +116,20 @@ def go(db) {
           moredata = false;
         }
       }
+
+      // Mark all records with a last seen date < authority_info.lastCheck as deleted
+      // result.lastSeen
+      db.ofsted.find(authority:authority_info.authcode,lastSeen:['$lt':authority_info.lastCheck]) { deleted_record ->
+        println("Processing deleted record...");
+        deleted_record.status='deleted';
+        deleted_record.lastModified = System.currentTimeMillis();
+        db.ofsted.save(deleted);
+      }
   
+      authority_info.lastCheck = System.currentTimeMillis();
+      db.ofstedauth.save(authority_info);
+      max_auth_count--;
+
       try {
         synchronized(this) {
           Thread.sleep(1000);
@@ -124,9 +138,6 @@ def go(db) {
       catch ( Exception e ) {
       }
   
-      authority_info.lastCheck = System.currentTimeMillis();
-      db.ofstedauth.save(authority_info);
-      max_auth_count--;
     }
   }
 
@@ -231,6 +242,7 @@ def processProvider(provurl,db,authid) {
     result.contact = contact_number_components
     result.postcode = addr_components[addr_components.size()-1]
     result.lastModified = System.currentTimeMillis();
+    result.lastSeen = System.currentTimeMillis();
 
     // println(result);
 
