@@ -43,7 +43,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.1.0'
         runtime 'org.elasticsearch:elasticsearch:0.19.9'
-
+        runtime 'mysql:mysql-connector-java:5.1.21'
     }
 
     plugins {
@@ -56,6 +56,7 @@ grails.project.dependency.resolution = {
         compile ":spring-security-core:1.2.7.3"
         compile ":spring-security-acl:1.1.1"
 
+
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
         //runtime ":cached-resources:1.0"
@@ -65,6 +66,6 @@ grails.project.dependency.resolution = {
 
         runtime ":database-migration:1.1"
 
-        compile ':cache:1.0.0'
+        // compile ':cache:1.0.0'
     }
 }
