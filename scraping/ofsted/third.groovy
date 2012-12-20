@@ -119,7 +119,7 @@ def go(db) {
 
       // Mark all records with a last seen date < authority_info.lastCheck as deleted
       // result.lastSeen
-      db.ofsted.find(authority:authority_info.authcode,lastSeen:['$lt':authority_info.lastCheck]) { deleted_record ->
+      db.ofsted.find( [ authority:authority_info.authcode , lastSeen : [ $lt : authority_info.lastCheck ] ] ).each { deleted_record ->
         println("Processing deleted record...");
         deleted_record.status='deleted';
         deleted_record.lastModified = System.currentTimeMillis();
