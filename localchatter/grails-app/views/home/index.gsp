@@ -1,6 +1,7 @@
 <html>
    <head>
       <meta name="layout" content="main"/>
+      <title>LocalChatter.info - Home</title>
       <r:require modules="bootstrap"/>
    </head>
 <body>

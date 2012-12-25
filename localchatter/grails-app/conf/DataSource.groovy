@@ -25,18 +25,22 @@ environments {
     }
     production {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
+           dbCreate = "update"
+            driverClassName = "com.mysql.jdbc.Driver"
+            username = "localchatter"
+            password = "localchatter"
+            url = "jdbc:mysql://localhost/localchatterprod?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8"
             pooled = true
+            dialect=org.hibernate.dialect.MySQL5Dialect
             properties {
-               maxActive = -1
-               minEvictableIdleTimeMillis=1800000
-               timeBetweenEvictionRunsMillis=1800000
-               numTestsPerEvictionRun=3
-               testOnBorrow=true
-               testWhileIdle=true
-               testOnReturn=true
-               validationQuery="SELECT 1"
+                maxActive = -1
+                minEvictableIdleTimeMillis=1800000
+                timeBetweenEvictionRunsMillis=1800000
+                numTestsPerEvictionRun=3
+                testOnBorrow=true
+                testWhileIdle=true
+                testOnReturn=true
+                validationQuery="select 1"
             }
         }
     }

@@ -1,0 +1,20 @@
+Change Log:
+
+Version 2.5:
+------------
+Plugins Update.
+OnHover navigation changed to OnClick Navigation.
+Brown Color Enhanced. 
+
+
+Version 2.0:
+------------
+Updated to Bootstrap 2.2.0.
+22 New Pages.
+Parallax Content Slider.
+
+
+
+Version 1.0:
+------------
+Initial Release.

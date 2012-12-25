@@ -1,6 +1,6 @@
 body{
 font-family: "PT Sans", Arial, Helvetica, sans-serif;
-background:#fff url('../img/body-back.png') repeat;
+background:#fff url('../images/body-back.png') repeat;
 font-size:13px;
 line-height:25px;
 text-shadow:none !important;
@@ -26,7 +26,7 @@ height:0px;
 .bor{
 height:20px;
 margin:20px 0px 15px 0px;
-background:url('../img/dot.png') repeat-x;
+background:url('../images/dot.png') repeat-x;
 }
 
 .center{
@@ -81,7 +81,7 @@ border-top:0px;
 
 .well{
 padding:5px 10px;
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 }
 
 /* Image alignment for WP */
@@ -112,7 +112,7 @@ clear: both;
 header{
 padding:25px 0px 0px 0px;
 border-bottom:1px solid #ddd;
-background:url('../img/header-back.png') repeat;
+background:url('../images/header-back.png') repeat;
 }
 
 header h1 a, header h1 a:visited, header h1 a:hover{
@@ -626,12 +626,12 @@ margin:0px;
 font-size:20px;
 line-height:35px;
 color:#777;
-background:url('../img/dot.png') left center repeat-x;
+background:url('../images/dot.png') left center repeat-x;
 background-size:4px 20px;
 }
 
 .hero h3 span{
-background:#fff url('../img/body-back.png') repeat;
+background:#fff url('../images/body-back.png') repeat;
 padding-right:8px;
 }
 
@@ -691,7 +691,7 @@ margin:10px 0px;
 width:190px;
 height:190px;
 margin:10px auto;
-background:#eee url("../img/header-back.png") repeat;
+background:#eee url("../images/header-back.png") repeat;
 border-radius:250px;
 border:5px solid #fff;
 box-shadow:0px 0px 3px #aaa;
@@ -745,7 +745,7 @@ padding:5px 8px;
 color:#555;
 text-transform:uppercase;
 font-size:12px;
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 }
 
 .blog .meta a, .blog .meta a:visited{
@@ -906,7 +906,7 @@ border-bottom:1px solid #eee;
 /* Sidebar */
 
 .sidebar{
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 border:1px solid #e1e1e1;
 border-radius:8px;
 padding:8px;
@@ -1166,7 +1166,7 @@ padding:0px;
 }
 
 #portfolio .pcap{
-background:#eee url("../img/header-back.png") repeat;
+background:#eee url("../images/header-back.png") repeat;
 border:1px solid #eee;
 padding:3px 0px;
 }
@@ -1235,7 +1235,7 @@ color:#fff;
 
 .error-page{
 padding:20px 20px;
-background:url('../img/header-back.png') repeat;
+background:url('../images/header-back.png') repeat;
 border:1px solid #ddd;
 border-radius:10px;
 color:#666;
@@ -1263,7 +1263,7 @@ margin:0 auto;
 .csoon-page{
 margin:80px 0px;
 padding:20px 20px;
-background:url('../img/header-back.png') repeat;
+background:url('../images/header-back.png') repeat;
 border:1px solid #ddd;
 border-radius:10px;
 color:#666;
@@ -1333,7 +1333,7 @@ font-size:12px;
 
 .logreg{
 padding:5px 10px;
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 border:1px solid #ddd;
 border-radius:10px;
 box-shadow:inset 0px 0px 3px #eee;
@@ -1429,7 +1429,7 @@ color:#fff;
 }
 
 .pricel .phead-bottom{
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 border-left:1px solid #ddd;
 border-right:1px solid #ddd;
 border-bottom:1px solid #ddd;
@@ -1454,7 +1454,7 @@ font-weight:normal;
 }
 
 .pricel .pbutton{
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 border:1px solid #ddd;
 padding:10px 0px 10px 0px;
 color:#777;
@@ -1502,7 +1502,7 @@ margin-right:15px;
 .redetails{
 width:53%;
 float:left;
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 padding:8px 10px;
 border:1px solid #ddd;
 border-radius:10px;
@@ -1529,7 +1529,7 @@ margin-bottom:20px;
 margin-right:10px;
 width:43.5%;
 float:left;
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 }
 
 .rbad{
@@ -1540,7 +1540,7 @@ margin-top:10px;
 margin-bottom:20px;
 width:43.5%;
 float:left;
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 }
 
 .rgood i{
@@ -1560,7 +1560,7 @@ border-bottom:1px solid #eee;
 }
 
 .rbox{
-background:#eee url('../img/header-back.png') repeat;
+background:#eee url('../images/header-back.png') repeat;
 padding:8px 10px;
 border:1px solid #ddd;
 border-radius:10px;
@@ -1607,7 +1607,7 @@ margin-bottom:10px;
 .pdetails{
 padding:10px 10px;
 border-radius:0px;
-background:#fff url('../img/header-back.png') repeat;
+background:#fff url('../images/header-back.png') repeat;
 border-radius:10px;
 box-shadow:inset 0px 0px 3px #eee;
 margin-top:20px;
@@ -1707,7 +1707,7 @@ border:1px solid #eee;
 }
 
 .scontact{
-background:#fff url('../img/header-back.png') repeat;
+background:#fff url('../images/header-back.png') repeat;
 padding:10px 15px;
 border-radius:10px;
 border:1px solid #eee;
@@ -1886,7 +1886,7 @@ margin:10px 14px;
 /* Clients page */
 
 .cclient{
-background:#eee url("../img/header-back.png") repeat;
+background:#eee url("../images/header-back.png") repeat;
 border:1px solid #eee;
 border-radius:10px;
 margin:10px 0px;
@@ -1910,7 +1910,7 @@ line-height:22px;
 /* Footer */
 
 footer{
-background:#222 url('../img/fback.png') repeat;
+background:#222 url('../images/fback.png') repeat;
 margin-top:10px;
 font-size:13px;
 padding-top:10px;
