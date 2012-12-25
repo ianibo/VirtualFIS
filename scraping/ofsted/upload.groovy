@@ -68,7 +68,7 @@ def go(db, ofs_pass, authcode) {
       db.config.save(maxts);
     }
 
-    def dpp = new RESTClient('http://aggregator.openfamilyservices.org.uk/')
+    def dpp = new RESTClient('http://localhost/api/rest/deposit')
 
     // Add preemtive auth
     dpp.client.addRequestInterceptor( new HttpRequestInterceptor() {
@@ -79,15 +79,15 @@ def go(db, ofs_pass, authcode) {
       }
     })
 
-    // dpp.auth.basic 'ofs', 'ofs_upload_6652'
+    dpp.auth.basic 'test', 'tset'
 
     def ctr = 0;
     db.ofsted.find( [ lastModified : [ $gt : maxts.value ], authority:authcode ] ).sort(lastModified:1).limit(max_batch_size).each { rec ->
       maxts.value = rec.lastModified
       def ecdrec = genecd(rec);
-      if ( !alreadyPresent(rec.ofstedId,dpp)) {
+      // if ( !alreadyPresent(rec.ofstedId,dpp)) {
         post(ecdrec,dpp,rec,snac_info.snac);
-      }
+      // }
       println("processed[${ctr++}], ${authcode} records, maxts.value updated to ${rec.lastModified}");
     }
 

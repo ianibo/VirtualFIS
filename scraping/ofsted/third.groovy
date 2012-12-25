@@ -14,7 +14,7 @@ def db = mongo.getDB("ofsted_crawl_db")
 
 try {
   synchronized(this) {
-    Thread.sleep(5000);
+    Thread.sleep(4000);
   }
 }
 catch ( Exception e ) {
@@ -70,9 +70,11 @@ def go(db) {
     }
   }
 
-  def max_auth_count = 5
+  def max_auth_count = 50
 
   db.ofstedauth.find().sort(lastCheck:1).each { authority_info ->
+  
+    println("Processing authority ${authority_info}");
   
     if ( max_auth_count > 0 ) {
   
@@ -118,7 +120,7 @@ def go(db) {
   
       try {
         synchronized(this) {
-          Thread.sleep(1000);
+          Thread.sleep(500);
         }
       }
       catch ( Exception e ) {
@@ -147,6 +149,7 @@ def processProvider(provurl,db,authid) {
   if ( details != null ) {
 
     def ofsted_id = details.p[0].strong.text();
+
     def result = db.ofsted.findOne(ofstedId:ofsted_id)
     if ( result == null ) {
       result=[:]
