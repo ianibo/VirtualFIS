@@ -107,7 +107,7 @@ def geocode(postcode, gazcache_db) {
                           lastSeen: System.currentTimeMillis(),
                           created: System.currentTimeMillis() ]
 
-      gazcache_db.save(cache_entry);
+      gazcache_db.entries.save(cache_entry);
 
       // json.results[0].address_components.each { ac ->
       //   def i = 0
