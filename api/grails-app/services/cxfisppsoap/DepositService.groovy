@@ -9,6 +9,7 @@ import net.sf.json.JSON
 class DepositService {
 
   def mongoService
+  def recordCanonicalisationService
 
   @PostConstruct
   def init() {
@@ -74,6 +75,7 @@ class DepositService {
       log.debug(j.toString());
       result.owner = owner;
       result.cksum = chksum(file);
+      result.timestamp = System.currentTimeMillis();
 
       if ( result.orig.ProviderDescription ) {
         log.debug("ECD Record");
