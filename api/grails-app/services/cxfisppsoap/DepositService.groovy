@@ -114,16 +114,16 @@ class DepositService {
       // Index the canonical record
       if ( canonical_record ) {
         log.debug("process canonical record");
-        // org.elasticsearch.groovy.node.GNode esnode = elasticSearchService.getNode()
-        // org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
+        org.elasticsearch.groovy.node.GNode esnode = elasticSearchService.getESNode()
+        org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
 
-        // def future = esclient.index {
-        //   index "localchatter"
-        //   type "resource"
-        //   id course_as_pojo['_id'].toString()
-        //   source course_as_pojo
-        // }
-        // log.debug("Indexed respidx:${future.response.index}/resptp:${future.response.type}/respid:${future.response.id}")
+        def future = esclient.index {
+          index "localchatter"
+          type "resource"
+          id result.docid
+          source canonical_record
+        }
+        log.debug("Indexed respidx:${future.response.index}/resptp:${future.response.type}/respid:${future.response.id}")
       }
       
     }
