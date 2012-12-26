@@ -28,18 +28,18 @@ def snac_lookups = [ [ofstedcode:"380",name:"Bradford",snac:"00CX"], [ofstedcode
 def snac_map = [:]
 
 snac_lookups.each { it ->
-  def snac_map[it.ofstedcode] = it;
+  snac_map[it.ofstedcode] = it;
 }
 
-def ofs_pass = ""
+def rest_upload_pass = ""
 System.in.withReader {
   print 'ofs pass:'
-  ofs_pass = it.readLine()
+  rest_upload_pass = it.readLine()
 }
   
 codes_to_process.each { code ->
   println("Process ${code}");
-  go(db,ofs_pass,"${code}");
+  go(db,rest_upload_pass,"${code}", snac_map);
 }
 
 // println 'Grab page...'
@@ -47,7 +47,7 @@ codes_to_process.each { code ->
 
 mongo.close();
 
-def go(db, ofs_pass, authcode) {
+def go(db, rest_upload_pass, authcode, snac_map) {
   def max_batch_size = 10000;
   def maxts = db.config.findOne(propname="${authcode}-maxts".toString())
 
@@ -68,18 +68,19 @@ def go(db, ofs_pass, authcode) {
       db.config.save(maxts);
     }
 
-    def dpp = new RESTClient('http://localhost/api/rest/deposit')
+    // def dpp = new RESTClient('http://localhost:8080/api/rest/deposit')
+    def dpp = new RESTClient('http://localhost:8080')
 
     // Add preemtive auth
     dpp.client.addRequestInterceptor( new HttpRequestInterceptor() {
       void process(HttpRequest httpRequest, HttpContext httpContext) {
-        String auth = "admin:${ofs_pass}"
+        String auth = "admin:${rest_upload_pass}"
         String enc_auth = auth.bytes.encodeBase64().toString()
         httpRequest.addHeader('Authorization', 'Basic ' + enc_auth);
       }
     })
 
-    dpp.auth.basic 'test', 'tset'
+    // dpp.auth.basic 'test', 'tset'
 
     def ctr = 0;
     db.ofsted.find( [ lastModified : [ $gt : maxts.value ], authority:authcode ] ).sort(lastModified:1).limit(max_batch_size).each { rec ->
@@ -196,11 +197,11 @@ def post(rec,
          authority) {
 
   byte[] rec_as_bytes = rec.getBytes('UTF-8')
-  println("Attempting post... [${rec_as_bytes.length}]");
+  println("Attempting post... [${rec_as_bytes.length}] to ${target_service}");
   try {
     target_service.request(POST) { request ->
       requestContentType = 'multipart/form-data'
-      uri.path='dpp/provider/upload'
+      uri.path='/api/rest/deposit'
       def multipart_entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
       multipart_entity.addPart("owner", new StringBody( 'ofsted', 'text/plain', Charset.forName('UTF-8')))
       def uploaded_file_body_part = new org.apache.http.entity.mime.content.ByteArrayBody(rec_as_bytes, 'text/xml', 'filename.xml')

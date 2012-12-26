@@ -13,11 +13,11 @@ class RestController {
   def springSecurityService
   def depositService
 
-  // Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def index() { 
   }
 
-  // Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
+  @Secured(['ROLE_USER', 'IS_AUTHENTICATED_FULLY'])
   def deposit() {
     log.debug("Deposit");
     if ( request.method == "POST" ) {
