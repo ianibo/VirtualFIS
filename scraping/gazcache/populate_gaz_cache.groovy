@@ -52,7 +52,7 @@ def go(crawl_db, gazcache_db) {
       def postcode = address[address.size()-1]
       println("Candidate postcode: ${postcode}");
 
-      def gaz_entry = gazcache_db.entries.find(postcode:postcode) 
+      def gaz_entry = gazcache_db.entries.find(address:postcode) 
       if ( gaz_entry ) {
         gaz_cache_hits++;
       }
