@@ -17,8 +17,8 @@ class BootStrap {
         // def newpass = java.util.UUID.randomUUID().toString()
         // log.error("No admin user found, create with temporary password ${newpass}")
         adminUser = new VFUser(
-                        username: 'test',
-                        password: 'tset',
+                        username: 'admin',
+                        password: 'changeme',
                         email: 'admin@localhost',
                         enabled: true).save(failOnError: true)
       }
