@@ -3,6 +3,8 @@ package api
 import org.elasticsearch.groovy.node.GNode
 import org.elasticsearch.groovy.node.GNodeBuilder
 import static org.elasticsearch.groovy.node.GNodeBuilder.*
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+
 
 class ElasticSearchService {
 
@@ -12,9 +14,12 @@ class ElasticSearchService {
 
   @javax.annotation.PostConstruct
   def init() {
+
+    org.elasticsearch.groovy.common.xcontent.GXContentBuilder.rootResolveStrategy = Closure.DELEGATE_FIRST; 
+
     log.debug("Init");
 
-    def nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
+    GNodeBuilder nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
 
     log.debug("Construct node settings");
 
@@ -28,16 +33,6 @@ class ElasticSearchService {
       http {
         enabled = false
       }
-      // discovery {
-      //   zen {
-      //     minimum_master_nodes=1
-      //     ping {
-      //       unicast {
-      //         hosts = [ "localhost" ] 
-      //       }
-      //     }
-      //   }
-      // }
     }
 
     log.debug("Constructing node...");
@@ -53,8 +48,8 @@ class ElasticSearchService {
     log.debug("Destroy completed");
   }
 
-  def getNode() {
-    log.debug("getNode()");
+  def getESNode() {
+    log.debug("getESNode()");
     gNode
   }
 

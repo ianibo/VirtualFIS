@@ -4,7 +4,7 @@ class RecordCanonicalisationService {
 
 
   def process(record) {
-    log.debug("Process..  schema: ${record.?__schema}");
+    log.debug("Process..  schema: ${record?.__schema}");
 
     def result = null;
 
@@ -31,8 +31,17 @@ class RecordCanonicalisationService {
   def processEcd(record) {
     def result=[:]
     result.docid = record.docid
-    // result.title = 
-    // result.description = 
+    result.title = record.orig?.ProviderDescription?.DC_Title
+    result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text'
+    result.postcode = record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode
+    result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
+    result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
+
+    if ( record.orig?.ProviderDescription?.RegistrationDetails ) {
+      result.registeredServiceDetails = [:]
+      result.registeredServiceDetails.registrationDate = record.orig?.ProviderDescription?.RegistrationDetails.RegistrationDate
+    }
+
     result
   }
 

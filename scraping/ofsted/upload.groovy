@@ -49,7 +49,7 @@ mongo.close();
 
 def go(db, rest_upload_pass, authcode, snac_map) {
   def max_batch_size = 10000;
-  def maxts = db.config.findOne(propname="${authcode}-maxts".toString())
+  def maxts = db.config.findOne(propname:"${authcode}-maxts")
 
   def snac_info = snac_map[authcode]
 
@@ -63,6 +63,7 @@ def go(db, rest_upload_pass, authcode, snac_map) {
       db.config.save(maxts);
     }
     else {
+      println("Using existing config value...");
       // In testing, reprocess evey time
       maxts.value = 0;
       db.config.save(maxts);
