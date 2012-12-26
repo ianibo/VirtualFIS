@@ -14,12 +14,13 @@ class ElasticSearchService {
 
   @javax.annotation.PostConstruct
   def init() {
-
-    org.elasticsearch.groovy.common.xcontent.GXContentBuilder.rootResolveStrategy = Closure.DELEGATE_FIRST; 
-
     log.debug("Init");
+    // org.elasticsearch.groovy.common.xcontent.GXContentBuilder.rootResolveStrategy = Closure.DELEGATE_FIRST; 
 
-    GNodeBuilder nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
+
+    // GNodeBuilder nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
+    def nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
+    def clus_nm = "aggr"
 
     log.debug("Construct node settings");
 
@@ -28,7 +29,7 @@ class ElasticSearchService {
         client = true
       }
       cluster {
-        name = "aggr"
+        name = clus_nm
       }
       http {
         enabled = false
