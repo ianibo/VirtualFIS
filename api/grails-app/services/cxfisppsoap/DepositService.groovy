@@ -9,6 +9,8 @@ import net.sf.json.JSON
 class DepositService {
 
   def mongoService
+  def recordCanonicalisationService
+  def elasticSearchService
 
   @PostConstruct
   def init() {
@@ -74,7 +76,8 @@ class DepositService {
       log.debug(j.toString());
       result.owner = owner;
       result.cksum = chksum(file);
-
+      result.timestamp = System.currentTimeMillis();
+      
       if ( result.orig.ProviderDescription ) {
         log.debug("ECD Record");
         result.'__schema' = "http://purl.org/jsonschema/ecd";
@@ -91,6 +94,7 @@ class DepositService {
         }
       }
 
+
       log.debug("looking for docid ${result.docid}");
 
       def mdb = mongoService.getMongo().getDB('localchatter')
@@ -103,6 +107,25 @@ class DepositService {
 
       // log.debug("Saving...");
       mdb.sourcerecs.save(result);
+
+      // Canonicalise the record
+      def canonical_record = recordCanonicalisationService.process(result);
+
+      // Index the canonical record
+      if ( canonical_record ) {
+        log.debug("process canonical record");
+        org.elasticsearch.groovy.node.GNode esnode = elasticSearchService.getESNode()
+        org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
+
+        def future = esclient.index {
+          index "localchatter"
+          type "resource"
+          id result.docid
+          source canonical_record
+        }
+        log.debug("Indexed respidx:${future.response.index}/resptp:${future.response.type}/respid:${future.response.id}")
+      }
+      
     }
     catch ( Exception e ) {
       log.error("error",e);
