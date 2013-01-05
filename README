@@ -7,3 +7,21 @@ grant all on localchatterprod.* to 'localchatter'@'localhost.localdomain' identi
 grant all on localchatterprod.* to 'localchatter'@'%' identified by 'localchatter';
 
 
+
+
+Overall workflow
+
+
+-- Pre step for scraped resources --
+
+Scraper does the scraping, and collates a deposit record
+Scraper puts deposit record in local queue
+
+Update service scans queue and for each changed record
+Scraper contacts api webapp, authenticates and then deposits the record
+
+
+
+API App
+Gets incoming record and canonicalizes it
+Puts canonicalised record into elasitcsearch index, no real need to store canonicalised record

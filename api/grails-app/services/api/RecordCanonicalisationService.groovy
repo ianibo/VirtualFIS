@@ -2,6 +2,7 @@ package api
 
 class RecordCanonicalisationService {
 
+  def gazetteerService
 
   def process(record) {
     log.debug("Process..  schema: ${record?.__schema}");
@@ -29,6 +30,10 @@ class RecordCanonicalisationService {
   }
 
   def processEcd(record) {
+
+    // Obtain database for geocoding
+    // def gazcache_db = mongoService.getMongo().getDB("gazcache")
+
     def result=[:]
     result.docid = record.docid
     result.title = record.orig?.ProviderDescription?.DC_Title
@@ -36,6 +41,10 @@ class RecordCanonicalisationService {
     result.postcode = record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode
     result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
     result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
+
+    if ( result.postcode ) {
+      def geocode = gazetteerService.geocode(result.postcode)
+    }
 
     if ( record.orig?.ProviderDescription?.RegistrationDetails ) {
       result.registeredServiceDetails = [:]
