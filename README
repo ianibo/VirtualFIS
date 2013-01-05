@@ -25,3 +25,10 @@ Scraper contacts api webapp, authenticates and then deposits the record
 API App
 Gets incoming record and canonicalizes it
 Puts canonicalised record into elasitcsearch index, no real need to store canonicalised record
+
+
+
+# Testing
+
+curl http://localhost:9200/_search?pretty=1&q=*
+http://localhost:9200/localchatter/_search/?pretty=1&q=*

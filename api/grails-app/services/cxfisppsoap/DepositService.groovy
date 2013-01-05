@@ -70,7 +70,7 @@ class DepositService {
       JSON j = xs.read(file)
       result.orig = j
 
-      log.debug(j.toString());
+      // log.debug(j.toString());
       result.owner = owner;
       result.cksum = chksum(file);
       result.timestamp = System.currentTimeMillis();
