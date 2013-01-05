@@ -60,6 +60,12 @@ class RecordCanonicalisationService {
         result.county = extractGeoFeature(geocode,'administrative_area_level_2');
         result.localauthority = extractGeoFeature(geocode,'political');
       }
+      else {
+        result.geonote ="Unable to resolve ${result.postcode}";
+      }
+    } 
+    else {
+      result.geonote ="No postcode present";
     }
 
     if ( record.orig?.ProviderDescription?.RegistrationDetails ) {
