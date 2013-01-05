@@ -50,10 +50,7 @@ class DepositService {
 
     def result = [:]
 
-    log.debug("upload: file len=${file.length()}");
-    log.debug("        ${authoritative}");
-    log.debug("        ${owner}");
-    log.debug("        ${user}");
+    log.debug("upload: file len=${file.length()}, ${authoritative}, ${owner}, ${user}");
 
     try {
       def xs=new net.sf.json.xml.XMLSerializer();
@@ -79,7 +76,7 @@ class DepositService {
       result.timestamp = System.currentTimeMillis();
       
       if ( result.orig.ProviderDescription ) {
-        log.debug("ECD Record");
+        // log.debug("ECD Record");
         result.'__schema' = "http://purl.org/jsonschema/ecd";
         result.docid = "${owner}:${j.ProviderDescription.'DC_Identifier'}"
       }
@@ -90,18 +87,18 @@ class DepositService {
           result.docid = "${owner}:${j.ServiceDescription.'DC_Identifier'}"
         }
         else {
-          log.debug("Unknown type");
+          log.error("Unknown type");
         }
       }
 
 
-      log.debug("looking for docid ${result.docid}");
+      // log.debug("looking for docid ${result.docid}");
 
       def mdb = mongoService.getMongo().getDB('localchatter')
       def reco_record = mdb.sourcerecs.findOne(docid:result.docid)
 
       if ( reco_record ) {
-        log.debug("Replace existing record");
+        // log.debug("Replace existing record");
         mdb.sourcerecs.remove(reco_record)
       }
 
@@ -113,7 +110,7 @@ class DepositService {
 
       // Index the canonical record
       if ( canonical_record ) {
-        log.debug("process canonical record");
+        // log.debug("process canonical record");
         org.elasticsearch.groovy.node.GNode esnode = elasticSearchService.getESNode()
         org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
 
@@ -131,7 +128,7 @@ class DepositService {
       log.error("error",e);
     }
     finally {
-      log.debug("upload service completed");
+      // log.debug("upload service completed");
     }
   }
 

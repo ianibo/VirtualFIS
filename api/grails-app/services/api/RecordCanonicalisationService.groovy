@@ -39,11 +39,27 @@ class RecordCanonicalisationService {
     result.title = record.orig?.ProviderDescription?.DC_Title
     result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text'
     result.postcode = record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode
+    result.addr = []
+    record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress.'Line'.each { l ->
+      result.addr.add(l)
+    }
+
     result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
     result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
 
     if ( result.postcode ) {
       def geocode = gazetteerService.geocode(result.postcode)
+      if ( geocode ) {
+        // log.debug("geocode result: ${geocode}");
+        result.position = [lat:geocode.geometry?.location?.lat, lon:geocode.geometry?.location?.lon]
+        result.vpne = [lat:geocode.geometry.viewport?.northeast.lat, lon:geocode.geometry.viewport?.northeast.lon]
+        result.vpsw = [lat:geocode.geometry.viewport?.southwest.lat, lon:geocode.geometry.viewport?.southwest.lon]
+        result.posttown = extractGeoFeature(geocode,'postal_town');
+        result.outcode = result.postcode.substring(0,result.postcode.indexOf(' '));
+        result.locality = extractGeoFeature(geocode,'locality');
+        result.county = extractGeoFeature(geocode,'administrative_area_level_2');
+        result.localauthority = extractGeoFeature(geocode,'political');
+      }
     }
 
     if ( record.orig?.ProviderDescription?.RegistrationDetails ) {
@@ -58,5 +74,9 @@ class RecordCanonicalisationService {
     def result=[:]
     result.docid = record.docid
     result
+  }
+
+  def extractGeoFeature(georecord, featurename) {
+    georecord.address_components.find { ac -> ac.types.contains(featurename) }
   }
 }

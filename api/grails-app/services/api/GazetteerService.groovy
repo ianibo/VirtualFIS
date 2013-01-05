@@ -10,11 +10,13 @@ class GazetteerService {
 
   def geocode(address) {
     def gazcache_db = mongoService.getMongo().getDB("gazcache")
-    result = gazcache_db.entries.find(address:postcode)
-    if ( !result ) {
+    def geo_result = gazcache_db.entries.findOne(address:address)
+    if ( !geo_result ) {
       log.debug("No cache hit for ${address}, lookup");
-      googleGeocode(address, gazcache_db);
+      geo_result = googleGeocode(address, gazcache_db);
     }
+
+    def result = geo_result.response.results[0]
 
     result
   }
