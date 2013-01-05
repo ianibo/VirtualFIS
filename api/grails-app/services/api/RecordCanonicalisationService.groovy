@@ -51,9 +51,9 @@ class RecordCanonicalisationService {
       def geocode = gazetteerService.geocode(result.postcode)
       if ( geocode ) {
         // log.debug("geocode result: ${geocode}");
-        result.position = [lat:geocode.geometry?.location?.lat, lon:geocode.geometry?.location?.lon]
-        result.vpne = [lat:geocode.geometry.viewport?.northeast.lat, lon:geocode.geometry.viewport?.northeast.lon]
-        result.vpsw = [lat:geocode.geometry.viewport?.southwest.lat, lon:geocode.geometry.viewport?.southwest.lon]
+        result.position = [lat:geocode.geometry?.location?.lat, lng:geocode.geometry?.location?.lng]
+        result.vpne = [lat:geocode.geometry.viewport?.northeast.lat, lng:geocode.geometry.viewport?.northeast.lng]
+        result.vpsw = [lat:geocode.geometry.viewport?.southwest.lat, lng:geocode.geometry.viewport?.southwest.lng]
         result.posttown = extractGeoFeature(geocode,'postal_town');
         result.outcode = result.postcode.substring(0,result.postcode.indexOf(' '));
         result.locality = extractGeoFeature(geocode,'locality');
