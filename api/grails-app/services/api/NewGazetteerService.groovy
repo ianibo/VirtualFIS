@@ -19,6 +19,9 @@ class NewGazetteerService {
         geo_result = codepointOpenGeocode(address, gazcache_db);
       }
     }
+    else {
+      log.error("Unable to geocode ${address}");
+    }
 
     def result = geo_result.response.results[0]
 
