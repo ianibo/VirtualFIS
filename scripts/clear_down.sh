@@ -13,6 +13,10 @@ db.config.drop();
 !!!
 
 
+# clear down elasticsearch indexes
+curl -XDELETE 'http://localhost:9200/localchatter'
+
+
 # db.orgs.ensureIndex({"ukfam": 1});
 # db.tipps.ensureIndex({"lastmod": 1});
 # db.pkgs.ensureIndex({"sub": 1});

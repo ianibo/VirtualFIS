@@ -102,6 +102,11 @@ def geocode(postcode, gazcache_db) {
     uri.query = [ 'address' : "$postcode", 'sensor' : 'false' ]
     response.success = {resp, json ->
 
+      if ( json.status == "OVER_QUERY_LIMIT" ) {
+        println("OVER QUERY LIMIT");
+        System.exit(1)
+      }
+
       def cache_entry = [ address:postcode,
                           response:json,
                           lastSeen: System.currentTimeMillis(),
@@ -118,6 +123,13 @@ def geocode(postcode, gazcache_db) {
       //     i++
       //   }
       // }
+
+
+      try {
+        Thread.sleep(750)
+      }
+      catch ( Exception e ) {
+      }
     }
   }
   result

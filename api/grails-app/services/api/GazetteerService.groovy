@@ -6,14 +6,18 @@ import groovyx.net.http.*
 
 class GazetteerService {
 
+  // Alternate geocoding from http://uk-postcodes.com/api.php
   def mongoService
+  def geocode_count = 0
 
   def geocode(address) {
     def gazcache_db = mongoService.getMongo().getDB("gazcache")
     def geo_result = gazcache_db.entries.findOne(address:address)
     if ( !geo_result ) {
       log.debug("No cache hit for ${address}, lookup");
-      geo_result = googleGeocode(address, gazcache_db);
+      if ( geocode_count < 2500 ) {
+        geo_result = googleGeocode(address, gazcache_db);
+      }
     }
 
     def result = geo_result.response.results[0]
@@ -38,6 +42,7 @@ class GazetteerService {
                             created: System.currentTimeMillis() ]
   
         gazcache_db.entries.save(cache_entry);
+        geocode_count++;
       }
     }
     result
