@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
 
         // runtime 'mysql:mysql-connector-java:5.1.20'
         runtime 'mysql:mysql-connector-java:5.1.21'
-
+        runtime 'com.gmongo:gmongo:1.0'
     }
 
     plugins {

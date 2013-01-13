@@ -1,4 +1,4 @@
-package api
+package lc
 
 import static groovyx.net.http.Method.*
 import groovyx.net.http.RESTClient
@@ -36,6 +36,9 @@ class NewGazetteerService {
                             lastSeen: System.currentTimeMillis(),
                             created: System.currentTimeMillis() ]
         gazcache_db.entries.save(result);
+      }
+      response.failure = { resp ->
+        log.debug("Not found: ${postcode}");
       }
     }
     result

@@ -21,6 +21,15 @@
     </div>
   </div>
 
+  <g:if test="${flash.message}">
+    <div class="content">
+      <div class="container"><div class="row"><div class="span12">
+        <bootstrap:alert class="alert-info">${flash.message}</bootstrap:alert>
+      </div></div></div>
+    </div>
+  </g:if>
+
+
   <div class="content">
     <div class="container">
       <div class="row">

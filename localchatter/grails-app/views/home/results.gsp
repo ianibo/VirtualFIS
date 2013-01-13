@@ -20,6 +20,24 @@
     </div>
   </div>
 
+  <g:if test="${flash.message}">
+  <div class="content">
+    <div class="container"><div class="row"><div class="well span12" style="text-align:center;">
+      <bootstrap:alert class="alert-info">${flash.message}</bootstrap:alert>
+    </div></div></div>
+  </div>
+  </g:if>
+
+  <g:if test="${flash.error}">
+  <div class="content">
+    <div class="container"><div class="row"><div class="well span12" style="text-align:center;">
+      <bootstrap:error class="alert-info">${flash.error}</bootstrap:error>
+    </div></div></div>
+  </div>
+  </g:if>
+
+
+
   <div class="content">
     <div class="container">
       <div class="row">
