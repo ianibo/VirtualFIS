@@ -44,9 +44,14 @@ class RecordCanonicalisationService {
     record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress.'Line'.each { l ->
       result.addr.add(l)
     }
+    result.certs = []
+
 
     result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
     result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
+
+    if ( result.ofstedUrn )
+      result.certs.add([cert:'OFSTED', id:result.ofstedUrn, uri:'http://www.ofsted.gov.uk/inspection-reports/find-inspection-report/provider/CARE/'+result.ofstedUrn])
 
     if ( result.postcode ) {
       def geocode = newGazetteerService.geocode(result.postcode)
