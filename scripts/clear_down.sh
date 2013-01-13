@@ -13,9 +13,20 @@ db.config.drop();
 !!!
 
 
+# Don't clear down the os gaz cache, it's useful
+# use osgazcache
+# db.dropDatabase()
 # clear down elasticsearch indexes
+echo Delete localchatter db
 curl -XDELETE 'http://localhost:9200/localchatter'
 
+
+echo Create db
+curl -X PUT "localhost:9200/localchatter" -d '{
+  "settings" : {}
+}'
+
+echo Put mapping
 
 # db.orgs.ensureIndex({"ukfam": 1});
 # db.tipps.ensureIndex({"lastmod": 1});
@@ -25,4 +36,35 @@ curl -XDELETE 'http://localhost:9200/localchatter'
 # db.titles.ensureIndex({"lastmod":1});
 # db.tipps.ensureIndex({"titleid":1, "pkgid":1, "platformid":1});
 # db.st.ensureIndex({"tipp_id":1, "org_id":1, "sub_id":1});
+
+curl -X PUT "localhost:9200/localchatter/resource/_mapping" -d '{
+  "resource" : {
+    "properties" : {
+      "position" : {
+        type : "geo_point"
+      },
+      "district_facet" : {
+        type : "string",
+        index : "not_analyzed"
+      },
+      "ofstedUrn" : {
+        type : "string",
+        index : "not_analyzed"
+      } ,
+      "ward_facet" : {
+        type : "string",
+        index : "not_analyzed"
+      },
+      "childcareType" : {
+        type : "string",
+        index : "not_analyzed"
+      },
+      "outcode" : {
+        type : "string",
+        index : "not_analyzed"
+      }
+    }
+  }
+}'
+
 

@@ -51,28 +51,34 @@ class RecordCanonicalisationService {
     if ( result.postcode ) {
       def geocode = newGazetteerService.geocode(result.postcode)
       if ( geocode ) {
-        // log.debug("geocode result: ${geocode}");
-        result.position = [lat:geocode.geometry?.location?.lat, lng:geocode.geometry?.location?.lng]
+        log.debug("geocode result: ${geocode}");
+        // Needs to be lat,lon for es geo_point type
+        result.position = [lat:geocode.response.geo.lat, lon:geocode.response.geo.lng]
         result.outcode = result.postcode.substring(0,result.postcode.indexOf(' '));
 
         if ( result.outcode && ( result.outcode.length() > 0 ) ) {
           shortcodeService.getShortcodeFor('outcode',result.outcode,result.outcode)
         }
 
-        if ( geocode.administrative.district ) {
-          result.district = geocode.administrative.district.title
-          result.district_facet = "${geocode.administrative.district.snac}:${geocode.administrative.district.title}"
-          shortcodeService.getShortcodeFor('district',geocode.administrative.district.snac,geocode.administrative.district.title)
+        if ( geocode.response.administrative ) {
+          if ( geocode.response.administrative?.district ) {
+            result.district = geocode.response.administrative.district.title
+            result.district_facet = "${geocode.response.administrative.district.snac}:${geocode.response.administrative.district.title}"
+            shortcodeService.getShortcodeFor('district',geocode.response.administrative.district.snac,geocode.response.administrative.district.title)
+          }
+          if ( geocode.response.administrative?.ward ) {
+            result.ward = geocode.response.administrative.ward.title
+            result.ward_facet = "${geocode.response.administrative.ward.snac}:${geocode.response.administrative.ward.title}"
+            shortcodeService.getShortcodeFor('ward',geocode.response.administrative.ward.snac,geocode.response.administrative.ward.title)
+          }
+          if ( geocode.response.administrative?.county ) {
+            result.ward = geocode.response.administrative.county.title
+            result.ward_facet = "${geocode.response.administrative.county.snac}:${geocode.response.administrative.county.title}"
+            shortcodeService.getShortcodeFor('county',geocode.response.administrative.county.snac,geocode.response.administrative.county.title)
+          }
         }
-        if ( geocode.administrative?.ward ) {
-          result.ward = geocode.administrative.ward.title
-          result.ward_facet = "${geocode.administrative.ward.snac}:${geocode.administrative.ward.title}"
-          shortcodeService.getShortcodeFor('ward',geocode.administrative.ward.snac,geocode.administrative.ward.title)
-        }
-        if ( geocode.administrative?.county ) {
-          result.ward = geocode.administrative.county.title
-          result.ward_facet = "${geocode.administrative.county.snac}:${geocode.administrative.county.title}"
-          shortcodeService.getShortcodeFor('county',geocode.administrative.county.snac,geocode.administrative.county.title)
+        else {
+          log.debug("No administrative data in geocode ${geocode}");
         }
       }
       else {
