@@ -104,8 +104,7 @@ class HomeController {
                   field = 'district_facet'
                 }
               }
-              ward
-              {
+              ward {
                   terms {
                        field = 'ward_facet'
                   }
@@ -116,12 +115,16 @@ class HomeController {
 
         log.debug("Assign result.hits... ${search.response.hits}");
         result.hits = search.response.hits
+        result.resultsTotal = search.response.hits.totalHits
+
+        result.lastrec = params.offset + params.max
+        if ( result.lastrec > result.resultsTotal )
+          result.lastrec = result.resultsTotal
 
         if(search.response.hits.maxScore == Float.NaN) {
             search.response.hits.maxScore = 0;
         }
 
-        result.resultsTotal = search.response.hits.totalHits
         if ( search.response.facets != null ) {
           result.facets = [:]
           search.response.facets.facets.each { facet ->

@@ -39,7 +39,7 @@ class RecordCanonicalisationService {
     result.docid = record.docid
     result.provider = record.owner
     result.title = record.orig?.ProviderDescription?.DC_Title
-    result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text'
+    result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text' + " - (" + record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType + ")"
     result.postcode = record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode
     result.addr = []
     record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress.'Line'.each { l ->
@@ -56,7 +56,7 @@ class RecordCanonicalisationService {
     result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
 
     result.shortcode = shortcodeService.getShortcodeFor('resource',record.docid,result.title).shortcode;
-    result.infotype = [ 'families', 'families/childcare']
+    result.infotypes = [ 'families', 'families/childcare']
     result.privacyLevel = 'PublicListing'
 
     if ( result.ofstedUrn )
