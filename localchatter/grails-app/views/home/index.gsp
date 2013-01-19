@@ -40,7 +40,7 @@
               <p>Search the localchatter database for organisations and services near you. Just enter your postcode to find everything near you,
                  or add keywords to look for specific kinds of information, EG childcare</p>
               Postcode: <input name="postcode" placeholder="Enter your postcode..." type="text" />
-              Keywords: <input name="keywords" placeholder="Keywords, eg Childcare..." type="text" />
+              Keywords: <input name="q" placeholder="Keywords, eg Childcare..." type="text" />
               <button class='btn'>Go!</button>
             </g:form>
           </div>

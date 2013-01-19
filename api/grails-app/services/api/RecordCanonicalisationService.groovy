@@ -37,6 +37,7 @@ class RecordCanonicalisationService {
 
     def result=[:]
     result.docid = record.docid
+    result.provider = record.owner
     result.title = record.orig?.ProviderDescription?.DC_Title
     result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text'
     result.postcode = record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode

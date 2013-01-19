@@ -45,7 +45,7 @@
           <div style="text-align:center;">
             <g:form action="index" method="get" class="form-inline">
               Postcode: <input name="postcode" placeholder="Enter your postcode..." type="text" />
-              Keywords: <input name="keywords" placeholder="Keywords, eg Childcare..." type="text" />
+              Keywords: <input name="q" placeholder="Keywords, eg Childcare..." type="text" />
               <button class='btn'>Go!</button>
             </g:form>
           </div>
