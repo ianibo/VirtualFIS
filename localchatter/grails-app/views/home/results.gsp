@@ -56,7 +56,7 @@
                   ${facet.key}
                   <ul>
                     <g:each in="${facet.value}" var="v">
-                      <li><a href="${v.term}">${v.display}</a> : ${v.count}</li>
+                      <li><g:link controller="collection" action="show" id="${facet.key}:${v.term}">${v.display}</g:link> : ${v.count}</li>
                     </g:each>
                   </ul>
                 </div>
@@ -68,7 +68,7 @@
               <ul>
                 <g:each in="${hits}" var="res">
                   <li>
-                    <strong><g:link controller="resource" action="index" id="${res.source.shortcode}">${res.source.title}</g:link></strong><br/>
+                    <strong><g:link controller="entry" action="show" id="${res.source.shortcode}">${res.source.title}</g:link></strong><br/>
                     ${res.source.description}<br/>
                     <g:if test="${params.postcode}">Distance from ${params.postcode} : ${res.sortValues[0].round(2)} ${dunit}<br/></g:if>
                     Information Source: ${res.source.provider}

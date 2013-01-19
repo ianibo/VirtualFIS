@@ -99,6 +99,11 @@ class HomeController {
               }
             }
             facets {
+              infotypes {
+                  terms {
+                       field = 'infotypes'
+                  }
+              }
               district {
                 terms {
                   field = 'district_facet'
@@ -132,7 +137,10 @@ class HomeController {
             facet.value.entries.each { fe ->
               // log.debug('adding to '+ facet.key + ': ' + fe.term + ' (' + fe.count + ' )')
               def components = fe.term.split(':');
-              facet_values.add([term: fe.term,display:components[1],count:"${fe?.count}"])
+              if ( components.length > 1 )
+                facet_values.add([term: fe.term,display:components[1],count:"${fe?.count}"])
+              else
+                facet_values.add([term: fe.term,display:components[0],count:"${fe?.count}"])
             }
 
             result.facets[facet.key] = facet_values
