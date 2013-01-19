@@ -6,6 +6,7 @@ import vf.*;
 class BootStrap {
 
   def depositEndpointFactory
+  def grailsApplication 
 
   def init = { servletContext ->
 
@@ -13,6 +14,7 @@ class BootStrap {
       def adminRole = VFRole.findByAuthority('ROLE_ADMIN') ?: new VFRole(authority: 'ROLE_ADMIN').save(failOnError: true)
 
 
+      log.debug("Processing bootstrap user accounts... ${grailsApplication.config.sysusers}");
       grailsApplication.config.sysusers.each { su ->
         log.debug("test ${su.name} ${su.pass} ${su.display} ${su.roles}");
         def user = VFUser.findByUsername(su.name)
@@ -28,7 +30,7 @@ class BootStrap {
         }
         else {
           log.debug("Create user...");
-          user = new UVFUser(
+          user = new VFUser(
                         username: su.name,
                         password: su.pass,
                         email: su.email,
@@ -37,7 +39,7 @@ class BootStrap {
 
         log.debug("Add roles for ${su.name}");
         su.roles.each { r ->
-          def role = VFUserRole.findByAuthority(r)
+          def role = VFRole.findByAuthority(r)
           if ( ! ( user.authorities.contains(role) ) ) {
             log.debug("  -> adding role ${role}");
             VFUserRole.create user, role

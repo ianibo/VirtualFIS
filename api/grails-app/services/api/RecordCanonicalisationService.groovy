@@ -46,10 +46,18 @@ class RecordCanonicalisationService {
       result.addr.add(l)
     }
     result.certs = []
-
+    result.identifiers = []
 
     result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
+    if ( record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN ) {
+      result.identifiers.add([namespace:'ofsted',value:record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN])
+    }
+ 
     result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
+
+    result.shortcode = shortcodeService.getShortcodeFor('resource',record.docid,result.title).shortcode;
+    result.infotype = [ 'families', 'families/childcare']
+    result.privacyLevel = 'PublicListing'
 
     if ( result.ofstedUrn )
       result.certs.add([cert:'OFSTED', id:result.ofstedUrn, uri:'http://www.ofsted.gov.uk/inspection-reports/find-inspection-report/provider/CARE/'+result.ofstedUrn])

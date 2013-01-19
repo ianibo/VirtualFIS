@@ -62,6 +62,14 @@ curl -X PUT "localhost:9200/localchatter/resource/_mapping" -d '{
       "outcode" : {
         type : "string",
         index : "not_analyzed"
+      },
+      "infotype" : {
+        type : "string",
+        index : "not_analyzed"
+      },
+      "shortcode" : {
+        type : "string",
+        index : "not_analyzed"
       }
     }
   }
