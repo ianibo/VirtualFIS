@@ -97,3 +97,5 @@ log4j = {
            'grails.app.jobs' // ,
            // 'org.springframework.security'
 }
+grails.plugins.twitterbootstrap.fixtaglib = true
+grails.plugins.twitterbootstrap.defaultBundle = 'bundle_bootstrap'

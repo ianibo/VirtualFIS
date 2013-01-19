@@ -18,10 +18,8 @@ class HomeController {
     log.debug("index");
     def result = [:]
 
-    def dunit = "miles"
-    if ( params.dunit == 'km' ) {
-      dunit = "km"
-    }
+    def dunit = params.dunit ?: 'miles'
+    result.dunit=dunit
 
     params.max = Math.min(params.max ? params.int('max') : 10, 100)
     params.offset = params.offset ? params.int('offset') : 0
@@ -101,71 +99,44 @@ class HomeController {
               }
             }
             facets {
-              subject {
+              district {
                 terms {
-                  field = 'subject'
+                  field = 'district_facet'
                 }
               }
-              provider
+              ward
               {
                   terms {
-                       field = 'provid'
+                       field = 'ward_facet'
                   }
               }
             }
           }
         }
 
-        /* It's possible to add the distance to the result even if not sorting by geo dist with
-            script_fields {
-              distance {
-                params {
-                  lat=g_lat
-                  lon=g_lon
-                }
-                script="doc[\u0027provloc\u0027].distanceInKm(lat,lon)"
-              }
-            }
-        */
-
-        // println "Search returned $search.response.hits.totalHits total hits"
-        // println "First hit course is $search.response.hits[0]"
+        log.debug("Assign result.hits... ${search.response.hits}");
         result.hits = search.response.hits
 
-        if(search.response.hits.maxScore == Float.NaN)//we cannot parse NaN to json so set to zero...
-        {
+        if(search.response.hits.maxScore == Float.NaN) {
             search.response.hits.maxScore = 0;
         }
 
         result.resultsTotal = search.response.hits.totalHits
-       // We pre-process the facet response to work around some translation issues in ES
         if ( search.response.facets != null ) {
           result.facets = [:]
           search.response.facets.facets.each { facet ->
             def facet_values = []
             facet.value.entries.each { fe ->
-
               // log.debug('adding to '+ facet.key + ': ' + fe.term + ' (' + fe.count + ' )')
-
-              if ( facet.key == 'provider' ) {
-                def term = resolveTermIdentifier(fe.term)
-                if ( term != null ) {
-                  facet_values.add([term: fe.term,display:term.label,count:"${fe?.count}"])
-                }
-                else {
-                  facet_values.add([term: fe.term,display:fe.term,count:"${fe?.count}"])
-                }
-              }
-              else {
-                facet_values.add([term: fe.term,display:fe.term,count:"${fe?.count}"])
-              }
-
+              def components = fe.term.split(':');
+              facet_values.add([term: fe.term,display:components[1],count:"${fe?.count}"])
             }
 
             result.facets[facet.key] = facet_values
           }
         }
-        render(view:'results');
+
+        render(view:'results',model:result);
       }
       catch ( Exception e ) {
         log.error("Problem",e);
@@ -175,7 +146,7 @@ class HomeController {
       render(view:'index');
     }
 
-    log.debug(result)
+    log.debug("Return result: ${result} (hits.totalhits=${result.hits.totalHits}")
   }
 
 

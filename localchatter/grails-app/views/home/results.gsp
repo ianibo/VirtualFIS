@@ -40,22 +40,51 @@
 
   <div class="content">
     <div class="container">
-      <div class="row">
-        <div class="span9">
-          <div style="text-align:center;">
-            <g:form action="index" method="get" class="form-inline">
-              Postcode: <input name="postcode" placeholder="Enter your postcode..." type="text" />
-              Keywords: <input name="q" placeholder="Keywords, eg Childcare..." type="text" />
-              <button class='btn'>Go!</button>
-            </g:form>
+      <div class="row-fluid">
+        <div class="span8">
+          <div class="row-fluid" style="text-align:center;">
+              <g:form action="index" method="get" class="form-inline">
+                Postcode: <input name="postcode" placeholder="Enter your postcode..." type="text" value="${params.postcode}" />
+                Keywords: <input name="q" placeholder="Keywords, eg Childcare..." type="text"  value="${params.q}"/>
+                <button class='btn'>Go!</button>
+              </g:form>
+          </div>
+          <div class="row-fluid">
+            <div class="facetFilter span3">
+              <g:each in="${facets}" var="facet">
+                <div>
+                  ${facet.key}
+                  <ul>
+                    <g:each in="${facet.value}" var="v">
+                      <li><a href="${v.term}">${v.display}</a> : ${v.count}</li>
+                    </g:each>
+                  </ul>
+                </div>
+              </g:each>
+            </div>
+            <div class="span9">
+              <g:if test="${hits?.totalHits}">Results ${params.offset+1} to ${params.lastrec} of ${hits?.totalHits}</g:if>
+
+              <ul>
+                <g:each in="${hits}" var="res">
+                  <li>
+                    <strong><g:link controller="resource" action="index" id="1">${res.source.title}</g:link></strong><br/>
+                    ${res.source.description}<br/>
+                    <g:if test="${params.postcode}">Distance from ${params.postcode} : ${res.sortValues[0].round(2)} ${dunit}</g:if>
+                  </li>
+                </g:each>
+              </ul>
+              <g:paginate action="index" controller="home" params="${params}" next="Next" prev="Prev" maxsteps="10" total="${hits.totalHits}" class="pagination-right"/>
+            </div>
           </div>
         </div>
-        <div class="span3">
+        <div class="span4">
+          Adspace
         </div>
       </div>
     </div>
+
   </div>
- 
 
 
 </body>
