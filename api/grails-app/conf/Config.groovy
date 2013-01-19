@@ -134,3 +134,5 @@ grails.plugins.springsecurity.basic.realmName = "localchatterapi"
    // '/rest/**': 'JOINED_FILTERS,-exceptionTranslationFilter'
    // '/rest/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
 //]
+
+
