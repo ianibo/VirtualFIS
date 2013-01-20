@@ -82,7 +82,7 @@
              </div>
           </div>
       
-          <div class="span12"><hr /><p class="copy"> Copyright &copy; <a href="#">Knowledge Integration Ltd</a></p></div>
+          <div class="span12"><hr /></div>
         </div>
       </div>
     </footer>               
