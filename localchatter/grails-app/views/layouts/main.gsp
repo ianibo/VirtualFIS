@@ -55,8 +55,7 @@
           <div class="span4">
              <!-- Widget 1 -->
              <div class="widget">
-                <h4>Twitter</h4>
-                <!-- Too add twitter widget, goto "js" folder and open "custom.js" file and search for the word "ashokramesh90". This is my twitter username. Just replace the word with your twitter username. You are done. -->
+                <h4>Twitter : <a href="http://twitter.com/lcdotinfo">lcdotinfo</a></h4>
                 <div class="tweet"></div>
              </div>
           </div>
@@ -66,8 +65,8 @@
              <div class="widget">
                 <h4>Links</h4>
                    <ul>
-                      <li><a href="#">For local authorities and information providers</a></li>
-                      <li><a href="#">For record owners</a></li>
+                      <li><a href="http://localchatter.info/blog">For local authorities and information providers</a></li>
+                      <li><a href="http://localchatter.info/blog">For record owners</a></li>
                    </ul>
              </div>
           </div>
@@ -77,8 +76,8 @@
              <div class="widget">
                 <h4>Categories</h4>
                 <ul>
-                   <li><a href="#">Global Search</a></li>
-                   <li><a href="#">Childcare Only</a></li>
+                   <li><a href="/">Global Search</a></li>
+                   <li><a href="/">Childcare Only</a></li>
                 </ul>
              </div>
           </div>
@@ -90,5 +89,23 @@
 
     <g:javascript library="application"/>
     <r:layoutResources />
+
+  <script language="JavaScript">
+    jQuery(function($){
+       $(".tweet").tweet({
+          username: "lcdotinfo",
+          join_text: "auto",
+          avatar_size: 0,
+          count: 3,
+          auto_join_text_default: "we said,",
+          auto_join_text_ed: "we",
+          auto_join_text_ing: "we were",
+          auto_join_text_reply: "we replied to",
+          auto_join_text_url: "we were checking out",
+          loading_text: "loading tweets...",
+          template: "{text}"
+       });
+    });
+  </script>
   </body>
 </html>

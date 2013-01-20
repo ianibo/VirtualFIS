@@ -2,6 +2,7 @@
    <head>
       <meta name="layout" content="main"/>
       <r:require modules="bootstrap"/>
+      <meta name="description" content="Use localchatter to search for community improved information from trusted local sources. You will information collected from local authorities and other trusted sources, imrpved and refined by the community"/>
    </head>
 <body>
 
@@ -56,7 +57,11 @@
                   ${facet.key}
                   <ul>
                     <g:each in="${facet.value}" var="v">
-                      <li><g:link controller="collection" action="show" id="${facet.key}:${v.term}">${v.display}</g:link> : ${v.count}</li>
+                      <li>
+                        <g:set var="fname" value="facet:${facet.key+':'+v.term}"/>
+                        <g:link controller="home" action="index" params="${params+[fname:'Y']}">${v.display}</g:link> (${v.count})
+                        <g:if test="${params[fname]=='Y'}">Tick</g:if>
+                      </li>
                     </g:each>
                   </ul>
                 </div>
@@ -68,7 +73,7 @@
               <ul>
                 <g:each in="${hits}" var="res">
                   <li>
-                    <strong><g:link controller="entry" action="show" id="${res.source.shortcode}">${res.source.title}</g:link></strong><br/>
+                    <strong><g:link controller="entry" id="${res.source.shortcode}">${res.source.title}</g:link></strong><br/>
                     ${res.source.description}<br/>
                     <g:if test="${params.postcode}">Distance from ${params.postcode} : ${res.sortValues[0].round(2)} ${dunit}<br/></g:if>
                     Information Source: ${res.source.provider}
@@ -81,7 +86,7 @@
           </div>
         </div>
         <div class="span4">
-          Adspace
+          <g:render template="addpanel" contextPath="../templates"/>
         </div>
       </div>
     </div>

@@ -7,6 +7,9 @@ class UrlMappings {
 			}
 		}
 
+                "/entry/$id" (controller:"entry", action:"show")
+                "/collection/$id" (controller:"collection", action:"show")
+
 		"/"(controller:"home",action:"index")
 		"500"(view:'/error')
 	}

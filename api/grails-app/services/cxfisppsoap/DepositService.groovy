@@ -78,13 +78,13 @@ class DepositService {
       if ( result.orig.ProviderDescription ) {
         // log.debug("ECD Record");
         result.'__schema' = "http://purl.org/jsonschema/ecd";
-        result.docid = "${owner}:${j.ProviderDescription.'DC_Identifier'}"
+        result.provid = "${owner}:${j.ProviderDescription.'DC_Identifier'}"
       }
       else {
         if ( result.orig.ServiceDescription ) {
           log.debug("FSD Record");
           result.'__schema' = "http://purl.org/jsonschema/fsd";
-          result.docid = "${owner}:${j.ServiceDescription.'DC_Identifier'}"
+          result.provid = "${owner}:${j.ServiceDescription.'DC_Identifier'}"
         }
         else {
           log.error("Unknown type");
@@ -95,11 +95,14 @@ class DepositService {
       // log.debug("looking for docid ${result.docid}");
 
       def mdb = mongoService.getMongo().getDB('localchatter')
-      def reco_record = mdb.sourcerecs.findOne(docid:result.docid)
+      def reco_record = mdb.sourcerecs.findOne(provid:result.provid)
 
       if ( reco_record ) {
         // log.debug("Replace existing record");
         mdb.sourcerecs.remove(reco_record)
+      }
+      else {
+        result._id = new org.bson.types.ObjectId()
       }
 
       // log.debug("Saving...");
@@ -117,7 +120,7 @@ class DepositService {
         def future = esclient.index {
           index "localchatter"
           type "resource"
-          id result.docid
+          id result._id.toString()
           source canonical_record
         }
         log.debug("Indexed respidx:${future.response.index}/resptp:${future.response.type}/respid:${future.response.id}")

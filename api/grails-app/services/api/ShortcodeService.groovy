@@ -21,10 +21,11 @@ class ShortcodeService {
   }
 
   def createShortcodeRecordFor(type,value,description,mdb) {
-    def new_shortcode=description.trim().toLowerCase().replaceAll("\\W","_")
+    def new_shortcode_base=description.trim().toLowerCase().replaceAll("\\W","_")
     int i=2;
+    def new_shortcode = new_shortcode_base;
     while(mdb.shortcodes.findOne(shortcode:new_shortcode)) {
-      new_shortcode = "${new_shortcode}_${i++}"
+      new_shortcode = "${new_shortcode_base}_${i++}"
       if ( i > 100 ) {
         throw new Exception("Too many attempts to find a unique shortcode");
       }

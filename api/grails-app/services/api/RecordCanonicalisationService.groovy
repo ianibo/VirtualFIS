@@ -36,7 +36,7 @@ class RecordCanonicalisationService {
     // def gazcache_db = mongoService.getMongo().getDB("gazcache")
 
     def result=[:]
-    result.docid = record.docid
+    result.provid = record.provid
     result.provider = record.owner
     result.title = record.orig?.ProviderDescription?.DC_Title
     result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text' + " - (" + record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType + ")"
@@ -55,8 +55,9 @@ class RecordCanonicalisationService {
  
     result.childcareType = record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType
 
-    result.shortcode = shortcodeService.getShortcodeFor('resource',record.docid,result.title).shortcode;
+    result.shortcode = shortcodeService.getShortcodeFor('resource',record._id,result.title).shortcode;
     result.infotypes = [ 'families', 'families/childcare']
+    result.finalSchema = 'http://schema.org/LocalBusiness'
     result.privacyLevel = 'PublicListing'
 
     if ( result.ofstedUrn )
@@ -78,17 +79,20 @@ class RecordCanonicalisationService {
           if ( geocode.response.administrative?.district ) {
             result.district = geocode.response.administrative.district.title
             result.district_facet = "${geocode.response.administrative.district.snac}:${geocode.response.administrative.district.title}"
-            shortcodeService.getShortcodeFor('district',geocode.response.administrative.district.snac,geocode.response.administrative.district.title)
+            def district_shortcode = shortcodeService.getShortcodeFor('district',geocode.response.administrative.district.snac,geocode.response.administrative.district.title)
+            result.district_shortcode = district_shortcode.shortcode
           }
           if ( geocode.response.administrative?.ward ) {
             result.ward = geocode.response.administrative.ward.title
             result.ward_facet = "${geocode.response.administrative.ward.snac}:${geocode.response.administrative.ward.title}"
-            shortcodeService.getShortcodeFor('ward',geocode.response.administrative.ward.snac,geocode.response.administrative.ward.title)
+            def ward_shortcode = shortcodeService.getShortcodeFor('ward',geocode.response.administrative.ward.snac,geocode.response.administrative.ward.title)
+            result.ward_shortcode = ward_shortcode.shortcode
           }
           if ( geocode.response.administrative?.county ) {
-            result.ward = geocode.response.administrative.county.title
-            result.ward_facet = "${geocode.response.administrative.county.snac}:${geocode.response.administrative.county.title}"
-            shortcodeService.getShortcodeFor('county',geocode.response.administrative.county.snac,geocode.response.administrative.county.title)
+            result.county = geocode.response.administrative.county.title
+            result.county_facet = "${geocode.response.administrative.county.snac}:${geocode.response.administrative.county.title}"
+            def county_shortcode = shortcodeService.getShortcodeFor('county',geocode.response.administrative.county.snac,geocode.response.administrative.county.title)
+            result.county_shortcode = county_shortcode.shortcode
           }
         }
         else {
@@ -113,7 +117,7 @@ class RecordCanonicalisationService {
 
   def processFsd(record) {
     def result=[:]
-    result.docid = record.docid
+    result.provid = record.provid
     result
   }
 

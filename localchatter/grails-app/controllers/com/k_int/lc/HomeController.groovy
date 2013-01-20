@@ -118,7 +118,8 @@ class HomeController {
           }
         }
 
-        log.debug("Assign result.hits... ${search.response.hits}");
+        // log.debug("Assign result.hits... ${search.response.hits}");
+
         result.hits = search.response.hits
         result.resultsTotal = search.response.hits.totalHits
 
@@ -156,8 +157,6 @@ class HomeController {
     else {
       render(view:'index');
     }
-
-    log.debug("Return result: ${result} (hits.totalhits=${result.hits.totalHits}")
   }
 
 
