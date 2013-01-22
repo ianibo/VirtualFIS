@@ -39,15 +39,15 @@
           <div class="span4 offset4">
             <div class="list">
               <div class="address">
-                <i class="icon-share"></i> Facebook, Google+
+                <i class="icon-share"></i> <!--Facebook, Google+,--> <a href="http://twitter.com/lcdotinfo">Twitter</a>
               </div>
               <hr />
               <!-- Add your address here -->
               <div class="address">
-                <i class="icon-home"></i> For local authorities
+                <i class="icon-home"></i> <a href="http://blog.localchatter.info/?page_id=4">For local authorities</a>
               </div>
               <div class="address">
-                <i class="icon-home"></i> For information owners
+                <i class="icon-home"></i> <a href="http://blog.localchatter.info/?page_id=6">For information owners</a>
               </div>
             </div>
           </div>
@@ -75,8 +75,8 @@
              <div class="widget">
                 <h4>Links</h4>
                    <ul>
-                      <li><a href="http://localchatter.info/blog">For local authorities and information providers</a></li>
-                      <li><a href="http://localchatter.info/blog">For record owners</a></li>
+                      <li><a href="http://blog.localchatter.info/?page_id=4">For local authorities and information providers</a></li>
+                      <li><a href="http://blog.localchatter.info/?page_id=6">For record owners</a></li>
                    </ul>
              </div>
           </div>
