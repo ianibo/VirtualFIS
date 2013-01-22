@@ -1,7 +1,7 @@
 <html>
    <head>
       <meta name="layout" content="main"/>
-      <title>LocalChatter.info - Home</title>
+      <title>LocalChatter.info - Search for local services and information from trusted sources</title>
       <r:require modules="bootstrap"/>
       <meta name="description" content="Use localchatter to search for community improved information from trusted local sources. You will information collected from local authorities and other trusted sources, imrpved and refined by the community. Content includes child care, registered Childminders and Family Information, Activities,  OfSTED registered Childcare and Family Information Service’s across England."/>
       <meta name="dc.description" content="Use localchatter to search for community improved information from trusted local sources. You will information collected from local authorities and other trusted sources, imrpved and refined by the community. Content includes child care, registered Childminders and Family Information, Activities,  OfSTED registered Childcare and Family Information Service’s across England."/>
