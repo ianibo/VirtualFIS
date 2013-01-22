@@ -3,6 +3,9 @@
       <meta name="layout" content="main"/>
       <r:require modules="bootstrap"/>
       <meta name="description" content="Use localchatter to search for community improved information from trusted local sources. You will information collected from local authorities and other trusted sources, imrpved and refined by the community"/>
+
+      <!-- Ask search engines not to index the search results pages, it looks horrible in google -->
+      <meta name="robots" CONTENT="noindex, follow">
    </head>
 <body>
 
