@@ -7,12 +7,22 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title><g:layoutTitle default="Grails"/></title>
+    <title><g:layoutTitle default="Localchatter.info"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <g:layoutHead/>
     <r:layoutResources />
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'style.css')}" type="text/css">
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'blue.css')}" type="text/css">
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-37870432-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </head>
   <body>
 
@@ -29,15 +39,15 @@
           <div class="span4 offset4">
             <div class="list">
               <div class="address">
-                <i class="icon-share"></i> Facebook, Google+
+                <i class="icon-share"></i> <!--Facebook, Google+,--> <a href="http://twitter.com/lcdotinfo">Twitter</a>
               </div>
               <hr />
               <!-- Add your address here -->
               <div class="address">
-                <i class="icon-home"></i> For local authorities
+                <i class="icon-home"></i> <a href="http://blog.localchatter.info/?page_id=4">For local authorities</a>
               </div>
               <div class="address">
-                <i class="icon-home"></i> For information owners
+                <i class="icon-home"></i> <a href="http://blog.localchatter.info/?page_id=6">For information owners</a>
               </div>
             </div>
           </div>
@@ -65,8 +75,8 @@
              <div class="widget">
                 <h4>Links</h4>
                    <ul>
-                      <li><a href="http://localchatter.info/blog">For local authorities and information providers</a></li>
-                      <li><a href="http://localchatter.info/blog">For record owners</a></li>
+                      <li><a href="http://blog.localchatter.info/?page_id=4">For local authorities and information providers</a></li>
+                      <li><a href="http://blog.localchatter.info/?page_id=6">For record owners</a></li>
                    </ul>
              </div>
           </div>
