@@ -14,7 +14,7 @@ class ElasticSearchService {
 
   @javax.annotation.PostConstruct
   def init() {
-    log.debug("Init");
+    log.debug("LC ES Service Init");
     // org.elasticsearch.groovy.common.xcontent.GXContentBuilder.rootResolveStrategy = Closure.DELEGATE_FIRST; 
 
 
