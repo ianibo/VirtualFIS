@@ -25,7 +25,7 @@ class HomeController {
     params.offset = params.offset ? params.int('offset') : 0
     params.distance = params.distance ? params.int('distance') : 5
 
-    if ( params.postcode || params.keyword ) {
+    if ( params.postcode || params.q ) {
 
       def geo = false;
       def g_lat = null;
