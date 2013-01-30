@@ -34,9 +34,20 @@ class RecordCanonicalisationService {
 
     // Obtain database for geocoding
     // def gazcache_db = mongoService.getMongo().getDB("gazcache")
+    def formatter = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
+    def lm_date = record.orig?.ProviderDescription?.DC_Date_Modified
+    
     def result=[:]
     result.provid = record.provid
+    if ( lm_date && ( lm_date.length() > 0 ) ) {
+      try {
+        log.debug("Trying to parse last modified date: ${lm_date}");
+        result.lastModified = formatter.parse(lm_date);
+      }
+      catch ( Exception e ) {
+      }
+    }
     result.provider = record.owner
     result.title = record.orig?.ProviderDescription?.DC_Title
     result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text' + " - (" + record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType + ")"

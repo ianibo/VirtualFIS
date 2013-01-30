@@ -70,8 +70,8 @@ def go(db, rest_upload_pass, authcode, snac_map) {
     }
 
     // def dpp = new RESTClient('http://localhost:8080/api/rest/deposit')
-    // def dpp = new RESTClient('http://localhost:8080')
-    def dpp = new RESTClient('http://api.localchatter.info')
+    def dpp = new RESTClient('http://localhost:8080')
+    // def dpp = new RESTClient('http://api.localchatter.info')
 
     // Add preemtive auth
     dpp.client.addRequestInterceptor( new HttpRequestInterceptor() {
@@ -106,6 +106,10 @@ def genecd(rec) {
   xml.setOmitEmptyAttributes(true);
   xml.setOmitNullAttributes(true);
 
+  def formatter = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  //def default_date = formatter.format(new Date(System.currentTimeMillis()))
+  def last_mod_date = new Date(rec.lastModified)
+
   xml.'ProviderDescription'(
                       'xsi:schemaLocation':'http://dcsf.gov.uk/XMLSchema/Childcare http://www.ispp-aggregator.org.uk/f1les/ISPP/docs/schemas/v5/ProviderTypes-v1-1e.xsd',
                       'xmlns' : 'http://dcsf.gov.uk/XMLSchema/Childcare',
@@ -128,7 +132,7 @@ def genecd(rec) {
     'DC.Creator'('OFSTED')
     'DC.Publisher'('href':rec.uri,'OFSTED')
     // 'DC.Date.Created'('title')
-    // 'DC.Date.Modified'('title')
+    'DC.Date.Modified'(formatter.format(last_mod_date))
     'ProviderDetails' {
       'ProviderName'(rec.name)
       'ConsentVisibleAddress'(true)
@@ -156,7 +160,7 @@ def genecd(rec) {
       'ProvisionType'() // CCD/CCN,
       'ChildcareAges'() // CCN,
       'Country'('United Kingdom') // United Kingdom
-      'ModificationDate'('')
+      'ModificationDate'(formatter.format(last_mod_date))
       'RegistrationDetails'(RegistrationId:rec.ofstedId) {
         'RegistrationDate'(rec.regdate)
         'RegistrationConditions'()
