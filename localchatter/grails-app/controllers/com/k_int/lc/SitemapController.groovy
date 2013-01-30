@@ -96,7 +96,7 @@ class SitemapController {
         }
         sort = [
                   'lastModified' : [
-                    'order' : 'asc',
+                    'order' : 'desc',
                   ]
         ]
       }

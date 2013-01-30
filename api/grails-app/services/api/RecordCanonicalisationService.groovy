@@ -95,9 +95,11 @@ class RecordCanonicalisationService {
           }
           if ( geocode.response.administrative?.ward ) {
             result.ward = geocode.response.administrative.ward.title
-            result.ward_facet = "${geocode.response.administrative.ward.snac}:${geocode.response.administrative.ward.title}"
-            def ward_shortcode = shortcodeService.getShortcodeFor('ward',geocode.response.administrative.ward.snac,geocode.response.administrative.ward.title)
-            result.ward_shortcode = ward_shortcode.shortcode
+            if ( result.ward ) {
+              result.ward_facet = "${geocode.response.administrative.ward.snac}:${geocode.response.administrative.ward.title}"
+              def ward_shortcode = shortcodeService.getShortcodeFor('ward',geocode.response.administrative.ward.snac,geocode.response.administrative.ward.title)
+              result.ward_shortcode = ward_shortcode.shortcode
+            }
           }
           if ( geocode.response.administrative?.county ) {
             result.county = geocode.response.administrative.county.title
