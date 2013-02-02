@@ -45,9 +45,15 @@ def go(db) {
     hits_table.tbody.tr.each { hits_row ->
       println("Processing hits row.....");
       def profile_td = hits_row.td[0];
-      def org_name = hits_row.td[1];
-      def contact_dets = hits_row.td[2];   
-      println("Org name is ${org_name.a.text()}");
+      def org_name_td = hits_row.td[1];
+      def contact_dets_td = hits_row.td[2];   
+
+      def org_name = org_name_td.a.text()
+      def org_logo_url = profile_td.a.img.@src
+      def details_link = profile_td.a.@href
+
+      println("Org name is ${org_name}, logo: ${org_logo_url}, details: ${details_link}");
+      processDetails(org_name, org_logo_url, details_link)
     }
 
     def next_page_link = gHTML.body.'**'.find { it.name() == 'a' && it.@title == 'Next Page' }
@@ -57,4 +63,19 @@ def go(db) {
     else
       next_page_url = null;
   }
+}
+
+def processDetails(name, logo_url, details_link) {
+  println("processDetails");
+    def gHTML = new URL( "http://findyourfis.daycaretrust.org.uk/kb5/findyourfis/${details_link}" ).withReader { r ->
+      new XmlSlurper( new Parser() ).parse( r )
+      // Find the table with ID Hits
+    }
+
+    def details_div = gHTML.body.'**'.find { it.name() == 'div' && it.@id == 'servicedetails' }
+    details_div.div.dl.each { d ->
+      println(d)
+    }
+    
+
 }
