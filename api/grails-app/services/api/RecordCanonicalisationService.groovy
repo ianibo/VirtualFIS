@@ -81,6 +81,9 @@ class RecordCanonicalisationService {
         // Needs to be lat,lon for es geo_point type
         result.position = [lat:geocode.response.geo.lat, lon:geocode.response.geo.lng]
         result.outcode = result.postcode.substring(0,result.postcode.indexOf(' '));
+        if ( result.outcode )
+          result.postalArea = (result.outcode =~ /[A-Za-z]*/)[0]
+
 
         if ( result.outcode && ( result.outcode.length() > 0 ) ) {
           shortcodeService.getShortcodeFor('outcode',result.outcode,result.outcode)

@@ -28,7 +28,7 @@ class NewGazetteerService {
     def result = null
     def http = new HTTPBuilder("http://uk-postcodes.com");
     http.request(Method.valueOf("GET"), ContentType.JSON) {
-      uri.path = "/postcode/${postcode}.json"
+      uri.path = "/postcode/${postcode.toUpperCase().trim()}.json"
       response.success = {resp, json ->
         log.debug("Process geocode response: ${json}");
         result = [ address:postcode,
