@@ -21,7 +21,7 @@ class ShortcodeService {
   }
 
   def createShortcodeRecordFor(type,value,description,mdb) {
-    def new_shortcode_base=description.trim().toLowerCase().replaceAll("\\p{Punct}","").replaceAll("\\W","_")
+    def new_shortcode_base=description.trim().toLowerCase().replaceAll("\\p{Punct}","").trim().replaceAll("\\W","_")
     int i=2;
     def new_shortcode = new_shortcode_base;
     while(mdb.shortcodes.findOne(shortcode:new_shortcode)) {

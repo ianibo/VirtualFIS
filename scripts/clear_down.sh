@@ -63,6 +63,10 @@ curl -X PUT "localhost:9200/localchatter/resource/_mapping" -d '{
         type : "string",
         index : "not_analyzed"
       },
+      "postalArea" : {
+        type : "string",
+        index : "not_analyzed"
+      },
       "infotypes" : {
         type : "string",
         index : "not_analyzed",
