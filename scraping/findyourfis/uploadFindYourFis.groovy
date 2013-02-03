@@ -17,6 +17,7 @@ import org.apache.http.entity.mime.content.*
 import java.nio.charset.Charset
 import org.apache.http.*
 import org.apache.http.protocol.*
+import net.sf.json.*
 
 def mongo = new com.gmongo.GMongo()
 def db = mongo.getDB("find_your_fis_crawl_db")
@@ -26,21 +27,24 @@ System.in.withReader {
   rest_upload_pass = it.readLine()
 }
   
-go(db,rest_upload_pass)
+// def lcendpoint = new RESTClient('http://api.localchatter.info')
+def lcendpoint = new RESTClient('http://localhost:8080')
+
+go(db,rest_upload_pass,lcendpoint)
 
 // println 'Grab page...'
 // go(db, '887');
 
 mongo.close();
 
-def go(db, rest_upload_pass) {
+def go(db, rest_upload_pass,lcendpoint) {
   db.fis.find().each{ rec ->
-    makeRecord(rec);
+    makeRecord(rec,lcendpoint);
   }
 }
 
 // Construct records according to  http://schema.org/GovernmentOffice
-def makeRecord(rec) {
+def makeRecord(rec,lcendpoint) {
   def upload_record = [:]
   upload_record.'$schema'="http://schema.org/GovernmentOffice"
   upload_record.url=rec.'Web site'
@@ -52,13 +56,12 @@ def makeRecord(rec) {
   upload_record.address.streetAddress=rec.Address
   upload_record.address.postalCode=rec.Postcode
 
-  println("Created upload record ${upload_record}");
+  def upload_record_json = upload_record as JSONObject
+  println("Created upload record ${upload_record_json.toString()}");
+  post(upload_record_json.toString(),lcendpoint,'lcsystem', upload_record);
 }
 
-def post(rec, 
-         target_service, 
-         orig_rec, 
-         authority) {
+def post(rec, target_service, authority, upload_record) {
 
   byte[] rec_as_bytes = rec.getBytes('UTF-8')
   println("Attempting post... [${rec_as_bytes.length}] to ${target_service}");
@@ -67,18 +70,18 @@ def post(rec,
       requestContentType = 'multipart/form-data'
       uri.path='/api/rest/deposit'
       def multipart_entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-      multipart_entity.addPart("owner", new StringBody( 'ofsted', 'text/plain', Charset.forName('UTF-8')))
-      def uploaded_file_body_part = new org.apache.http.entity.mime.content.ByteArrayBody(rec_as_bytes, 'text/xml', 'filename.xml')
+      multipart_entity.addPart("owner", new StringBody( authority, 'text/plain', Charset.forName('UTF-8')))
+      def uploaded_file_body_part = new org.apache.http.entity.mime.content.ByteArrayBody(rec_as_bytes, 'application/json', 'filename.json')
       multipart_entity.addPart("upload", uploaded_file_body_part);
 
       request.entity = multipart_entity
 
       response.success = { resp, data ->
-        println("OK - Record uploaded. Authority:${authority}, URI:${orig_rec.uri}")
+        println("OK - Record uploaded. Authority:${authority} - id is ${upload_record.url}");
       }
 
       response.failure = { resp ->
-        println("Error - ${resp.status}. Authority:${authority}, URI:${orig_rec.uri}");
+        println("Error - ${resp.status}. Authority:${authority} - id is ${upload_record.url}");
         System.out << resp
         println("Done\n\n");
       }
