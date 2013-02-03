@@ -10,6 +10,8 @@ use localchatter
 db.dropDatabase();
 use ofsted_crawl_db
 db.config.drop();
+use lcrecon
+db.sourceRecords.drop();
 !!!
 
 

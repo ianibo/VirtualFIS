@@ -12,6 +12,8 @@ class DepositService {
   def mongoService
   def recordCanonicalisationService
   def elasticSearchService
+  def newGazetteerService
+  def shortcodeService
 
   @PostConstruct
   def init() {
@@ -77,10 +79,10 @@ class DepositService {
       json.remove('$schema') // We are storing the record in mongo.. it doesn't like fields starting with $
 
       log.debug("Schema is present - ${schema} - new rec is ${json}");
-      def mdb = mongoService.getMongo().getDB('lcrecon')
+      def mdb = mongoService.getMongo().getDB('localchatter')
       def lcidentifier = "${owner}:${json.url}"
       log.debug("resource identifier is ${lcidentifier}");
-      def recon_record = mdb.sourceRecords.findOne(lcidentifier:lcidentifier)
+      def recon_record = mdb.sourcerecs.findOne(provid:lcidentifier)
       if ( recon_record ) {
         updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user)
       }
@@ -100,9 +102,18 @@ class DepositService {
   def processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user) {
     log.debug("processNewRecordUpload");
     def recon_rec = [:]
-    recon_rec.identifer = lcidentifier
-    recon_rec.originalRecord = json
+    recon_rec.provid = lcidentifier
+    recon_rec.orig = json
+    recon_rec.owner = owner;
+    recon_rec.cksum = chksum(file);
+    recon_rec.timestamp = System.currentTimeMillis();
+    recon_rec.'__schema' = json.'__schema'
+    recon_rec._id = new org.bson.types.ObjectId()
+
     mdb.sourceRecords.save(recon_rec)
+
+    mdb.currenRecords.save(augment(recon_rec))
+
     log.debug("Saved reconciliation record");
   }
 
@@ -208,5 +219,58 @@ class DepositService {
     String md5sumHex = new BigInteger(1, md5sum).toString(16);
 
     md5sumHex
+  }
+
+
+  def augment(source_record) {
+    def new_record = source_record
+
+    new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name);
+
+    // 1. Lookin to the address field and see if there is a postcode
+    if ( new_record.orig.address.postalCode ) {
+      log.debug("Postal code is present");
+      def geocode = newGazetteerService.geocode(result.postcode)
+      if ( geocode ) {
+        log.debug("geocode result: ${geocode}");
+        // Needs to be lat,lon for es geo_point type
+        new_record.position = [lat:geocode.response.geo.lat, lon:geocode.response.geo.lng]
+        new_record.outcode = result.postcode.substring(0,result.postcode.indexOf(' '));
+        if ( new_record.outcode )
+          new_record.postalArea = (result.outcode =~ /[A-Za-z]*/)[0]
+
+
+        if ( new_record.outcode && ( result.outcode.length() > 0 ) ) {
+          shortcodeService.getShortcodeFor('outcode',new_record.outcode,new_record.outcode)
+        }
+
+        if ( geocode.response.administrative ) {
+          if ( geocode.response.administrative?.district ) {
+            new_record.district = geocode.response.administrative.district.title
+            new_record.district_facet = "${geocode.response.administrative.district.snac}:${geocode.response.administrative.district.title}"
+            def district_shortcode = shortcodeService.getShortcodeFor('district',geocode.response.administrative.district.snac,geocode.response.administrative.district.title)
+            new_record.district_shortcode = district_shortcode.shortcode
+          }
+          if ( geocode.response.administrative?.ward ) {
+            new_record.ward = geocode.response.administrative.ward.title
+            if ( new_record.ward ) {
+              new_record.ward_facet = "${geocode.response.administrative.ward.snac}:${geocode.response.administrative.ward.title}"
+              def ward_shortcode = shortcodeService.getShortcodeFor('ward',geocode.response.administrative.ward.snac,geocode.response.administrative.ward.title)
+              new_record.ward_shortcode = ward_shortcode.shortcode
+            }
+          }
+          if ( geocode.response.administrative?.county ) {
+            new_record.county = geocode.response.administrative.county.title
+            new_record.county_facet = "${geocode.response.administrative.county.snac}:${geocode.response.administrative.county.title}"
+            def county_shortcode = shortcodeService.getShortcodeFor('county',geocode.response.administrative.county.snac,geocode.response.administrative.county.title)
+            new_record.county_shortcode = county_shortcode.shortcode
+          }
+        }
+        else {
+          log.debug("No administrative data in geocode ${geocode}");
+        }
+      }
+    }
+    new_record
   }
 }
