@@ -3,6 +3,7 @@ package cxfisppsoap
 import java.security.MessageDigest
 import javax.annotation.PostConstruct;
 import net.sf.json.JSON
+import groovy.json.JsonSlurper
 
 // http://www.xml.com/pub/a/2006/05/31/converting-between-xml-and-json.html
 
@@ -68,6 +69,41 @@ class DepositService {
 
   def uploadJSON(file,authoritative,owner,user, contentType) {
     log.debug("uploadJSON...");
+    def json = new JsonSlurper().parseText(file)
+    log.debug("Got json ${json}");
+    def schema = json.'$schema'
+    if ( schema) {
+      json.__schema = schema
+      json.remove('$schema') // We are storing the record in mongo.. it doesn't like fields starting with $
+
+      log.debug("Schema is present - ${schema} - new rec is ${json}");
+      def mdb = mongoService.getMongo().getDB('lcrecon')
+      def lcidentifier = "${owner}:${json.url}"
+      log.debug("resource identifier is ${lcidentifier}");
+      def recon_record = mdb.sourceRecords.findOne(lcidentifier:lcidentifier)
+      if ( recon_record ) {
+        updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user)
+      }
+      else {
+        processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user)
+      }
+    }
+    else {
+      log.debug("No schema in json record - cannot process");
+    }
+  }
+
+  def updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user) {
+    log.debug("updateExistingReconRecord");
+  }
+
+  def processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user) {
+    log.debug("processNewRecordUpload");
+    def recon_rec = [:]
+    recon_rec.identifer = lcidentifier
+    recon_rec.originalRecord = json
+    mdb.sourceRecords.save(recon_rec)
+    log.debug("Saved reconciliation record");
   }
 
   def uploadXML(file,authoritative,owner,user, contentType) {
