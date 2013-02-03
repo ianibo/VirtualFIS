@@ -53,7 +53,7 @@ def go(db) {
       def details_link = profile_td.a.@href
 
       println("Org name is ${org_name}, logo: ${org_logo_url}, details: ${details_link}");
-      processDetails(org_name, org_logo_url, details_link)
+      processDetails(org_name, org_logo_url, details_link, db)
     }
 
     def next_page_link = gHTML.body.'**'.find { it.name() == 'a' && it.@title == 'Next Page' }
@@ -65,17 +65,42 @@ def go(db) {
   }
 }
 
-def processDetails(name, logo_url, details_link) {
+def processDetails(name, logo_url, details_link, db) {
   println("processDetails");
     def gHTML = new URL( "http://findyourfis.daycaretrust.org.uk/kb5/findyourfis/${details_link}" ).withReader { r ->
       new XmlSlurper( new Parser() ).parse( r )
       // Find the table with ID Hits
     }
 
-    def details_div = gHTML.body.'**'.find { it.name() == 'div' && it.@id == 'servicedetails' }
-    details_div.div.dl.each { d ->
-      println(d)
-    }
-    
+    def norm_name = name.trim().toLowerCase().replaceAll("\\p{Punct}","").trim().replaceAll("\\W","_")
 
+    def org_record = db.fis.findOne(internal_id:norm_name)
+    if ( !org_record ) {
+      println("Create new org record...");
+      org_record = [
+        internal_id:norm_name.toString(),
+        name:name.toString(),
+        logoUrl:logo_url.toString()
+      ]
+    }
+    else {
+      log.debug("Update existing org record");
+      org_record.logoUrl = logo_url.toString()
+    }
+
+    def last_descriptive_name = null
+
+    println("Listing children of servicedetails div - dl element");
+    def details_div = gHTML.body.'**'.find { it.name() == 'div' && it.@id == 'servicedetails' }
+    details_div.div.dl.children().each { d ->
+      println("Processing element ${d.name()} = ${d.text()}")
+      if ( d.name() == 'dt' ) {
+        last_descriptive_name = d.text().trim().toString();
+      }
+      else if ( d.name() == 'dd' ) {
+        org_record[last_descriptive_name] = d.text().trim().toString()
+        last_descriptive_name = null;
+      }
+    }
+    db.fis.save(org_record);
 }
