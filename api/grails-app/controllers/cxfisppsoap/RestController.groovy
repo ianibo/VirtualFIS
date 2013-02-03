@@ -26,7 +26,7 @@ class RestController {
       def file = request.getFile("upload")
 
       def record = new String(file.getBytes())
-      depositService.upload(record,true,provider,user.username);
+      depositService.upload(record,true,provider,user.username, file.contentType);
     }
   }
 }

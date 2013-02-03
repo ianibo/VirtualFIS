@@ -21,6 +21,7 @@ import net.sf.json.*
 
 def mongo = new com.gmongo.GMongo()
 def db = mongo.getDB("find_your_fis_crawl_db")
+def rest_upload_pass
 
 System.in.withReader {
   print 'localchatter pass:'
@@ -30,14 +31,24 @@ System.in.withReader {
 // def lcendpoint = new RESTClient('http://api.localchatter.info')
 def lcendpoint = new RESTClient('http://localhost:8080')
 
-go(db,rest_upload_pass,lcendpoint)
+// Add preemtive auth
+lcendpoint.client.addRequestInterceptor( new HttpRequestInterceptor() {
+  void process(HttpRequest httpRequest, HttpContext httpContext) {
+    String auth = "admin:${rest_upload_pass}"
+    String enc_auth = auth.bytes.encodeBase64().toString()
+    httpRequest.addHeader('Authorization', 'Basic ' + enc_auth);
+  }
+})
+
+
+go(db,lcendpoint)
 
 // println 'Grab page...'
 // go(db, '887');
 
 mongo.close();
 
-def go(db, rest_upload_pass,lcendpoint) {
+def go(db, lcendpoint) {
   db.fis.find().each{ rec ->
     makeRecord(rec,lcendpoint);
   }

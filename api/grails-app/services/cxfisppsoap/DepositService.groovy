@@ -47,6 +47,30 @@ class DepositService {
   }
 
   def upload(file,authoritative,owner,user) {
+    upload(file,authoritative,owner,user,null);
+  }
+
+  def upload(file,authoritative,owner,user, contentType) {
+    switch(contentType) {
+      case 'text/xml':
+        log.debug("Process XML");
+        uploadXML(file,authoritative,owner,user, contentType)
+        break;
+      case 'application/json':
+        log.debug("Process JSON");
+        uploadJSON(file,authoritative,owner,user, contentType)
+        break;
+      default:
+        log.error("Unhandled submission type: ${contentType}");
+        break;
+    }
+  }
+
+  def uploadJSON(file,authoritative,owner,user, contentType) {
+    log.debug("uploadJSON...");
+  }
+
+  def uploadXML(file,authoritative,owner,user, contentType) {
 
     def result = [:]
 
