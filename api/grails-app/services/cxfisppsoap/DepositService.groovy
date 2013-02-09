@@ -236,6 +236,11 @@ class DepositService {
 
     new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name).shortcode;
 
+    if ( source_record.orig.__schema=='http://schema.org/GovernmentOffice' ) {
+      new_record._boost=2.0
+    }
+
+    // if ( new_record.http://schema.org/GovernmentOffice
     // 1. Lookin to the address field and see if there is a postcode
     if ( new_record.orig.address.postalCode ) {
       log.debug("Postal code is present");
