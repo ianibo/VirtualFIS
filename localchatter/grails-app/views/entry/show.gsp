@@ -1,7 +1,7 @@
 <html>
    <head>
       <meta name="layout" content="main"/>
-      <title>LocalChatter.info: ${record.source.title} via ${record.source.provider}</title>
+      <title>LocalChatter.info: ${record.source.title} via ${record.source.owner}</title>
       <r:require modules="bootstrap"/>
 
     <g:if test="${record.source.position && record.source.position.lat && record.source.position.lon}">
@@ -12,12 +12,12 @@
       <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
     </g:if>
 
-    <meta property="geo.region" name="geo.region" content="${record.source.addr.toString()}" />
-    <meta property="geo.placename" name="geo.placename" content="${record.source.addr.toString()}" />
+    <meta property="geo.region" name="geo.region" content="${record.source.orig.address.toString()}" />
+    <meta property="geo.placename" name="geo.placename" content="${record.source?.orig.address?.streetAddress?.toString()}" />
 
     <!-- OGP Properties -->
-    <meta property="og:title" content="${record.source.title}" />
-    <meta property="og:description" content="${record.source.description}" />
+    <meta property="og:title" content="${record.source.orig.name}" />
+    <meta property="og:description" content="${record.source.orig.description}" />
     <meta property="og:type" content="activity" />
     <meta property="og:url" content="http://localchatter.info/entry/${record.source.shortcode}" />
     <meta property="og:site_name" content="LocalChatter.info" />
@@ -52,7 +52,7 @@
   <div class="content">
     <div class="container">
       <div class="row">
-        <div class="span9" itemscope itemtype="${record.source.finalSchema}">
+        <div class="span9" itemscope itemtype="${record.source.__schema}">
 
           <g:if test="${record.source.position && record.source.position.lat && record.source.position.lon }">
           <div id="rightpanel" style="float:right; width:250px;">
@@ -61,35 +61,34 @@
           </div>
           </g:if>
 
-          <h1 itemprop="name">${record.source.title}</h1>
-          <p itemprop="description">${record.source.description}</p>
+          <h1 itemprop="name">${record.source.orig.name}</h1>
+          <p itemprop="description">${record.source.orig.description}</p>
 
           <dl>
     
             <g:if test="${record.source.additionalInfo}">
             <dt>Additional Information</dt>
-            <dd>${record.source.additionalInfo}</dd>
+            <dd>${record.source.orig.additionalInfo}</dd>
             </g:if>
 
             <dt>Address</dt>
             <dd itemprop="address">
-              <g:each in="${record.source.addr}" var="a">
-                ${a}<br/>
-              </g:each>
+              ${record.source.orig.address.streetAddress}<br/>
+              ${record.source.orig.address.postcode}
             </dd>
           </dl>
           <dl>
 
             <dt>Privacy</dt>
             <dd>
-              <g:if test="${record.source.privacyLevel=='PublicListing'}">Public Listing.</g:if>
+              <g:if test="${record.source.orig.privacyLevel=='PublicListing'}">Public Listing.</g:if>
             </dd>
             <dt>Original Source Record Provided by</dt>
-            <dd>${record.source.provider} (No local updates, corrections or edits yet)</dd>
+            <dd>${record.source.owner} (No local updates, corrections or edits yet)</dd>
             <dt>Ownership</dt>
             <dd>Not currently claimed</dd>
 
-            <g:if test="${record.source.certs}">
+            <g:if test="${record.source.orig.certs}">
               <dt>Certificates, Accreditations and Authorised Links</dt>
               <dd>
                 <table class="table table-bordered">
@@ -129,7 +128,7 @@
 
         var map = new google.maps.Map(document.getElementById("map"), myOptions);
 
-        <g:if test="${record.source.privacyLevel=='PublicListing'}">
+        <g:if test="${record.source.orig.privacyLevel=='PublicListing'}">
         var marker = new google.maps.Marker({
              position: myLatlng, 
              map: map, 

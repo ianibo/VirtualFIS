@@ -57,6 +57,7 @@ class RecordCanonicalisationService {
     result.infotypes = [ 'families', 'families/childcare']
     result.finalSchema = 'http://schema.org/LocalBusiness'
     result.privacyLevel = 'PublicListing'
+    result.provider = record.owner
 
     result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
     if ( record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN ) {

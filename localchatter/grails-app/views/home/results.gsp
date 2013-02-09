@@ -76,10 +76,10 @@
               <ul>
                 <g:each in="${hits}" var="res">
                   <li>
-                    <strong><g:link controller="entry" id="${res.source.shortcode}">${res.source.title}</g:link></strong><br/>
-                    ${res.source.description}<br/>
+                    <strong><g:link controller="entry" id="${res.source.shortcode}">${res.source.orig.name}</g:link></strong><br/>
+                    ${res.source.orig.description}<br/>
                     <g:if test="${params.postcode}">Distance from ${params.postcode} : ${res.sortValues[0].round(2)} ${dunit}<br/></g:if>
-                    Information Source: ${res.source.provider}
+                    Information Source: ${res.source.owner}
  
                   </li>
                 </g:each>

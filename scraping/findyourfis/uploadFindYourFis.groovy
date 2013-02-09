@@ -60,6 +60,8 @@ def makeRecord(rec,lcendpoint) {
   upload_record.'$schema'="http://schema.org/GovernmentOffice"
   upload_record.url=rec.'Web site'
   upload_record.name=rec.name
+  upload_record.description=rec.name
+  upload_record.privacyLevel="PublicListing"
   upload_record.image=rec.logoUrl
   upload_record.address=[:]
   upload_record.address.email=rec.Email
