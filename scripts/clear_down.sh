@@ -78,10 +78,6 @@ curl -X PUT "localhost:9200/localchatter/resource/_mapping" -d '{
       "shortcode" : {
         type : "string",
         index : "not_analyzed"
-      },
-      "_boost" : {
-        "name" : "_boost", 
-        "null_value" : 1.0
       }
     }
   }

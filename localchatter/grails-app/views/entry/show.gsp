@@ -74,11 +74,13 @@
             <dt>Address</dt>
             <dd itemprop="address">
               ${record.source.orig.address.streetAddress}<br/>
-              ${record.source.orig.address.postcode}
+              ${record.source.orig.address.postalCode}
             </dd>
+            <g:if test="${record.source.orig.address?.email}"><dt>Email</td><dd><a href="mailto:${record.source.orig.address.email}" itemprop="email">${record.source.orig.address.email}</a></dd></g:if>
+            <g:if test="${record.source.orig.address?.telephone}"><dt>Telephone</td><dd><a href="mailto:${record.source.orig.address.telephone}" itemprop="telephone">${record.source.orig.address.telephone}</a></dd></g:if>
+            <g:if test="${record.source.orig.url}"><dt>Website</td><dd><a href="${record.source.orig.url}" itemprop="url">${record.source.orig.url}</a></dd></g:if>
           </dl>
           <dl>
-
             <dt>Privacy</dt>
             <dd>
               <g:if test="${record.source.orig.privacyLevel=='PublicListing'}">Public Listing.</g:if>

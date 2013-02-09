@@ -101,7 +101,7 @@ class HomeController {
             facets {
               infotypes {
                   terms {
-                       field = 'infotypes'
+                       field = 'orig.infotypes'
                   }
               }
               district {
