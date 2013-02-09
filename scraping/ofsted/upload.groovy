@@ -70,8 +70,8 @@ def go(db, rest_upload_pass, authcode, snac_map) {
     }
 
     // def dpp = new RESTClient('http://localhost:8080/api/rest/deposit')
-    def api = new RESTClient('http://localhost:8080')
-    // def dpp = new RESTClient('http://api.localchatter.info')
+    // def api = new RESTClient('http://localhost:8080')
+    def api = new RESTClient('http://api.localchatter.info')
 
     // Add preemtive auth
     api.client.addRequestInterceptor( new HttpRequestInterceptor() {

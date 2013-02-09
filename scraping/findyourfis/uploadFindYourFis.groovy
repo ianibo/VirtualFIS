@@ -68,7 +68,7 @@ def makeRecord(rec,lcendpoint) {
   upload_record.address.telephone=rec.Helpline
   upload_record.address.streetAddress=rec.Address
   upload_record.address.postalCode=rec.Postcode
-  upload_record.additionalInfotypes = ['families','families/childcare','localgov','localgov/services']
+  upload_record.infotypes = ['families','families/childcare','localgov','localgov/services']
 
   def upload_record_json = upload_record as JSONObject
   println("Created upload record ${upload_record_json.toString()}");
