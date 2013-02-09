@@ -28,8 +28,8 @@ System.in.withReader {
   rest_upload_pass = it.readLine()
 }
   
-// def lcendpoint = new RESTClient('http://api.localchatter.info')
-def lcendpoint = new RESTClient('http://localhost:8080')
+def lcendpoint = new RESTClient('http://api.localchatter.info')
+// def lcendpoint = new RESTClient('http://localhost:8080')
 
 // Add preemtive auth
 lcendpoint.client.addRequestInterceptor( new HttpRequestInterceptor() {
@@ -68,7 +68,7 @@ def makeRecord(rec,lcendpoint) {
   upload_record.address.telephone=rec.Helpline
   upload_record.address.streetAddress=rec.Address
   upload_record.address.postalCode=rec.Postcode
-  upload_record.additionalInfotypes = ['families','families/childcare']
+  upload_record.additionalInfotypes = ['families','families/childcare','localgov','localgov/services']
 
   def upload_record_json = upload_record as JSONObject
   println("Created upload record ${upload_record_json.toString()}");
