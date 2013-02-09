@@ -84,10 +84,10 @@ class DepositService {
       log.debug("resource identifier is ${lcidentifier}");
       def recon_record = mdb.sourcerecs.findOne(provid:lcidentifier)
       if ( recon_record ) {
-        updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user)
+        updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user,file)
       }
       else {
-        processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user)
+        processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user,file)
       }
     }
     else {
@@ -95,11 +95,11 @@ class DepositService {
     }
   }
 
-  def updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user) {
+  def updateExistingReconRecord(lcidentifier,mdb,recon_record,json,owner,user,file) {
     log.debug("updateExistingReconRecord");
   }
 
-  def processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user) {
+  def processNewRecordUpload(lcidentifier,mdb,recon_record,json,owner,user,file) {
     log.debug("processNewRecordUpload");
     def recon_rec = [:]
     recon_rec.provid = lcidentifier
@@ -110,9 +110,8 @@ class DepositService {
     recon_rec.'__schema' = json.'__schema'
     recon_rec._id = new org.bson.types.ObjectId()
 
-    mdb.sourceRecords.save(recon_rec)
-
-    mdb.currenRecords.save(augment(recon_rec))
+    mdb.sourcerecs.save(recon_rec)
+    mdb.currentRecords.save(augment(recon_rec))
 
     log.debug("Saved reconciliation record");
   }
@@ -162,6 +161,12 @@ class DepositService {
         }
       }
 
+      def canonical_record = [
+        provid:result.provid,
+        owner:owner,
+        timestamp:result.timestamp,
+        orig:recordCanonicalisationService.process(result)
+      ]
 
       // log.debug("looking for docid ${result.docid}");
 
@@ -170,32 +175,36 @@ class DepositService {
 
       if ( reco_record ) {
         // log.debug("Replace existing record");
+        log.debug("update local copy of changed remote record....");
         mdb.sourcerecs.remove(reco_record)
+        mdb.sourcerecs.save(canonical_record);
       }
       else {
+        log.debug("Store new record....");
         result._id = new org.bson.types.ObjectId()
+        mdb.sourcerecs.save(canonical_record);
+        mdb.currentRecords.save(augment(canonical_record))
       }
 
       // log.debug("Saving...");
-      mdb.sourcerecs.save(result);
 
       // Canonicalise the record
-      def canonical_record = recordCanonicalisationService.process(result);
+      // def canonical_record = recordCanonicalisationService.process(result);
 
       // Index the canonical record
-      if ( canonical_record ) {
+      // if ( canonical_record ) {
         // log.debug("process canonical record");
-        org.elasticsearch.groovy.node.GNode esnode = elasticSearchService.getESNode()
-        org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
+      //   org.elasticsearch.groovy.node.GNode esnode = elasticSearchService.getESNode()
+      //   org.elasticsearch.groovy.client.GClient esclient = esnode.getClient()
 
-        def future = esclient.index {
-          index "localchatter"
-          type "resource"
-          id result._id.toString()
-          source canonical_record
-        }
-        log.debug("Indexed respidx:${future.response.index}/resptp:${future.response.type}/respid:${future.response.id}")
-      }
+      //   def future = esclient.index {
+      //     index "localchatter"
+      //     type "resource"
+      //     id result._id.toString()
+      //     source canonical_record
+      //   }
+      //   log.debug("Indexed respidx:${future.response.index}/resptp:${future.response.type}/respid:${future.response.id}")
+      // }
       
     }
     catch ( Exception e ) {
@@ -225,22 +234,22 @@ class DepositService {
   def augment(source_record) {
     def new_record = source_record
 
-    new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name);
+    new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name).shortcode;
 
     // 1. Lookin to the address field and see if there is a postcode
     if ( new_record.orig.address.postalCode ) {
       log.debug("Postal code is present");
-      def geocode = newGazetteerService.geocode(result.postcode)
+      def geocode = newGazetteerService.geocode(new_record.orig.address.postalCode)
       if ( geocode ) {
         log.debug("geocode result: ${geocode}");
         // Needs to be lat,lon for es geo_point type
         new_record.position = [lat:geocode.response.geo.lat, lon:geocode.response.geo.lng]
-        new_record.outcode = result.postcode.substring(0,result.postcode.indexOf(' '));
+        new_record.outcode = new_record.orig.address.postalCode.substring(0,new_record.orig.address.postalCode.indexOf(' '));
         if ( new_record.outcode )
-          new_record.postalArea = (result.outcode =~ /[A-Za-z]*/)[0]
+          new_record.postalArea = (new_record.outcode =~ /[A-Za-z]*/)[0]
 
 
-        if ( new_record.outcode && ( result.outcode.length() > 0 ) ) {
+        if ( new_record.outcode && ( new_record.outcode.length() > 0 ) ) {
           shortcodeService.getShortcodeFor('outcode',new_record.outcode,new_record.outcode)
         }
 

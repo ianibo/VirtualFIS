@@ -18,7 +18,7 @@ class RecordCanonicalisationService {
 
 
     if ( record.__schema == 'http://purl.org/jsonschema/ecd' ) {
-      result = processEcd(record);
+      result = ecdToCanonical(record);
     }
     else if ( record.__schema == 'http://purl.org/jsonschema/fsd' ) {
       result = processFsd(record);
@@ -30,14 +30,56 @@ class RecordCanonicalisationService {
     result
   }
 
+  def ecdToCanonical(record) {
+    def formatter = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    def lm_date = record.orig?.ProviderDescription?.DC_Date_Modified
+    def result=[:]
+    result=[:]
+    result.name = record.orig?.ProviderDescription?.DC_Title
+    result.description = record.orig?.ProviderDescription?.Description?.DC_DESCRIPTION?.'#text' + " - (" + record.orig?.ProviderDescription?.ProviderDetails?.ChildcareType + ")"
+    result.address=[:]
+    result.address.postcode=record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode
+    StringWriter sw = new StringWriter()
+    boolean notfirst=false
+    record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress.'Line'.each { l ->
+      if ( notfirst ) {
+        sw.write(', ');
+      }
+      else { 
+        notfirst=true
+      }
+      sw.write(l)
+    }
+    result.address.streetAddress=sw.toString()
+    result.address.postalCode=record.orig?.ProviderDescription?.ProviderDetails?.SettingDetails?.PostalAddress?.A_5LineAddress?.PostCode
+    result.certs = []
+    result.identifiers = []
+    result.infotypes = [ 'families', 'families/childcare']
+    result.finalSchema = 'http://schema.org/LocalBusiness'
+    result.privacyLevel = 'PublicListing'
+
+    result.ofstedUrn = record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN
+    if ( record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN ) {
+      result.identifiers.add([namespace:'ofsted',value:record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN])
+    }
+    
+    result.registrations = [:]
+    if ( record.orig?.ProviderDescription?.RegistrationDetails ) {
+      result.registrations.authority='ofsted'
+      result.registrations.registrationDate = record.orig?.ProviderDescription?.RegistrationDetails.RegistrationDate
+      result.registrations.identifier = result.ofstedUrn
+      result.registrations.uri='http://www.ofsted.gov.uk/inspection-reports/find-inspection-report/provider/CARE/'+result.ofstedUrn
+    }
+
+    result
+  }
+
   def processEcd(record) {
 
     // Obtain database for geocoding
     // def gazcache_db = mongoService.getMongo().getDB("gazcache")
     def formatter = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-
     def lm_date = record.orig?.ProviderDescription?.DC_Date_Modified
-    
     def result=[:]
     result.provid = record.provid
     if ( lm_date && ( lm_date.length() > 0 ) ) {

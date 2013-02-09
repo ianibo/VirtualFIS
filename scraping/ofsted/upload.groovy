@@ -70,11 +70,11 @@ def go(db, rest_upload_pass, authcode, snac_map) {
     }
 
     // def dpp = new RESTClient('http://localhost:8080/api/rest/deposit')
-    // def dpp = new RESTClient('http://localhost:8080')
-    def dpp = new RESTClient('http://api.localchatter.info')
+    def api = new RESTClient('http://localhost:8080')
+    // def dpp = new RESTClient('http://api.localchatter.info')
 
     // Add preemtive auth
-    dpp.client.addRequestInterceptor( new HttpRequestInterceptor() {
+    api.client.addRequestInterceptor( new HttpRequestInterceptor() {
       void process(HttpRequest httpRequest, HttpContext httpContext) {
         String auth = "admin:${rest_upload_pass}"
         String enc_auth = auth.bytes.encodeBase64().toString()
@@ -89,7 +89,7 @@ def go(db, rest_upload_pass, authcode, snac_map) {
       maxts.value = rec.lastModified
       def ecdrec = genecd(rec);
       // if ( !alreadyPresent(rec.ofstedId,dpp)) {
-        post(ecdrec,dpp,rec,snac_info.snac);
+        post(ecdrec,api,rec,snac_info.snac);
       // }
       println("processed[${ctr++}], ${authcode} records, maxts.value updated to ${rec.lastModified}");
     }

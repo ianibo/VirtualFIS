@@ -20,6 +20,7 @@ db.sourceRecords.drop();
 # db.dropDatabase()
 # clear down elasticsearch indexes
 echo Delete localchatter db
+curl -XDELETE 'http://localhost:9200/_river/lcmongo/_meta'
 curl -XDELETE 'http://localhost:9200/localchatter'
 
 
@@ -77,9 +78,26 @@ curl -X PUT "localhost:9200/localchatter/resource/_mapping" -d '{
       "shortcode" : {
         type : "string",
         index : "not_analyzed"
+      },
+      "_boost" : {
+        "name" : "_boost", 
+        "null_value" : 1.0
       }
     }
   }
+}'
+
+curl -XPUT "localhost:9200/_river/lcmongo/_meta" -d'
+{
+  "type": "mongodb",
+    "mongodb": {
+      "db": "localchatter", 
+      "collection": "currentRecords"
+    },
+    "index": {
+      "name": "localchatter", 
+      "type": "resource"
+    }
 }'
 
 
