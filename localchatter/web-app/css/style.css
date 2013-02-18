@@ -1,3 +1,11 @@
+.pagination ul {
+  display: -moz-inline-box; /* FF2 or lower */
+  display: inline-block;
+  /* IE6/7 inline-block hack */
+  *display: inline;
+  *zoom: 1;
+}
+
 body{
 font-family: "PT Sans", Arial, Helvetica, sans-serif;
 background:#fff url('../images/body-back.png') repeat;

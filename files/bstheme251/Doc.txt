@@ -1,0 +1,16 @@
+How to change color?
+====================
+Open the HTML file in code editor. 
+Search for the below lines.
+
+<link href="style/blue.css" rel="stylesheet">  
+
+Change the color "blue" to "orange" or "green". You are done.
+
+Note: You need to do this for all pages.
+  
+------------------------------------------------  
+  
+Basic Doc :
+===========
+http://responsivewebinc.com/premium/ericka/doc

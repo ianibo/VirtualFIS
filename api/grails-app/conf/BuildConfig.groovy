@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
 
         runtime 'com.gmongo:gmongo:1.0'
 
-        runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.1.0'
+        runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.2.0'
         // runtime 'org.elasticsearch:elasticsearch:0.19.11'
         // runtime 'org.elasticsearch:elasticsearch:0.20.1'
         runtime 'mysql:mysql-connector-java:5.1.21'
@@ -50,7 +50,8 @@ grails.project.dependency.resolution = {
     plugins {
         runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.8.0"
-        runtime ":resources:1.1.6"
+        runtime ":resources:1.2.RC2"
+        // runtime ":resources:1.1.6"
 
         compile ":cxf:1.0.7"
         compile ":cxf-client:1.4.7"

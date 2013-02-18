@@ -20,9 +20,9 @@ class ElasticSearchService {
 
     // GNodeBuilder nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
     def nodeBuilder = new org.elasticsearch.groovy.node.GNodeBuilder()
-    def clus_nm = "aggr"
+    def clus_nm = ApplicationHolder.application.config.es.cluster ?: "elasticsearch"
 
-    log.debug("Construct node settings");
+    log.debug("Construct node settings - ES cluster name will be ${clus_nm}");
 
     nodeBuilder.settings {
       node {
