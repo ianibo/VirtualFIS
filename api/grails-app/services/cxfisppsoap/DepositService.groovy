@@ -236,7 +236,7 @@ class DepositService {
 
     new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name).shortcode;
 
-    if ( new_record.orig.attrubution == null ) {
+    if ( new_record.orig.attribution == null ) {
       new_record.orig.attribution = []
     }
 
