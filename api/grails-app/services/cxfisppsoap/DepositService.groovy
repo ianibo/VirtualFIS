@@ -236,6 +236,14 @@ class DepositService {
 
     new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name).shortcode;
 
+    if ( new_record.orig.attrubution == null )
+      new_record.orig.attribution = []
+
+    new_record.orig.attribution.add([copiedOn:System.currentTimeMillis(), 
+                                     name:'localchatter.info', 
+                                     errataUrl:"http://www.localchatter.info/localchatter/entry/${new_record.shortcode}/edit",
+                                     url:'http://www.localchatter.info'])
+
     // if ( new_record.http://schema.org/GovernmentOffice
     // 1. Lookin to the address field and see if there is a postcode
     if ( new_record.orig.address.postalCode ) {

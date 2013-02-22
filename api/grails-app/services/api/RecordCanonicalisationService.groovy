@@ -63,6 +63,7 @@ class RecordCanonicalisationService {
     if ( record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN ) {
       result.identifiers.add([namespace:'ofsted',value:record.orig?.ProviderDescription?.ProviderDetails?.OfstedURN])
     }
+    result.attribution = []
     
     result.registrations = [:]
     if ( record.orig?.ProviderDescription?.RegistrationDetails ) {
@@ -70,6 +71,7 @@ class RecordCanonicalisationService {
       result.registrations.registrationDate = record.orig?.ProviderDescription?.RegistrationDetails.RegistrationDate
       result.registrations.identifier = result.ofstedUrn
       result.registrations.uri='http://www.ofsted.gov.uk/inspection-reports/find-inspection-report/provider/CARE/'+result.ofstedUrn
+      result.attribution.add([copiedOn:System.currentTimeMillis(), name:'OFSTED', url:result.registrations.uri])
     }
 
     result

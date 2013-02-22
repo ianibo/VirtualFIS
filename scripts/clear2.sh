@@ -7,7 +7,6 @@
 echo Remove localchatter db
 mongo <<!!!
 use localchatter
-db.dropDatabase();
 db.currentRecords.remove({});
 use ofsted_crawl_db
 db.config.drop();
