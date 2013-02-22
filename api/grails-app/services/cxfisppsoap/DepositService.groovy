@@ -236,9 +236,11 @@ class DepositService {
 
     new_record.shortcode = shortcodeService.getShortcodeFor('resource',source_record._id,source_record.orig.name).shortcode;
 
-    if ( new_record.orig.attrubution == null )
+    if ( new_record.orig.attrubution == null ) {
       new_record.orig.attribution = []
+    }
 
+    log.debug("Adding attribution...");
     new_record.orig.attribution.add([copiedOn:System.currentTimeMillis(), 
                                      name:'localchatter.info', 
                                      errataUrl:"http://www.localchatter.info/localchatter/entry/${new_record.shortcode}/edit",
