@@ -105,6 +105,8 @@ class DepositService {
     recon_rec.provid = lcidentifier
     recon_rec.orig = json
     recon_rec.owner = owner;
+    recon_rec.pubStatus = 1; // 0=Pending, 1=Published, 2=Withdrawn, 3=Expired
+    recon_rec.authStatus = 1; // 0=Pending approval, 1=Approved, 2=Withdrawn
     recon_rec.cksum = chksum(file);
     recon_rec.timestamp = System.currentTimeMillis();
     recon_rec.'__schema' = json.'__schema'

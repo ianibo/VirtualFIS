@@ -23,8 +23,18 @@ rs.initiate()
 
 To start replication. rs.conf() and other commands can be used to dump connfig.
 
+Don't forget to bounce mongo
+
 https://github.com/richardwilly98/elasticsearch-river-mongodb
 https://github.com/richardwilly98/elasticsearch-river-mongodb/wiki
+
+
+2.1. Required ES plugins
+
+/usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-mapper-attachments/1.7.0
+/usr/share/elasticsearch/bin/plugin -url https://github.com/downloads/richardwilly98/elasticsearch-river-mongodb/elasticsearch-river-mongodb-1.6.4.zip -install river-mongodb
+/usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head
+
 
 
 3. Schemas and collections
@@ -99,3 +109,11 @@ frontend='http://www.localchatter.info/localchatter'
 cd into scraping/ofsted
 and run
 ./upload.groovy
+
+
+
+7. Test
+
+After the above, you should be able to query using
+
+http://localhost:9200/localchatter/_search?q=*
