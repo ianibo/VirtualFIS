@@ -99,3 +99,8 @@ log4j = {
 }
 grails.plugins.twitterbootstrap.fixtaglib = true
 grails.plugins.twitterbootstrap.defaultBundle = 'bundle_bootstrap'
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'info.localchatter.auth.User'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'info.localchatter.auth.UserRole'
+grails.plugins.springsecurity.authority.className = 'info.localchatter.auth.Role'
