@@ -1,7 +1,7 @@
-#!/usr/bin/groovy
+#!/home/ibbo/.gvm/groovy/current/bin/groovy
 
 @Grapes([
-  @Grab(group='com.gmongo', module='gmongo', version='0.9.2'),
+  @Grab(group='com.gmongo', module='gmongo', version='1.1'),
   @Grab(group='org.apache.httpcomponents', module='httpmime', version='4.1.2'),
   @Grab(group='org.apache.httpcomponents', module='httpclient', version='4.0'),
   @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0'),
@@ -27,6 +27,11 @@ def snac_lookups = [ [ofstedcode:"380",name:"Bradford",snac:"00CX"], [ofstedcode
 
 def snac_map = [:]
 
+if ( args.length != 1 ) {
+  println("Usgae: ./upload.groovy <URL>\nExample urls \"http://localhost:8080\", \"http://api.localchatter.info\"");
+  System.exit(1);
+}
+
 snac_lookups.each { it ->
   snac_map[it.ofstedcode] = it;
 }
@@ -36,10 +41,12 @@ System.in.withReader {
   print 'ofs pass:'
   rest_upload_pass = it.readLine()
 }
+
+
   
 codes_to_process.each { code ->
-  println("Process ${code}");
-  go(db,rest_upload_pass,"${code}", snac_map);
+  println("Process ${code} - uploading to ${args[0]}");
+  go(db,rest_upload_pass,"${code}", snac_map, args[0]);
 }
 
 // println 'Grab page...'
@@ -47,7 +54,7 @@ codes_to_process.each { code ->
 
 mongo.close();
 
-def go(db, rest_upload_pass, authcode, snac_map) {
+def go(db, rest_upload_pass, authcode, snac_map, url) {
   def max_batch_size = 10000;
   def maxts = db.config.findOne(propname:"${authcode}-maxts")
 
@@ -71,7 +78,7 @@ def go(db, rest_upload_pass, authcode, snac_map) {
 
     // def dpp = new RESTClient('http://localhost:8080/api/rest/deposit')
     // def api = new RESTClient('http://localhost:8080')
-    def api = new RESTClient('http://api.localchatter.info')
+    def api = new RESTClient(url)
 
     // Add preemtive auth
     api.client.addRequestInterceptor( new HttpRequestInterceptor() {
@@ -91,10 +98,10 @@ def go(db, rest_upload_pass, authcode, snac_map) {
       // if ( !alreadyPresent(rec.ofstedId,dpp)) {
         post(ecdrec,api,rec,snac_info.snac);
       // }
-      println("processed[${ctr++}], ${authcode} records, maxts.value updated to ${rec.lastModified}");
+      println("processed[${ctr++}] records for code ${authcode}, maxts.value updated to ${rec.lastModified}");
     }
-
-    println("Updating maxts ${maxts}");
+    println("processed ${ctr} records for authcode ${authcode}");
+    println("Updating maxts ${maxts} for ${authcode}");
     db.config.save(maxts);
   }
 }

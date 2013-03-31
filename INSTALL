@@ -50,4 +50,52 @@ To pre-populate the various source collections, you can load the json dumps.
 For me thats
 
 mongoimport --db osgazcache --collection entries < ~/Dropbox/lc/osgazcache_dump.json 
-mongoimport --db ofsted_crawl_db --collection ofsted < ~/Dropbox/lc/osgazcache_dump.json 
+mongoimport --db ofsted_crawl_db --collection ofsted < ~/Dropbox/lc/ofsted.json
+
+5. config
+
+~/.grails/api-config.groovy
+
+-----
+sysusers = [
+  [
+    name:'admin',
+    pass:'defadmpassword',
+    display:'Admin',
+    email:'admin@localhost',
+    roles: [ 'ROLE_USER', 'ROLE_ADMIN']
+  ] 
+]
+
+
+es {
+  cluster='localchatter'
+}
+-----
+
+~/.grails/localchatter-config.groovy
+
+-----
+sysusers = [
+  [
+    name:'admin',
+    pass:'__l1v3lcch4hg3m3',
+    display:'Admin',
+    email:'admin@localhost',
+    roles: [ 'ROLE_USER', 'ROLE_ADMIN']
+  ] 
+]
+
+
+es {
+  cluster='localchatter'
+}
+
+frontend='http://www.localchatter.info/localchatter'
+-----
+
+
+6. Test run... To push the ofsted data loaded in the dump above into the database, you can start the api project then
+cd into scraping/ofsted
+and run
+./upload.groovy
