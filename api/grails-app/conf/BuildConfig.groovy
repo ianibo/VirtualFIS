@@ -39,12 +39,10 @@ grails.project.dependency.resolution = {
         compile "xom:xom:1.2.5"
         compile "xalan:xalan:2.7.1"
 
-        runtime 'com.gmongo:gmongo:1.0'
+        runtime 'com.gmongo:gmongo:1.1'
 
-        runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.2.0'
-        // runtime 'org.elasticsearch:elasticsearch:0.19.11'
-        // runtime 'org.elasticsearch:elasticsearch:0.20.1'
-        runtime 'mysql:mysql-connector-java:5.1.21'
+        runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.4.0'
+        runtime 'mysql:mysql-connector-java:5.1.24'
     }
 
     plugins {
