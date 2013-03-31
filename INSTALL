@@ -23,20 +23,16 @@ rs.initiate()
 
 To start replication. rs.conf() and other commands can be used to dump connfig.
 
-
-
-
-
 https://github.com/richardwilly98/elasticsearch-river-mongodb
 https://github.com/richardwilly98/elasticsearch-river-mongodb/wiki
 
 
+3. Schemas and collections
 
 create database localchatterprod default charset UTF8 default collate utf8-bin;
 grant all on localchatterprod.* to 'localchatter'@'localhost' identified by 'localchatter';
 grant all on localchatterprod.* to 'localchatter'@'localhost.localdomain' identified by 'localchatter';
 grant all on localchatterprod.* to 'localchatter'@'%' identified by 'localchatter';
-
 
 Initial ES setup
 
@@ -45,3 +41,13 @@ Run
 scripts/clear_down.sh
 
 under this directory. This will clear down any existing mongo databases,so be warned!! It will also configure ES collections and the mongod rivier
+
+
+4. Data
+
+To pre-populate the various source collections, you can load the json dumps. 
+
+For me thats
+
+mongoimport --db osgazcache --collection entries < ~/Dropbox/lc/osgazcache_dump.json 
+mongoimport --db ofsted_crawl_db --collection ofsted < ~/Dropbox/lc/osgazcache_dump.json 
