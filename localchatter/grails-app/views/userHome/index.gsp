@@ -30,14 +30,7 @@
       <div class="row">
         <div class="span9">
           <div style="text-align:center;">
-            <g:form action="index" method="get" class="form-inline">
-              <h1>Search</h1>
-              <p>Search the our database for information about organisations and services near you. We collect information from trusted local sources and then allow the information owners to correct and improve their own information whilst preserving the statutory parts. Just enter your postcode to find local services near you:
-                 or add keywords to look for specific kinds of information, EG childcare</p>
-              Postcode: <input name="postcode" placeholder="Enter your postcode..." type="text" />
-              Keywords: <input name="q" placeholder="Keywords, eg Childcare..." type="text" />
-              <button class='btn'>Go!</button>
-            </g:form>
+            LoginForm
           </div>
         </div>
         <div class="span3">
@@ -46,7 +39,6 @@
       </div>
     </div>
   </div>
- 
 
 
 </body>

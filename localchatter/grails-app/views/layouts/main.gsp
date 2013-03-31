@@ -55,6 +55,26 @@
       </div>
     </header>
 
+    <div class="navbar navbar-static-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse">
+            <!-- Navigation links starts here -->
+            <ul class="nav">
+              <!-- Main menu -->
+              <li><g:link controller="home" action="index">Home</g:link></li>
+            </ul>
+            <ul class="nav pull-right">
+               <sec:ifLoggedIn>
+                 <li><g:link controller="logout">Logout</g:link></li>
+               </sec:ifLoggedIn>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <g:layoutBody/>
 
 

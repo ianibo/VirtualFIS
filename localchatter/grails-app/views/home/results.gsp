@@ -9,21 +9,6 @@
    </head>
 <body>
 
-  <div class="navbar navbar-static-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">Menu</a>
-        <div class="nav-collapse">
-          <!-- Navigation links starts here -->
-          <ul class="nav">
-            <!-- Main menu -->
-            <li><g:link controller="home" action="index">Home</g:link></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <g:if test="${flash.message}">
   <div class="content">
     <div class="container"><div class="row"><div class="well span12" style="text-align:center;">
