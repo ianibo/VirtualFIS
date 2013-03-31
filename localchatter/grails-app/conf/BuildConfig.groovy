@@ -38,6 +38,8 @@ grails.project.dependency.resolution = {
         runtime 'org.elasticsearch:elasticsearch-lang-groovy:1.2.0'
         runtime 'mysql:mysql-connector-java:5.1.21'
         runtime 'com.gmongo:gmongo:1.0'
+        compile 'org.springframework.social:spring-social-core:1.0.2.RELEASE'
+        compile 'org.springframework.social:spring-social-facebook:1.0.2.RELEASE'
     }
 
     plugins {
