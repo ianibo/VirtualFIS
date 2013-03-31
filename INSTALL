@@ -117,3 +117,12 @@ and run
 After the above, you should be able to query using
 
 http://localhost:9200/localchatter/_search?q=*
+
+
+
+
+X. Upgrade
+
+rs0:PRIMARY> db.currentRecords.update({},{$set:{authStatus:1}},{multi:true});
+rs0:PRIMARY> db.currentRecords.update({},{$set:{pubStatus:1}},{multi:true});
+
