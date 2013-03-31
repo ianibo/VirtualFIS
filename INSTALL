@@ -39,7 +39,12 @@ https://github.com/richardwilly98/elasticsearch-river-mongodb/wiki
 
 3. Schemas and collections
 
-create database localchatterprod default charset UTF8 default collate utf8-bin;
+create database lcdev default charset UTF8 default collate utf8_bin;
+grant all on lcdev.* to 'lcdev'@'localhost' identified by 'lcdev';
+grant all on lcdev.* to 'lcdev'@'localhost.localdomain' identified by 'lcdev';
+grant all on lcdev.* to 'lcdev'@'%' identified by 'lcdev';
+
+create database localchatterprod default charset UTF8 default collate utf8_bin;
 grant all on localchatterprod.* to 'localchatter'@'localhost' identified by 'localchatter';
 grant all on localchatterprod.* to 'localchatter'@'localhost.localdomain' identified by 'localchatter';
 grant all on localchatterprod.* to 'localchatter'@'%' identified by 'localchatter';

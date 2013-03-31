@@ -13,8 +13,23 @@ hibernate {
 environments {
     development {
         dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
-            url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
+           dbCreate = "update"
+            driverClassName = "com.mysql.jdbc.Driver"
+            username = "lcdev"
+            password = "lcdev"
+            url = "jdbc:mysql://localhost/lcdev?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8"
+            pooled = true
+            dialect=org.hibernate.dialect.MySQL5Dialect
+            properties {
+                maxActive = -1
+                minEvictableIdleTimeMillis=1800000
+                timeBetweenEvictionRunsMillis=1800000
+                numTestsPerEvictionRun=3
+                testOnBorrow=true
+                testWhileIdle=true
+                testOnReturn=true
+                validationQuery="select 1"
+            }
         }
     }
     test {

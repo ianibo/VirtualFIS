@@ -104,3 +104,8 @@ grails.plugins.twitterbootstrap.defaultBundle = 'bundle_bootstrap'
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'info.localchatter.auth.User'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'info.localchatter.auth.UserRole'
 grails.plugins.springsecurity.authority.className = 'info.localchatter.auth.Role'
+
+
+grails.plugins.springsecurity.facebook.domain.classname='info.localchatter.auth.FacebookUser'
+// See local config file grails.plugins.springsecurity.facebook.appId=
+// See local config file grails.plugins.springsecurity.facebook.secret=
