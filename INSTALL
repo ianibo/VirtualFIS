@@ -1,0 +1,47 @@
+
+1. Package Prerequs
+
+Last configured with
+
+ii  elasticsearch                             0.20.5                                    all          Open Source, Distributed, RESTful Search Engine
+ii  mongodb-10gen                             2.4.1                                     amd64        An object/document-oriented database
+
+2. Config Prereqs
+
+Mongo needs to be configured with replica set enabled.. Info here: http://docs.mongodb.org/manual/tutorial/deploy-replica-set/ but in essence add
+
+-----
+# in replica set configuration, specify the name of the replica set
+replSet = rs0
+-----
+
+to /etc/mongodb.conf
+
+Then run mongo command line and execute
+
+rs.initiate()
+
+To start replication. rs.conf() and other commands can be used to dump connfig.
+
+
+
+
+
+https://github.com/richardwilly98/elasticsearch-river-mongodb
+https://github.com/richardwilly98/elasticsearch-river-mongodb/wiki
+
+
+
+create database localchatterprod default charset UTF8 default collate utf8-bin;
+grant all on localchatterprod.* to 'localchatter'@'localhost' identified by 'localchatter';
+grant all on localchatterprod.* to 'localchatter'@'localhost.localdomain' identified by 'localchatter';
+grant all on localchatterprod.* to 'localchatter'@'%' identified by 'localchatter';
+
+
+Initial ES setup
+
+Run
+
+scripts/clear_down.sh
+
+under this directory. This will clear down any existing mongo databases,so be warned!! It will also configure ES collections and the mongod rivier
