@@ -39,8 +39,9 @@
               <span class="help-block">We only add informaiton about places people can actually walk into, please tell us where people can find the service, event or business</span>
               <label>Whats the name of the service, event or business?</label>
               <input type="text" placeholder="Name of the service, event or business" name="proposed_name"/>
-              <label>If this is an event, please tell us the start time</label>
-              <a data-type="date" id="datepicker"></a>
+              <label>If this is an event, please tell us the event date</label>
+              <input type="hidden" id="event_date" name="event_date"/>
+              <a data-type="date" class="hiddenDateInput" data-hiddenid="event_date"></a>
               <label>Continue</label>
               <button type="submit" class="btn">Next -></button>
             </fieldset>
@@ -63,7 +64,11 @@
   <script>
     $(function() {
       $.fn.editable.defaults.mode = 'popup';
-      $("#datepicker").editable();
+      $(".hiddenDateInput").editable({
+        url: function(params) {
+          $("#"+$(this).data('hiddenid')).val(params.value);
+        }
+      });
     });
   </script>
 
