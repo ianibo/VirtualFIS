@@ -96,4 +96,27 @@ curl -XPUT "localhost:9200/_river/lcmongo/_meta" -d'
     }
 }'
 
+curl -XPOST 'http://localhost:9200/_aliases' -d '
+{
+  "actions" : [
+    {  
+      "remove" : { 
+        "index":"localchatter", 
+        alias:"lcpub" 
+      }
+    },
+    {
+      "add" : {
+        "index" : "localchatter",
+        "alias" : "lcpub",
+        "filter" : { 
+          "and" : [
+            { "term" : { "pubStatus" : 1 } },
+            { "term" : { "authStatus" : 1 } }
+          ]
+        }
+      }
+    }
+  ]
+}'
 
