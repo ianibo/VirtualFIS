@@ -9,10 +9,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><g:layoutTitle default="Localchatter.info"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <r:require modules="bootstrap, bootstrap-popover, lc "/> <!-- see bootstrap-js for all js res-->
+
     <g:layoutHead/>
     <r:layoutResources />
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'style.css')}" type="text/css">
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'blue.css')}" type="text/css">
+
+    <!-- Moved to resources
+      <link rel="stylesheet" href="${resource(dir: 'css', file: 'style.css')}" type="text/css">
+      <link rel="stylesheet" href="${resource(dir: 'css', file: 'blue.css')}" type="text/css">
+      <link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-editable.css')}" type="text/css">
+      <script src="${resource(dir: 'js', file: 'bootstrap-editable.min.js')}"></script>
+      <script src="${resource(dir: 'js', file: 'moment.min.js')}"></script>
+    -->
+
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-37870432-1']);
@@ -23,6 +33,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+
   </head>
   <body>
 
