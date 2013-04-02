@@ -37,35 +37,7 @@
     <div class="container">
       <div class="row">
         <div class="span9">
-          <p>Want to share information about a local service, one-off event or locally owned independent business? GREAT!</p>
-          <p>Please use our recurring event form to tell us about an event that repeats</p>
-
-          <g:form class="form-horizontal" action="check" method="get">
-            <div class="control-group">
-              <label class="control-label" for="proposed_postcode">Postcode</label>
-              <div class="controls">
-                <input type="text" name="proposed_postcode" placeholder="Postcode of service, event or business" value="${params.proposed_postcode}">
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label" for="proposed_name">Name</label>
-              <div class="controls">
-	        <input type="text" placeholder="Name of the service, event or business" name="proposed_name" value="${params.proposed_name}"/>
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label" for="proposed_event_date">Event Date</label>
-              <input type="hidden" name="event_date" id="event_date" value="${params.event_date}"/>
-              <div class="controls">
-                <a data-type="date" class="hiddenDateInput" data-hiddenid="event_date">${params.event_date}</a>
-              </div>
-            </div>
-            <div class="control-group">
-              <div class="controls">
-                <button type="submit" class="btn">Next -></button>
-              </div>
-            </div>
-          </g:form>
+          <p>${proposed_name} in ${proposed_postcode} looks like something we don't already know about</p>
         </div>
         <div class="span3">
           <ul>
