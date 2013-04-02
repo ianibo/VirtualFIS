@@ -31,23 +31,33 @@
         <div class="span9">
           <p>Want to share information about a local service, one-off event or locally owned independent business? GREAT!</p>
           <p>Please use our recurring event form to tell us about an event that repeats</p>
-          <form>
-            <fieldset>
-              <legend>Legend</legend>
-              <label>Where can we find the service, event or business?</label>
-              <input type="text" name="proposed_postcode" placeholder="Postcode of service, event or business">
-              <span class="help-block">We only add informaiton about places people can actually walk into, please tell us where people can find the service, event or business</span>
-              <label>Whats the name of the service, event or business?</label>
-              <input type="text" placeholder="Name of the service, event or business" name="proposed_name"/>
-              <label>If this is an event, please tell us the event date</label>
-              <input type="hidden" id="event_date" name="event_date"/>
-              <a data-type="date" class="hiddenDateInput" data-hiddenid="event_date"></a>
-              <label>Continue</label>
-              <button type="submit" class="btn">Next -></button>
-            </fieldset>
-          </form>
-          <p>Whats the postcode of the location? <input type="text" name="proposed_postcode"/></p>
-          <p>Whats the name of the service, event or  </p>
+
+          <g:form class="form-horizontal" action="check">
+            <div class="control-group">
+              <label class="control-label" for="proposed_postcode">Postocde</label>
+              <div class="controls">
+                <input type="text" name="proposed_postcode" placeholder="Postcode of service, event or business" value="${params.proposed_postcode}">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="proposed_name">Name</label>
+              <div class="controls">
+	        <input type="text" placeholder="Name of the service, event or business" name="proposed_name" value="${params.proposed_name}"/>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="proposed_event_date">Event Date</label>
+              <input type="hidden" name="event_date" id="event_date" value="${params.event_date}"/>
+              <div class="controls">
+                <a data-type="date" class="hiddenDateInput" data-hiddenid="event_date">${params.event_date}</a>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
+                <button type="submit" class="btn">Next -></button>
+              </div>
+            </div>
+          </g:form>
         </div>
         <div class="span3">
           <ul>
