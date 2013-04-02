@@ -38,8 +38,20 @@
           </div>
           <div class="span4 offset4">
             <div class="list">
+
               <div class="address">
-                <i class="icon-share"></i> <!--Facebook, Google+,--> <a href="http://twitter.com/lcdotinfo">Twitter</a>
+                <!-- AddThis Button BEGIN -->
+                <div class="addthis_toolbox addthis_default_style ">
+                  <a class="addthis_button_preferred_1"></a>
+                  <a class="addthis_button_preferred_2"></a>
+                  <a class="addthis_button_preferred_3"></a>
+                  <a class="addthis_button_preferred_4"></a>
+                  <a class="addthis_button_compact"></a>
+                  <a class="addthis_counter addthis_bubble_style"></a>
+                </div>
+                <script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+                <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-513ceb995a05bdf7"></script>
+              <!-- AddThis Button END -->
               </div>
               <hr />
               <!-- Add your address here -->
