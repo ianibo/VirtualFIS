@@ -1,0 +1,12 @@
+Credits:
+========
+
+Photos : http://pdphoto.org
+HTML5 Sive : https://github.com/aFarkas/html5shiv
+Isotope : http://isotope.metafizzy.co
+PrettyPhoto : http://www.no-margin-for-errors.com
+Twitter : http://tweet.seaofclouds.com
+Font awesome icon : http://fortawesome.github.com/Font-Awesome/
+Flex Slider : http://www.woothemes.com/flexslider/
+Bootstrap : http://twitter.github.com/bootstrap/
+Medialoot : http://medialoot.com/item/free-designer-portfolio-icon-set/

@@ -1,0 +1,43 @@
+Change Log:
+
+Version 2.9:
+-----------
+Button Fix. (style.css)
+Navigation bar fix. Added the extra class "collapse" in <div class="nav-collapse collapse"> (All HTML files).
+Portfolio fix. (gallery.html, portfolio.html, portfolio1.html, portfolio2.html, custom.js)
+
+Version 2.8:
+------------
+Bootstrap updated to 2.2.2.
+Button Fix. (style.css)
+Navbar Fixed.
+
+Version 2.6:
+-----------
+Removed reference to default Bootstrap Gly Icons (Bootstrap.css file).
+About Page Icon fix. (style.css)
+Service Page Icon fix. (style.css)
+
+Version 2.5.1:
+-------------
+Minor Bug fixes in Stylesheet.
+Fixed Button Color Issue.
+
+
+Version 2.5:
+------------
+Plugins Update.
+OnHover navigation changed to OnClick Navigation.
+Brown Color Enhanced. 
+
+
+Version 2.0:
+------------
+Updated to Bootstrap 2.2.0.
+22 New Pages.
+Parallax Content Slider.
+
+
+Version 1.0:
+------------
+Initial Release.
