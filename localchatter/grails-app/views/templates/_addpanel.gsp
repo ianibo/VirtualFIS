@@ -1,5 +1,5 @@
 <script type="text/javascript"><!--
-google_ad_client = "${grailsApplication.config.adsense.clientcode=}";
+google_ad_client = "${grailsApplication.config.adsense.clientcode}";
 /* LocalChatterMain */
 google_ad_slot = "${grailsApplication.config.adsense.adslot}";
 google_ad_width = 160;
