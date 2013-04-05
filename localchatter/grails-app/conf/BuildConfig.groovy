@@ -40,13 +40,16 @@ grails.project.dependency.resolution = {
         runtime 'com.gmongo:gmongo:1.0'
         compile 'org.springframework.social:spring-social-core:1.0.2.RELEASE'
         compile 'org.springframework.social:spring-social-facebook:1.0.2.RELEASE'
+
     }
 
     plugins {
         runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.9.1"
         // runtime ":jquery:1.8.0"
-        runtime ":resources:1.1.6"
+        // runtime ":resources:1.1.6"
+        runtime ":resources:1.2.RC2"
+        compile ":webxml:1.4.1" 
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
