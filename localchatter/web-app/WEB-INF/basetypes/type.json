@@ -1,0 +1,13 @@
+{
+  typename:'type',
+  properties:[
+    {
+      name:'typename'
+      type:'string'
+    },
+    {
+      name:'properties',
+      type:'array'
+    }
+  ]
+}

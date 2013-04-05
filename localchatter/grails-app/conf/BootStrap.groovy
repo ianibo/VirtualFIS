@@ -1,6 +1,8 @@
 
 import info.localchatter.auth.*
-
+import org.springframework.core.io.Resource
+import org.codehaus.groovy.grails.commons.ApplicationAttributes
+import grails.util.GrailsUtil
 
 class BootStrap {
 
@@ -11,7 +13,6 @@ class BootStrap {
     def userRole = Role.findByAuthority('ROLE_USER') ?: new Role(authority: 'ROLE_USER').save(failOnError: true)
     def adminRole = Role.findByAuthority('ROLE_ADMIN') ?: new Role(authority: 'ROLE_ADMIN').save(failOnError: true)
     def fbRole = Role.findByAuthority('ROLE_FACEBOOK') ?: new Role(authority: 'ROLE_FACEBOOK').save(failOnError: true)
-
 
     log.debug("Processing bootstrap user accounts... ${grailsApplication.config.sysusers}");
     grailsApplication.config.sysusers.each { su ->
@@ -48,9 +49,28 @@ class BootStrap {
         }
       }
     }
+
+    bootstrapTypeSystem(servletContext);
   }
 
 
   def destroy = {
+  }
+
+  def bootstrapTypeSystem(servletContext) {
+
+    log.debug("Loading bootstrap type definitions from disk cache");
+
+    def ctx = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
+    Resource r = ctx.getResource("/WEB-INF/basetypes");
+    def f = r.getFile();
+    log.debug("got types dir: ${f}");
+
+    // see http://groovy.dzone.com/news/class-loading-fun-groovy for info on the strategy being used here
+
+    if ( f.isDirectory() ) {
+      f.listFiles().each { type_declaration ->
+      }
+    }
   }
 }
