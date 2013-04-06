@@ -9,6 +9,7 @@ class SyseditController {
   def springSecurityService
   def mongoService
   def mongoTypeService
+  def layoutService
 
   @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def index() { 
@@ -23,6 +24,7 @@ class SyseditController {
     log.debug("Got object ${o}");
 
     if ( o ) {
+      result.o = o;
       def type_info = mongoTypeService.extractTypeInfoFor(o);
       log.debug("Type info: ${type_info}");
 
@@ -32,6 +34,8 @@ class SyseditController {
       else {
         // No type specified
         log.debug("Lookup layout for first type: ${type_info[0].name}");
+        result.layoutInfo = layoutService.generateDefaultLayout(type_info[0]);
+        render view:'templateDisplay', model:result
       }
     }
 

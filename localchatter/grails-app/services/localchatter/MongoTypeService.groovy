@@ -9,9 +9,7 @@ class MongoTypeService {
     log.debug("Request to extract type info for ${mongo_object._id}");
     if ( mongo_object.__types ) {
     }
-    else {
-      result.add(reflectBasicTypeInfoFromObject(mongo_object));
-    }
+    result.add(reflectBasicTypeInfoFromObject(mongo_object));
 
     result
   }
