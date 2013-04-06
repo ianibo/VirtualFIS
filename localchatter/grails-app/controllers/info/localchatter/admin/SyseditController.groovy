@@ -8,6 +8,7 @@ class SyseditController {
 
   def springSecurityService
   def mongoService
+  def mongoTypeService
 
   @Secured(['ROLE_ADMIN', 'IS_AUTHENTICATED_FULLY'])
   def index() { 
@@ -20,6 +21,19 @@ class SyseditController {
     def o = mdb."${params.collection}".findOne(_id:oid)
 
     log.debug("Got object ${o}");
+
+    if ( o ) {
+      def type_info = mongoTypeService.extractTypeInfoFor(o);
+      log.debug("Type info: ${type_info}");
+
+      if (params.type) {
+        log.debug("Get layout for type ${params.type}")
+      }
+      else {
+        // No type specified
+        log.debug("Lookup layout for first type: ${type_info[0].name}");
+      }
+    }
 
     //result.typeInfo = mongoTypeService.identify(o)
     //result.layoutInfo = templateServie.generate
