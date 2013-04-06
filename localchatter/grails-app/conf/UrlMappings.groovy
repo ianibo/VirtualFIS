@@ -12,7 +12,7 @@ class UrlMappings {
     "/entry/$id" (controller:"entry", action:"show")
     "/collection/$id" (controller:"collection", action:"show")
 
-    "/admin/data/$collection/$id/$action?"(controller:"sysedit")
+    "/admin/data/$database/$collection/$id/$type?"(controller:"sysedit")
 
     "/"(controller:"home",action:"index")
     "500"(view:'/error')
