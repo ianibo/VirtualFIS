@@ -30,6 +30,31 @@ class LayoutService {
             def sub_object_layout = generateDefaultLayout(sub_object_type_info[0],object_instance[p.name])
             result.fields.add([name:p.name,label:p.name, type:'object', layout:sub_object_layout])
             break;
+          case 'com.mongodb.BasicDBList':
+            // Want to be able to support several variant list layouts: Tabular, where rows are reasonably consistent,
+            // Object, were rows are heterogenious, and some variant for *big* lists. For now, tabular
+            //
+            //If there is at least 1 item in the list, use the 0th element as a template
+            def tab_layout = [label:p.name, name:p.name, type:'tablist']
+            log.debug("Handle list property (${p.name})");
+            if ( object_instance[p.name].size() > 0 ) {
+              // Is the row a scalar, or an object?
+              if ( object_instance[p.name][0].getClass().name == 'com.mongodb.BasicDBObject' ) {
+                def first_row_type_info = mongoTypeService.extractTypeInfoFor(object_instance[p.name][0])
+                log.debug("First row of table: ${object_instance[p.name][0]}, generated type info: ${first_row_type_info}");
+                tab_layout.columns = []
+                first_row_type_info[0].properties.each { row_prop ->
+                  log.debug("Adding column: ${row_prop}");
+                  tab_layout.columns.add([name:row_prop.name,label:row_prop.name]);
+                }
+                result.fields.add(tab_layout);
+              }
+              else {
+                log.debug("Not a list of objects, not handled yet...");
+              }
+            }
+            tab_layout
+            break;
           default:
             log.debug("Skipping ${p.name} with type ${p.type}");
             break;
