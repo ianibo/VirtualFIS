@@ -34,7 +34,7 @@ class SyseditController {
       else {
         // No type specified
         log.debug("Lookup layout for first type: ${type_info[0].name}");
-        result.layoutInfo = layoutService.generateDefaultLayout(type_info[0]);
+        result.layoutInfo = layoutService.generateDefaultLayout(type_info[0], o);
         render view:'templateDisplay', model:result
       }
     }

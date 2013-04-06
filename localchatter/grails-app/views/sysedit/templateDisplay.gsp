@@ -29,17 +29,8 @@
     <div class="container">
       <div class="row">
         <div class="span12">
-          <div style="text-align:center;">
-            <dl class="dl-horizontal">
-              <g:each in="${layoutInfo.fields}" var="f">
-                <g:if test="${f.type=='string'}">
-                  <div class="control-group">
-                    <dt>${f.label}</dt>
-                    <dd class="text-left" style="text-align:left;">${o[f.label]}</dd>
-                  </div>
-                </g:if>
-              </g:each>
-            </dl>
+          <div>
+            <g:render template="objectPanel" contextPath="../templates" model="[o:o,layoutInfo:layoutInfo]"/>
           </div>
         </div>
       </div>

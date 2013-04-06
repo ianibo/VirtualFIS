@@ -6,7 +6,7 @@ class MongoTypeService {
 
     def result = []
 
-    log.debug("Request to extract type info for ${mongo_object._id}");
+    log.debug("Request to extract type info for ${mongo_object._id} (null indicates an anonymous nested object)");
     if ( mongo_object.__types ) {
     }
     result.add(reflectBasicTypeInfoFromObject(mongo_object));
@@ -15,13 +15,13 @@ class MongoTypeService {
   }
 
   def reflectBasicTypeInfoFromObject(mongo_object) {
-    log.debug("No type information present. Generating reflected stub");
+    log.debug("No type information present. Generating reflected stub - Root is ${mongo_object.getClass()}");
     def result = [:]
     result.name="__object"
     def properties = []
     mongo_object.keySet().each { k ->
-      log.debug("Adding property ${k}");
-      properties.add([name:k,type:k.class.name])
+      log.debug("Adding property ${k} class ${mongo_object[k]?.getClass()?.name}");
+      properties.add([name:k,type:mongo_object[k].getClass().name])
     }
     result.properties = properties
     result;
