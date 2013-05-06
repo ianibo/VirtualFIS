@@ -49,17 +49,18 @@ def go(db, urls) {
 def processLetter(url, letter) {
   def full_search_url = "${url.url}/Search.aspx?letter=${letter}"
   println("Process ${url.name} : ${full_search_url}");
+  def pageno = 0;
 
   def cookies = []
 
   new HTTPBuilder( full_search_url ).with {
     get(contentType:TEXT) { resp, reader ->
       gHTML = new XmlSlurper( new Parser() ).parse( reader )
-      // resp.getHeaders('Set-Cookie').each {
-      //   String cookie = it.value.split(';')[0]
-      //   println("Adding cookie to collection: $cookie")
-      //   cookies.add(cookie)
-      // }
+      resp.getHeaders('Set-Cookie').each {
+        String cookie = it.value.split(';')[0]
+        println("Adding cookie to collection: $cookie")
+        cookies.add(cookie)
+      }
     }
   }
 
@@ -67,10 +68,14 @@ def processLetter(url, letter) {
   //   new XmlSlurper( new Parser() ).parse( r )
   // }
 
+  println("Processing page ${pageno}");
   def process_result = processResponsePage(gHTML, url);
 
   println("Will set cookies header to ${cookies.join(';')}");
   while ( process_result.has_next ) {
+
+    println("Processing page ${++pageno}");
+
     // We have to do a form post to the URL, sucks ass majorly, but there you go
     new HTTPBuilder( full_search_url ).with {
       request(POST,TEXT) {
@@ -81,15 +86,17 @@ def processLetter(url, letter) {
         headers.'Content-Type' = 'application/x-www-form-urlencoded'
         requestContentType = URLENC
 
+
         body=['__VIEWSTATE':viewstate,
-              'ctl00$ContentPlaceHolder1$bottomPager$ctl06':'Next',
+              "${process_result.pagination_name}":'Next',
               '__EVENTVALIDATION':process_result.event_validation
         ]
 
-        // headers['Cookie'] = cookies.join(';')
+        headers['Cookie'] = cookies.join(';')
 
 
         response.success = { resp, reader ->
+          println("Got page....");
           def gHTML2 = new XmlSlurper( new Parser() ).parse( reader )
           process_result = processResponsePage(gHTML2, url);
         }
@@ -113,13 +120,22 @@ def processResponsePage(gHTML,url) {
   }
 
   def next_button_element = gHTML.body.'**'.find { it.name() == 'input'  && it.@value.text() == 'Next' && it.@class.text() == 'paging_next_button'}
-  if ( next_button_element.@disabled == 'disabled' ) {
+  
+  if ( next_button_element == null ) {
     println("No next page");
     result.has_next = false
+    result.pagination_name = null;
+  }
+  else if ( next_button_element.@disabled == 'disabled' ) {
+    println("No next page");
+    result.has_next = false
+    result.pagination_name = null;
   }
   else {
     println("Has next page");
     result.has_next = true
+    result.pagination_name = next_button_element.@name
+    println("Pagination element will be ${result.pagination_name}");
   }
 
   def event_validation_element = gHTML.body.'**'.find { it.name() == 'input'  && it.@name.text() == '__EVENTVALIDATION'}
