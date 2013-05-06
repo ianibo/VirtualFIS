@@ -173,4 +173,26 @@ def processResponsePage(gHTML,url) {
 
 def processRecord(owner, url) {
   println("Find ${url} owned by ${owner}");
+
+  // Get url
+  // Extract all provider_result_section divs.
+  // Read 
+  // <div class="provider_result_section"><h3 class="provider_result_header">Additional Information</h3><div class="provider_result_content">Please contact provider by post, email or telephone.<br />Venue to be confirmed.</div></div>
+
+  def gHTML = null
+  new HTTPBuilder( url ).with {
+    get(contentType:TEXT) { resp, reader ->
+      gHTML = new XmlSlurper( new Parser() ).parse( reader )
+    }
+  }
+
+  if ( gHTML != null ) {
+    def props = [:]
+    def sel = gHTML.body.'**'.find { it.name() == 'div' && it.@class.text() == 'provider_result_section' }
+    sel.each { p ->
+      props[p.h3.text()] = p.div
+    }
+    println("got props: ${props}");
+  }
+
 }
