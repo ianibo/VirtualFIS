@@ -2,10 +2,17 @@
 
 @Grapes([
   @Grab(group='com.gmongo', module='gmongo', version='0.9.2'),
-  @Grab( 'org.ccil.cowan.tagsoup:tagsoup:1.2.1' )
+  @Grab( 'org.ccil.cowan.tagsoup:tagsoup:1.2.1' ),
+  @Grab(group='org.apache.httpcomponents', module='httpmime', version='4.1.2'),
+  @Grab(group='org.apache.httpcomponents', module='httpclient', version='4.0'),
+  @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0')
+
 ])
 
 import org.ccil.cowan.tagsoup.Parser
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.ContentType.URLENC
+import static groovyx.net.http.ContentType.TEXT
 
 
 println "Open mongo";
@@ -44,23 +51,86 @@ def go(db, urls) {
 def processLetter(url, letter) {
   def full_search_url = "${url.url}/Search.aspx?letter=${letter}"
   println("Process ${url.name} : ${full_search_url}");
-  def gHTML = new URL( full_search_url ).withReader { r ->
-    new XmlSlurper( new Parser() ).parse( r )
+
+  def cookies = []
+
+  new HTTPBuilder( full_search_url ).with {
+    get(contentType:TEXT) { resp, reader ->
+      gHTML = new XmlSlurper( new Parser() ).parse( reader )
+      resp.getHeaders('Set-Cookie').each {
+        String cookie = it.value.split(';')[0]
+        println("Adding cookie to collection: $cookie")
+        cookies.add(cookie)
+      }
+    }
   }
 
-  def sel = gHTML.body.'**'.find { it.name() == 'table' && it.@id.text() == 'ctl00_ContentPlaceHolder1_GridView1' }
+  // def gHTML = new URL( full_search_url ).withReader { r ->
+  //   new XmlSlurper( new Parser() ).parse( r )
+  // }
 
+  def process_result = processResponsePage(gHTML, url);
+
+  while ( process_result.has_next ) {
+    // We have to do a form post to the URL, sucks ass majorly, but there you go
+    new HTTPBuilder( full_search_url ).with {
+      // Get from the given path as TEXT
+      // println("__VIEWSTATE:${process_result.viewstate_value}");
+      // println("__EVENTVALIDATION:${process_result.event_validation}");
+      post(contentType:TEXT,
+           body:['__VIEWSTATE':process_result.viewstate_value, 
+                 'ctl00$ContentPlaceHolder1$bottomPager$ctl05':'Next',
+                 '__EVENTVALIDATION':process_result.event_validation]) { resp, reader ->
+        println("Reader is ${reader.class.name}");
+        gHTML = new XmlSlurper( new Parser() ).parse( reader )
+        processResponsePage(gHTML, url);
+        // println("Got response... ${gHTML}");
+      }
+    }
+    process_result.has_next = false
+  }
+
+}
+
+// Read a remote page, process any elements, return VIEWSTATE and a boolean indicating if there is another page
+
+def processResponsePage(gHTML,url) {
+
+  def result = [:]
+
+  def viewstate_element = gHTML.body.'**'.find { it.name() == 'input'  && it.@id.text() == 'VIEWSTATE' }
+  def viewstate_value = null;
+  // This is severely FUGLY code on the server side
+  if ( viewstate_element ) {
+    result.viewstate_value = viewstate_element.@value.text();
+  }
+
+  def next_button_element = gHTML.body.'**'.find { it.name() == 'input'  && it.@value.text() == 'Next' && it.@class.text() == 'paging_next_button'}
+  if ( next_button_element.@disabled == 'disabled' ) {
+    println("No next page");
+    result.has_next = false
+  }
+  else {
+    println("Has next page");
+    result.has_next = true
+  }
+
+  def event_validation_element = gHTML.body.'**'.find { it.name() == 'input'  && it.@name.text() == '__EVENTVALIDATION'}
+  if ( event_validation_element ) {
+    result.event_validation = event_validation_element.@value.text()
+  }
+
+
+  def sel = gHTML.body.'**'.find { it.name() == 'table' && it.@id.text() == 'ctl00_ContentPlaceHolder1_GridView1' }
   def column_index = [:]
   boolean process = false
   sel.tr.each { tr ->
-    println("Processing tr ${tr}");
     if ( process ) {
       def details_link_tr = tr.td[column_index['Name']]
       def name = details_link_tr.a.@title.text()
       // def details_url = "${url.url}/${details_link_tr.a.@href.text()}"; // Old way, not reliable
       def details_anchor_tag = tr.'**'.find { it.name() == 'a' && it.@href.text().startsWith('Search.aspx')}
       if ( details_anchor_tag ) {
-        println("Result of find: ${details_anchor_tag}");
         def details_url = "${url.url}/${details_anchor_tag.@href.text()}"
         processRecord(url.name, details_url)
       }
@@ -75,6 +145,8 @@ def processLetter(url, letter) {
       println("Constructed column index: ${column_index}");
     }
   }
+
+  result
 }
 
 def processRecord(owner, url) {
