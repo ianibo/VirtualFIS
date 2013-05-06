@@ -55,11 +55,11 @@ def processLetter(url, letter) {
   new HTTPBuilder( full_search_url ).with {
     get(contentType:TEXT) { resp, reader ->
       gHTML = new XmlSlurper( new Parser() ).parse( reader )
-      resp.getHeaders('Set-Cookie').each {
-        String cookie = it.value.split(';')[0]
-        println("Adding cookie to collection: $cookie")
-        cookies.add(cookie)
-      }
+      // resp.getHeaders('Set-Cookie').each {
+      //   String cookie = it.value.split(';')[0]
+      //   println("Adding cookie to collection: $cookie")
+      //   cookies.add(cookie)
+      // }
     }
   }
 
@@ -86,18 +86,15 @@ def processLetter(url, letter) {
               '__EVENTVALIDATION':process_result.event_validation
         ]
 
-        headers['Cookie'] = cookies.join(';')
+        // headers['Cookie'] = cookies.join(';')
 
 
         response.success = { resp, reader ->
-          println("Reader is ${reader.class.name}");
           def gHTML2 = new XmlSlurper( new Parser() ).parse( reader )
-          processResponsePage(gHTML2, url);
-          // println("Got response... ${gHTML}");
+          process_result = processResponsePage(gHTML2, url);
         }
       }
     }
-    process_result.has_next = false
   }
 
 }
