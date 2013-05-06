@@ -19,12 +19,12 @@ def db = mongo.getDB("tribal_crawl_db")
 
 def urls = [
   ['name': 'Kent', url: 'https://fisonline.tribalhosted.co.uk/Kent/EarlyYears/FSD'],
-  // ['name': 'TowerHamlets', url: 'https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry'],
-  // ['name': 'centralbedfordshire', url: 'https://fisonline.tribalhosted.co.uk/centralbedfordshire/fiso/publicenquiry'],
-  // ['name': 'Bracknell', url: 'https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry'],
-  // ['name': 'Doncaster', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
-  // ['name': 'Aberdeen', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
-  // ['name': 'Lambeth', url: 'https://fisonline.tribalhosted.co.uk/Lambeth/FISO/PublicEnquiry']
+  ['name': 'TowerHamlets', url: 'https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry'],
+  ['name': 'centralbedfordshire', url: 'https://fisonline.tribalhosted.co.uk/centralbedfordshire/fiso/publicenquiry'],
+  ['name': 'Bracknell', url: 'https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry'],
+  ['name': 'Doncaster', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
+  ['name': 'Aberdeen', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
+  ['name': 'Lambeth', url: 'https://fisonline.tribalhosted.co.uk/Lambeth/FISO/PublicEnquiry']
 ]
 
 go(db, urls);
@@ -37,16 +37,16 @@ def go(db, urls) {
 
     def rcount = 0;
     def ecount = 0;
-    def range = ['a'] // 'a'..'z'
+    def range = 'a'..'z'
     range.each { letter ->
       println("Letter: ${letter}");
-      processLetter(url, letter)
+      processLetter(url, letter, db)
     }
 
   }
 }
 
-def processLetter(url, letter) {
+def processLetter(url, letter, db) {
   def full_search_url = "${url.url}/Search.aspx?letter=${letter}"
   println("Process ${url.name} : ${full_search_url}");
   def pageno = 0;
@@ -69,7 +69,7 @@ def processLetter(url, letter) {
   // }
 
   println("Processing page ${pageno}");
-  def process_result = processResponsePage(gHTML, url);
+  def process_result = processResponsePage(gHTML, url,db);
 
   println("Will set cookies header to ${cookies.join(';')}");
   while ( process_result.has_next ) {
@@ -108,7 +108,7 @@ def processLetter(url, letter) {
 
 // Read a remote page, process any elements, return VIEWSTATE and a boolean indicating if there is another page
 
-def processResponsePage(gHTML,url) {
+def processResponsePage(gHTML,url,db) {
 
   def result = [:]
 
@@ -155,7 +155,7 @@ def processResponsePage(gHTML,url) {
       def details_anchor_tag = tr.'**'.find { it.name() == 'a' && it.@href.text().startsWith('Search.aspx')}
       if ( details_anchor_tag ) {
         def details_url = "${url.url}/${details_anchor_tag.@href.text()}"
-        processRecord(url.name, details_url)
+        processRecord(url.name, details_url, db)
       }
     }
     else {
@@ -171,7 +171,7 @@ def processResponsePage(gHTML,url) {
   result
 }
 
-def processRecord(owner, url) {
+def processRecord(owner, url, db) {
   println("Find ${url} owned by ${owner}");
 
   // Get url
@@ -187,13 +187,63 @@ def processRecord(owner, url) {
   }
 
   if ( gHTML != null ) {
+
     def props = [:]
+
+    gHTML.body.depthFirst().collect { it }.findAll { it.name() == 'span' && it.@class=='provider_name_header' }.each { pn ->
+      props.'name' = pn
+    }
+
+    gHTML.body.depthFirst().collect { it }.findAll { it.name() == 'span' && it.@class=='provider_type_header' }.each { pt ->
+      props.'type' = pt
+    }
 
     gHTML.body.depthFirst().collect { it }.findAll { it.name() == 'div' && it.@class.text() == 'provider_result_section' }.each { p ->
       props[p.h3.text()] = p.div
     }
 
-    println("got props: ${props}");
+    def record = [:]
+    addIfPresent(record, 'uri', url)
+    addIfPresent(record, 'name', props.name.text())
+    addIfPresent(record, 'type', props.type.text())
+    addIfPresent(record, 'telephone', props.Telephone?.text())
+    addIfPresent(record, 'website', props.Website?.a.@href.text())
+    addIfPresent(record, 'description', props.Description?.text())
+    record.lastSeen=System.currentTimeMillis()
+
+    println("Rec: ${record}");
+    // println("Description: ${props.'Service Description'?.text()}");
+    // println("Age Range Suitability: ${props.'Age Range Suitability'?.text()}");
+    // println("Eligibility Criteria: ${props.'Eligibility Criteria'?.text()}");
+    // println("Accredited By: ${props.'Accredited By'?.text()}");
+    // println("Availability: ${props.'Availability'?.text()}");
+    // println("Daily Opening Times: ${props.'Daily Opening Times'?.text()}");
+    // println("Opening Times: ${props.'Opening Times'?.text()}");
+    // println("Costs: ${props.'Costs'?.text()}");
+    // println("Other Costs: ${props.'Other Costs'?.text()}");
+    // println("Facilities: ${props.'Facilities'?.text()}");
+    // println("Eligibility Criteria: ${props.'Eligibility Criteria'?.text()}");
+    // println("Special/Additional Needs: ${props.'Special/Additional Needs'?.text()}");
+    // println("OfSTED Inspection Report (If Applicable): ${props.'OfSTED Inspection Report (If Applicable)'?.text()}");
+    // println("Languages Spoken: ${props.'Languages Spoken'?.text()}");
+
+    def existing_record = db.tribalrecs.findOne(uri:url);
+    if ( existing_record == null ) {
+      db.tribal.save(record);
+    }
+    else {
+      existing_record.lastSeen=System.currentTimeMillis()
+      db.tribal.save(authority_info);
+    }
+
   }
 
+}
+
+def addIfPresent(rec, name, value) {
+  if ( ( value ) &&
+       ( value.trim() != '' ) &&
+       ( value.trim() != '-' ) ) {
+    rec[name] = value;
+  }
 }
