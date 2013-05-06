@@ -73,20 +73,26 @@ def processLetter(url, letter) {
   while ( process_result.has_next ) {
     // We have to do a form post to the URL, sucks ass majorly, but there you go
     new HTTPBuilder( full_search_url ).with {
-      request(POST, TEXT) {
+      request(POST,TEXT) {
 
-        body=['__VIEWSTATE':process_result.viewstate_value, 
+        // def viewstate = new String(process_result.viewstate_value.decodeBase64())
+        def viewstate = process_result.viewstate_value
+
+        headers.'Content-Type' = 'application/x-www-form-urlencoded'
+        requestContentType = URLENC
+
+        body=['__VIEWSTATE':viewstate,
               'ctl00$ContentPlaceHolder1$bottomPager$ctl06':'Next',
-              '__EVENTVALIDATION':process_result.event_validation]
+              '__EVENTVALIDATION':process_result.event_validation
+        ]
 
         headers['Cookie'] = cookies.join(';')
 
-        requestContentType = URLENC
 
         response.success = { resp, reader ->
           println("Reader is ${reader.class.name}");
-          gHTML = new XmlSlurper( new Parser() ).parse( reader )
-          processResponsePage(gHTML, url);
+          def gHTML2 = new XmlSlurper( new Parser() ).parse( reader )
+          processResponsePage(gHTML2, url);
           // println("Got response... ${gHTML}");
         }
       }
