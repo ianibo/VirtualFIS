@@ -6,14 +6,12 @@
   @Grab(group='org.apache.httpcomponents', module='httpmime', version='4.1.2'),
   @Grab(group='org.apache.httpcomponents', module='httpclient', version='4.0'),
   @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.5.0')
-
 ])
 
 import org.ccil.cowan.tagsoup.Parser
 import groovyx.net.http.HTTPBuilder
-import static groovyx.net.http.ContentType.URLENC
-import static groovyx.net.http.ContentType.TEXT
-
+import static groovyx.net.http.ContentType.*
+import static groovyx.net.http.Method.*
 
 println "Open mongo";
 def mongo = new com.gmongo.GMongo()
@@ -71,20 +69,26 @@ def processLetter(url, letter) {
 
   def process_result = processResponsePage(gHTML, url);
 
+  println("Will set cookies header to ${cookies.join(';')}");
   while ( process_result.has_next ) {
     // We have to do a form post to the URL, sucks ass majorly, but there you go
     new HTTPBuilder( full_search_url ).with {
-      // Get from the given path as TEXT
-      // println("__VIEWSTATE:${process_result.viewstate_value}");
-      // println("__EVENTVALIDATION:${process_result.event_validation}");
-      post(contentType:TEXT,
-           body:['__VIEWSTATE':process_result.viewstate_value, 
-                 'ctl00$ContentPlaceHolder1$bottomPager$ctl05':'Next',
-                 '__EVENTVALIDATION':process_result.event_validation]) { resp, reader ->
-        println("Reader is ${reader.class.name}");
-        gHTML = new XmlSlurper( new Parser() ).parse( reader )
-        processResponsePage(gHTML, url);
-        // println("Got response... ${gHTML}");
+      request(POST, TEXT) {
+
+        body=['__VIEWSTATE':process_result.viewstate_value, 
+              'ctl00$ContentPlaceHolder1$bottomPager$ctl06':'Next',
+              '__EVENTVALIDATION':process_result.event_validation]
+
+        headers['Cookie'] = cookies.join(';')
+
+        requestContentType = URLENC
+
+        response.success = { resp, reader ->
+          println("Reader is ${reader.class.name}");
+          gHTML = new XmlSlurper( new Parser() ).parse( reader )
+          processResponsePage(gHTML, url);
+          // println("Got response... ${gHTML}");
+        }
       }
     }
     process_result.has_next = false
@@ -134,7 +138,6 @@ def processResponsePage(gHTML,url) {
         def details_url = "${url.url}/${details_anchor_tag.@href.text()}"
         processRecord(url.name, details_url)
       }
-
     }
     else {
       process = true; // First tr is a header row, process all subsequent rows.
