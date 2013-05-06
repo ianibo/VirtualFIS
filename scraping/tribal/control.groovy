@@ -1,7 +1,7 @@
 #!/home/ibbo/.gvm/groovy/current/bin/groovy
 
 @Grapes([
-  @Grab(group='com.gmongo', module='gmongo', version='0.9.2'),
+  @Grab(group='com.gmongo', module='gmongo', version='1.1'),
   @Grab( 'org.ccil.cowan.tagsoup:tagsoup:1.2.1' ),
   @Grab(group='org.apache.httpcomponents', module='httpmime', version='4.1.2'),
   @Grab(group='org.apache.httpcomponents', module='httpclient', version='4.0'),
@@ -15,7 +15,7 @@ import static groovyx.net.http.Method.*
 
 println "Open mongo";
 def mongo = new com.gmongo.GMongo()
-def db = mongo.getDB("ofsted_crawl_db")
+def db = mongo.getDB("tribal_crawl_db")
 
 def urls = [
   ['name': 'Kent', url: 'https://fisonline.tribalhosted.co.uk/Kent/EarlyYears/FSD'],
@@ -188,10 +188,11 @@ def processRecord(owner, url) {
 
   if ( gHTML != null ) {
     def props = [:]
-    def sel = gHTML.body.'**'.find { it.name() == 'div' && it.@class.text() == 'provider_result_section' }
-    sel.each { p ->
+
+    gHTML.body.depthFirst().collect { it }.findAll { it.name() == 'div' && it.@class.text() == 'provider_result_section' }.each { p ->
       props[p.h3.text()] = p.div
     }
+
     println("got props: ${props}");
   }
 
