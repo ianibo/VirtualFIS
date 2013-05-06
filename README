@@ -43,3 +43,44 @@ http://stackoverflow.com/questions/15151717/grails-facebook-login-using-spring-s
 
 testing
 http://localhost:8080/localchatter/admin/data/localchatter/sourcerecs/51581eece4b0546a8d7cd16f#.UWBd6aC8w7w
+
+
+
+Kent sitemap
+
+https://fisonline.tribalhosted.co.uk/Kent/Publications/Sitemap.xml
+
+
+
+https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry/Search.aspx?letter=A
+
+Authority so far:
+
+Kent:Publications
+https://fisonline.tribalhosted.co.uk/Kent/EarlyYears/FSD/Search.aspx?letter=A
+
+TowerHamlets:PublicEnquiry
+https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry/Search.aspx?letter=a
+
+centralbedfordshire:fiso:publicenquiry
+https://fisonline.tribalhosted.co.uk/centralbedfordshire/fiso/publicenquiry/Search.aspx?letter=a
+
+
+Bracknell
+https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry/Search.aspx?letter=a
+https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry/Search.aspx?providerID=1486
+https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry/Print.aspx?ws=1&ln=1&id=pIKlifgzUFc%3D
+
+
+Doncaster
+https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory/Print.aspx?ws=2&ln=1&id=HpirRvTUPwc%3D
+
+
+https://fisonline.tribalhosted.co.uk/${Authority}/[EarlyYears|]/${LocalCollectionName}/Search.aspx?letter=A
+
+Details link:
+https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry/Search.aspx?providerID=313
+
+
+
+
