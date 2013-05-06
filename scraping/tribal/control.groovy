@@ -57,9 +57,14 @@ def processLetter(url, letter) {
     if ( process ) {
       def details_link_tr = tr.td[column_index['Name']]
       def name = details_link_tr.a.@title.text()
-      def details_url = "${url.url}/${details_link_tr.a.@href.text()}";
+      // def details_url = "${url.url}/${details_link_tr.a.@href.text()}"; // Old way, not reliable
+      def details_anchor_tag = tr.'**'.find { it.name() == 'a' && it.@href.text().startsWith('Search.aspx')}
+      if ( details_anchor_tag ) {
+        println("Result of find: ${details_anchor_tag}");
+        def details_url = "${url.url}/${details_anchor_tag.@href.text()}"
+        processRecord(url.name, details_url)
+      }
 
-      println("Name: ${name}, url:${details_url}");
     }
     else {
       process = true; // First tr is a header row, process all subsequent rows.
@@ -70,4 +75,8 @@ def processLetter(url, letter) {
       println("Constructed column index: ${column_index}");
     }
   }
+}
+
+def processRecord(owner, url) {
+  println("Find ${url} owned by ${owner}");
 }
