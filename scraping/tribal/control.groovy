@@ -98,7 +98,7 @@ def processLetter(url, letter, db) {
         response.success = { resp, reader ->
           println("Got page....");
           def gHTML2 = new XmlSlurper( new Parser() ).parse( reader )
-          process_result = processResponsePage(gHTML2, url);
+          process_result = processResponsePage(gHTML2, url, db);
         }
       }
     }
@@ -204,28 +204,27 @@ def processRecord(owner, url, db) {
 
     def record = [:]
     addIfPresent(record, 'uri', url)
+    addIfPresent(record, 'owner', owner)
     addIfPresent(record, 'name', props.name.text())
     addIfPresent(record, 'type', props.type.text())
     addIfPresent(record, 'telephone', props.Telephone?.text())
     addIfPresent(record, 'website', props.Website?.a.@href.text())
-    addIfPresent(record, 'description', props.Description?.text())
+    addIfPresent(record, 'description', props.'Service Description'?.text())
+    addIfPresent(record, 'ageRange', props.'Age Range Suitability'?.text())
+    addIfPresent(record, 'eligibilityCriteria', props.'Eligibility Criteria'?.text())
+    addIfPresent(record, 'accreditedBy', props.'Accredited By'?.text())
+    addIfPresent(record, 'availability', props.'Availability'?.text())
+    addIfPresent(record, 'dailyOpeningTimes', props.'Daily Opening Times'?.text())
+    addIfPresent(record, 'openingTimes', props.'Opening Times'?.text())
+    addIfPresent(record, 'costs', props.'Costs'?.text())
+    addIfPresent(record, 'otherCosts', props.'Other Costs'?.text())
+    addIfPresent(record, 'facilities', props.'Facilities'?.text())
+    addIfPresent(record, 'eligibilityCriteria', props.'Eligibility Criteria'?.text())
+    addIfPresent(record, 'ofstedReport', props.'OfSTED Inspection Report (If Applicable)'?.text())
+    addIfPresent(record, 'languages', props.'Languages Spoken'?.text())
     record.lastSeen=System.currentTimeMillis()
 
     println("Rec: ${record}");
-    // println("Description: ${props.'Service Description'?.text()}");
-    // println("Age Range Suitability: ${props.'Age Range Suitability'?.text()}");
-    // println("Eligibility Criteria: ${props.'Eligibility Criteria'?.text()}");
-    // println("Accredited By: ${props.'Accredited By'?.text()}");
-    // println("Availability: ${props.'Availability'?.text()}");
-    // println("Daily Opening Times: ${props.'Daily Opening Times'?.text()}");
-    // println("Opening Times: ${props.'Opening Times'?.text()}");
-    // println("Costs: ${props.'Costs'?.text()}");
-    // println("Other Costs: ${props.'Other Costs'?.text()}");
-    // println("Facilities: ${props.'Facilities'?.text()}");
-    // println("Eligibility Criteria: ${props.'Eligibility Criteria'?.text()}");
-    // println("Special/Additional Needs: ${props.'Special/Additional Needs'?.text()}");
-    // println("OfSTED Inspection Report (If Applicable): ${props.'OfSTED Inspection Report (If Applicable)'?.text()}");
-    // println("Languages Spoken: ${props.'Languages Spoken'?.text()}");
 
     def existing_record = db.tribalrecs.findOne(uri:url);
     if ( existing_record == null ) {
