@@ -19,12 +19,12 @@ def db = mongo.getDB("tribal_crawl_db")
 
 def urls = [
   ['name': 'Kent', url: 'https://fisonline.tribalhosted.co.uk/Kent/EarlyYears/FSD'],
-  ['name': 'TowerHamlets', url: 'https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry'],
-  ['name': 'centralbedfordshire', url: 'https://fisonline.tribalhosted.co.uk/centralbedfordshire/fiso/publicenquiry'],
-  ['name': 'Bracknell', url: 'https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry'],
-  ['name': 'Doncaster', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
-  ['name': 'Aberdeen', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
-  ['name': 'Lambeth', url: 'https://fisonline.tribalhosted.co.uk/Lambeth/FISO/PublicEnquiry']
+  // ['name': 'TowerHamlets', url: 'https://fisonline.tribalhosted.co.uk/TowerHamlets/EarlyYears/PublicEnquiry'],
+  // ['name': 'centralbedfordshire', url: 'https://fisonline.tribalhosted.co.uk/centralbedfordshire/fiso/publicenquiry'],
+  // ['name': 'Bracknell', url: 'https://fisonline.tribalhosted.co.uk/Bracknell/EarlyYears/PublicEnquiry'],
+  // ['name': 'Doncaster', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
+  // ['name': 'Aberdeen', url: 'https://fisonline.tribalhosted.co.uk/Doncaster/EarlyYears/FamilyServiceDirectory'],
+  // ['name': 'Lambeth', url: 'https://fisonline.tribalhosted.co.uk/Lambeth/FISO/PublicEnquiry']
 ]
 
 go(db, urls);
@@ -37,7 +37,8 @@ def go(db, urls) {
 
     def rcount = 0;
     def ecount = 0;
-    def range = 'a'..'z'
+    // def range = 'a'..'z'
+    def range = 'w'..'z'
     range.each { letter ->
       println("Letter: ${letter}");
       processLetter(url, letter, db)
@@ -222,6 +223,9 @@ def processRecord(owner, url, db) {
     addIfPresent(record, 'eligibilityCriteria', props.'Eligibility Criteria'?.text())
     addIfPresent(record, 'ofstedReport', props.'OfSTED Inspection Report (If Applicable)'?.text())
     addIfPresent(record, 'languages', props.'Languages Spoken'?.text())
+    addIfPresent(record, 'address', props.'Address'?.text())
+    addIfPresent(record, 'mapTitle', props.'Map'?.a.@title.text())
+    addIfPresent(record, 'mapLink', props.'Map'?.a.@href.text())
     record.lastSeen=System.currentTimeMillis()
 
     println("Rec: ${record}");
